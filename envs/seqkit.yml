@@ -1,0 +1,8 @@
+name: seqkit
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - seqkit=2.10.0=he881be0_1
+prefix: /cfs/klemming/projects/supr/yantlab_storage/Denzel/miniconda3/envs/seqkit

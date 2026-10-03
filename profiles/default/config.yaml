@@ -1,0 +1,5 @@
+default-resources:
+    slurm_partition: pelle
+    slurm_account: slu2026-1-5
+    mem_mb: 32000
+    runtime: 120

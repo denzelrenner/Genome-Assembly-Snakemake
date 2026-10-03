@@ -1,0 +1,39 @@
+rule gfa_to_fa:
+    input:
+        "{sample}/s4_run_hifiasm/{sample}.hap{haplomeNumber}.p_ctg.gfa"
+    output:
+        '{sample}/s4_run_hifiasm/{sample}.hap{haplomeNumber}.fa'
+    params:
+        hicParam="--h1 {input.hic1} --h2 {input.hic2}" if HASHIC else [],
+        ploidy=config["ploidy"],
+    threads:
+        1
+    resources:
+        runtime=10,
+        mem_mb=1000
+    conda:
+        "../../envs/hifiasm.yml"
+    shell:
+        '''
+        # go through all the gfa files
+        for gfa in {wildcards.sample}/s4_run_hifiasm/*hap*.p_ctg.gfa; do
+
+            echo $gfa
+
+            if [ -f $gfa ]; then
+
+                # get only file name and not whole path
+                file=$(basename "${{gfa}}")
+
+                # find haplome number
+                hap=$(awk -F'.' '{{print $(NF-2)}}' <<< $file)
+
+                # convert to fasta file
+                awk '/^S/{{print ">"$2;print $3}}' $gfa > {wildcards.sample}/s4_run_hifiasm/{wildcards.sample}."${{hap}}".fa
+
+            fi
+        done
+        '''
+        
+        
+
