@@ -4,7 +4,7 @@ rule run_smudgeplot:
     output:
         plots=expand("{{sample}}/s3_estimate_ploidy/smudgeplot/plots/{png}.png",png=['output_smudgeplot','output_smudgeplot_log10','output_centralities'])
     params:
-        ploidy=config["ploidy"],
+        ploidy=lambda w: sampleInfo[w.sample]["ploidy"],
         outdir="{sample}/s3_estimate_ploidy/smudgeplot"
     conda:
         "../../envs/smudgeplot053.yml"

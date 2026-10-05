@@ -1,3 +1,4 @@
+import os
 rule hifiasm_qc:
     input:
         fa='{sample}/s4_run_hifiasm/{sample}.hap{haplomeNumber}.fa'
@@ -9,7 +10,7 @@ rule hifiasm_qc:
         odb=config['compleasm_odb'],
         lineage=config['compleasm_lineage'],
         libpath=config['compleasm_download_path'],
-        qcScript=config['script_dir'] + '/create_qc_summary_table_v3.py',
+        qcScript=os.path.join(config['script_dir'],'create_qc_summary_table_v3.py'),
     resources:
         runtime=240,
     threads:

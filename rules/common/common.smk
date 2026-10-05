@@ -5,8 +5,8 @@ import os
 HASHIC = True if (config['hic1_reads'] and config['hic2_reads']) else False
 
 # get samples by reading hifi reads file
-SAMPLES = [f.split('.')[0] for f in os.listdir(config['hifi_reads'])]
-HAPLOMENUMBERS = [str(i) for i in range(1,config['ploidy']+1)] if HASHIC else ['1','2']
+#SAMPLES = [f.split('.')[0] for f in os.listdir(config['hifi_reads'])]
+# HAPLOMENUMBERS = [str(i) for i in range(1,config['ploidy']+1)] if HASHIC else ['1','2']
 
 # join path of hic reads and sample, then save in dir
 HIC1FILES={s:"" for s in SAMPLES}
@@ -16,6 +16,9 @@ MERGEHIC={s:False for s in SAMPLES}
 SMUDGEPLOTFILES={s:"" for s in SAMPLES}
 GENOMESCOPEFILES={s:"" for s in SAMPLES}
 
+
+
+# add hifiasm ploidy column
 for s in SAMPLES:
 
     if not HASHIC:
@@ -52,7 +55,6 @@ for s in SAMPLES:
 # wildcard constaints
 wildcard_constraints:
     sample='|'.join(SAMPLES), # limit value of sample to our input bams
-    haplomeNumber='|'.join(HAPLOMENUMBERS) # limit value of haplome number
 
 
 # helper functions
@@ -61,86 +63,13 @@ wildcard_constraints:
 
 def set_rule_target():
 
-    # return [f'{s}/s0_end_pipe/done.txt' for s in SAMPLES]
+    outFiles = []
 
-    return expand('{sample}/s0_end_pipe/{sample}.hap{haplomeNumber}/done.txt',sample=SAMPLES,haplomeNumber=HAPLOMENUMBERS)
+    for smpl in sampleInfo:
 
-def get_directory_array(myDir:str,absPath:bool=True):
-    
-    if absPath:
-        return [os.path.join(myDir,i) for i in os.listdir(myDir)]
-    
-    elif not absPath:
-        return os.listdir(myDir)
+        for i in range(1,sampleInfo[smpl]['ploidy']+1):
+            outFiles.append(f'{smpl}/s0_end_pipe/{smpl}.hap{i}/done.txt')
 
-### HIFIASM ###
-# def get_hifiasm_output_files(wildcards):
+    return outFiles
 
-#     if HASHIC:
-
-#         # return list of files
-#         return expand('{wildcards.sample}/s3_run_hifiasm/{wildcards.sample}.hic.hap{hapNumber}.p_ctg.gfa',hapNumber=HAPLOMENUMBERS)
-    
-#     else:
-
-#         # return list of files
-#         return expand('{wildcards.sample}/s3_run_hifiasm/{wildcards.sample}.hap{hapNumber}.p_ctg.gfa',hapNumber=HAPLOMENUMBERS)
-
-# def get_hifiasm_qc_output_files(wildcards):
-
-#     if HASHIC:
-
-#         # return list of files
-#         return expand('{wildcards.sample}/s3_run_hifiasm/quality_control/{wildcards.sample}/{wildcards.sample}.hic.hap{hapNumber}/Compleasm',hapNumber=HAPLOMENUMBERS)
-    
-#     else:
-
-#         # return list of files
-#         return expand('{wildcards.sample}/s3_run_hifiasm/{wildcards.sample}.hap{hapNumber}.fa',hapNumber=HAPLOMENUMBERS)
-
-# def get_hifiasm_input_files(wildcards):
-
-#     if HASHIC:
-
-#         # return list of files
-#         return expand('{wildcards.sample}/s3_run_hifiasm/{wildcards.sample}.hic.hap{hapNumber}.p_ctg.gfa',hapNumber=HAPLOMENUMBERS)
-    
-#     else:
-
-#         # return list of files
-#         return expand('{wildcards.sample}/s3_run_hifiasm/{wildcards.sample}.hap{hapNumber}.p_ctg.gfa',hapNumber=HAPLOMENUMBERS)
-
-# # get the HiC files to use for hifiasm
-# def get_hifiasm_hic_input(pairedEnd):
-
-#     # return empty string if paths to hic1 and hic2 data not given
-#     if not HASHIC:
-#         return ''
-
-#     if pairedEnd == 'hic1':
-
-#         # get array of hic files
-#         hic1Files = get_directory_array(config['hic1_reads'])
-
-#         # check if the dir has more than one HiC file, in that case there should be a merged HiC file, otherwise if only one HiC file then just return that
-#         if len(hic1Files) > 1:
-#             return [f for f in hic1Files if 'merged' in f][0]
-        
-#         elif len(hic1Files) == 1:
-#             return hic1Files[0]
-    
-#     elif pairedEnd == 'hic2':
-
-#         # get array of hic files
-#         hic2Files = get_directory_array(config['hic2_reads'])
-
-#         # check if the dir has more than one HiC file, in that case there should be a merged HiC file, otherwise if only one HiC file then just return that
-#         if len(hic2Files) > 1:
-#             return [f for f in hic2Files if 'merged' in f][0]
-        
-#         elif len(hic2Files) == 1:
-#             return hic2Files[0]
-
-# def set_hifiasm_hic_parameter(wildcards):
-#     pass
 

@@ -17,6 +17,7 @@ configIni.read(configIniPath)
 # build snakemake config
 ### DEFAULTS ###
 config['ploidy'] = configIni['DEFAULT'].getint('ploidy',fallback=2)
+config['samples_file'] = configIni['DEFAULT'].get('samples_file',fallback='samples.csv')
 
 ### PREPARING HIFI READS
 config['filter_hifi_reads'] = configIni['PREPARING_HIFI_READS'].getboolean('filter_hifi_reads',fallback=False)
@@ -49,9 +50,12 @@ config['tmpdir'] = configIni['SLURM_ARGS'].get('tmpdir',fallback='/scratch')
 config['script_dir'] = os.path.join(workflow.basedir,'scripts')
 config['shared_data_dir'] = os.path.join(workflow.basedir,'shared_data')
 
+
+
 # include rules
 
 # shared rules
+include:"rules/common/input_csv_processes.smk"
 include:"rules/common/common.smk"
 include:"rules/common/end_results.smk"
 

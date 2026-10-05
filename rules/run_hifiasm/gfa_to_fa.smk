@@ -1,11 +1,8 @@
 rule gfa_to_fa:
     input:
-        "{sample}/s4_run_hifiasm/{sample}.hap{haplomeNumber}.p_ctg.gfa"
+        "{sample}/s4_run_hifiasm/.done.txt"
     output:
         '{sample}/s4_run_hifiasm/{sample}.hap{haplomeNumber}.fa'
-    params:
-        hicParam="--h1 {input.hic1} --h2 {input.hic2}" if HASHIC else [],
-        ploidy=config["ploidy"],
     threads:
         1
     resources:

@@ -6,7 +6,7 @@ rule run_genomescope:
         plots=expand("{{sample}}/s3_estimate_ploidy/genomescope/plots/{png}.png",png=['transformed_log_plot','transformed_linear_plot','log_plot','linear_plot'])
 
     params:
-        ploidy=config['ploidy'],
+        ploidy=lambda w: sampleInfo[w.sample]["ploidy"],
         outdir="{sample}/s3_estimate_ploidy/genomescope"
 
     conda:
