@@ -6,12 +6,12 @@ rule bam_to_fastq:
     conda:
         "../../envs/minimap2_samtools.yml"
     threads:
-        2
+        16
     resources:
         runtime=240,
         mem_mb=5000
     shell:
-        "samtools fastq {input.bam} | gzip > {output.fastq}"
+        "samtools fastq --threads {threads} {input.bam} | gzip > {output.fastq}"
 
 rule bam_to_fastq_with_filter:
     input:
