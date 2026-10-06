@@ -22,7 +22,7 @@ rule run_hifiasm:
         '''
         hifiasm -v # confirm hifiasm version
 
-        if {params.useHiCShell};then
+        if [ {params.useHiCShell} = true ];then
 
 	        hifiasm -o {wildcards.sample}/s4_run_hifiasm/{wildcards.sample} --n-hap {params.ploidy} --h1 {params.hic1} --h2 {params.hic2} -t {threads} {input.hifiFastq}
         
