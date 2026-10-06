@@ -23,8 +23,8 @@ rule get_input_data_stats:
 
         if {params.runHiCStats};then
 
-            seqkit stats {params.hic1}/* --threads {threads} -Ta -o {wildcards.sample}/s2_input_data_qc/HiC1/{wildcards.sample}.hic1.tsv
-            seqkit stats {params.hic2}/* --threads {threads} -Ta -o {wildcards.sample}/s2_input_data_qc/HiC2/{wildcards.sample}.hic2.tsv
+            seqkit stats {params.hic1} --threads {threads} -Ta -o {wildcards.sample}/s2_input_data_qc/HiC1/{wildcards.sample}.hic1.tsv
+            seqkit stats {params.hic2} --threads {threads} -Ta -o {wildcards.sample}/s2_input_data_qc/HiC2/{wildcards.sample}.hic2.tsv
 
         fi
         
