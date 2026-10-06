@@ -6,7 +6,7 @@ rule bam_to_fastq:
     conda:
         "../../envs/minimap2_samtools.yml"
     threads:
-        16
+        2
     resources:
         runtime=240,
         mem_mb=5000
