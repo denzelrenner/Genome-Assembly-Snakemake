@@ -109,8 +109,12 @@ sampleInfo = df.to_dict("index")
 # add all HiC files we expect to have in input dir
 for smpl in sampleInfo:
 
-    sampleInfo[smpl]['all_hic1_files'] = ' '.join([[sampleInfo[smpl]['hic1_input_file']] + sampleInfo[smpl]['merge_hic1_files']])
-    sampleInfo[smpl]['all_hic2_files'] = ' '.join([[sampleInfo[smpl]['hic2_input_file']] + sampleInfo[smpl]['merge_hic2_files']])
+    if not sampleInfo[smpl]['hic1_input_file'] and not sampleInfo[smpl]['hic2_input_file']:
+        sampleInfo[smpl]['all_hic1_files'] = ' '.join([sampleInfo[smpl]['hic1_input_file'], sampleInfo[smpl]['merge_hic1_files']])
+        sampleInfo[smpl]['all_hic2_files'] = ' '.join([sampleInfo[smpl]['hic2_input_file'], sampleInfo[smpl]['merge_hic2_files']])
+    else:
+        sampleInfo[smpl]['all_hic1_files'] = []
+        sampleInfo[smpl]['all_hic2_files'] = []
 
 # add merge HiC column
 for smpl in sampleInfo:
