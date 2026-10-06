@@ -109,15 +109,15 @@ sampleInfo = df.to_dict("index")
 # add all HiC files we expect to have in input dir
 for smpl in sampleInfo:
 
-    sampleInfo[smpl]['all_hic1_files'] = sampleInfo[smpl]['hic1_input_file'] + sampleInfo[smpl]['merge_hic1_files']
-    sampleInfo[smpl]['all_hic2_files'] = sampleInfo[smpl]['hic2_input_file'] + sampleInfo[smpl]['merge_hic2_files']
+    sampleInfo[smpl]['all_hic1_files'] = ' '.join(sampleInfo[smpl]['hic1_input_file'], sampleInfo[smpl]['merge_hic1_files'])
+    sampleInfo[smpl]['all_hic2_files'] = ' '.join(sampleInfo[smpl]['hic2_input_file'], sampleInfo[smpl]['merge_hic2_files'])
 
 # add merge HiC column
 for smpl in sampleInfo:
 
     sampleInfo[smpl]['merge_hic'] = 0
 
-    if (sampleInfo[smpl]['hic1_input_file'] not in sampleInfo[smpl]['all_hic1_files']) and sampleInfo[smpl]['useHiC']:
+    if (sampleInfo[smpl]['hic1_input_file'] not in sampleInfo[smpl]['merge_hic1_files']) and sampleInfo[smpl]['useHiC']:
         sampleInfo[smpl]['merge_hic'] = 1
 
 # add has bash true false or use HiC
