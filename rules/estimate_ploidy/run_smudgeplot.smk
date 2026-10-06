@@ -11,7 +11,7 @@ rule run_smudgeplot:
     threads:
         int(workflow.cores * 0.25)
     resources:
-        runtime=240,
+        runtime=480,
         mem_mb=200000
     shell:
         '''
