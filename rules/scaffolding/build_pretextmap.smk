@@ -52,7 +52,6 @@ rule create_hic_coverage_bedgraph:
     input:
         fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/yahs_hap1_hap2.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
         pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext",
-        pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext",
         hicToAssem="{sample}/s6_build_pretextmap/pretextmap/hic_sorted.bam",
         
     output:
@@ -78,9 +77,7 @@ rule create_hifi_coverage_bedgraph:
         fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/yahs_hap1_hap2.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
         pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext",
         hifiFastq="{sample}/s1_bam_to_fastq/{sample}.fastq.gz",
-        pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext",
     output:
-        pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext",        
         hifiCovBedgraph="{sample}/s6_build_pretextmap/mapping_coverage/coverage_output_hifi.bedgraph",
         hifiToAssem="{sample}/s6_build_pretextmap/pretextmap/hifi_sorted.bam",
     conda:
@@ -106,7 +103,6 @@ rule create_hic_gaps_bedgraph:
     input:
         fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/yahs_hap1_hap2.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
         pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext",
-        pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext",
         hicCovBedgraph="{sample}/s6_build_pretextmap/mapping_coverage/coverage_output_hic.bedgraph",
     output:
         covGapsBedgraph="{sample}/s6_build_pretextmap/coverage_gaps/gaps.bedgraph",
@@ -129,7 +125,6 @@ rule create_hic_gaps_bedgraph:
 rule create_gfastats_gaps_bedgraph:
     input:
         fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/yahs_hap1_hap2.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
-        pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext",
         pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext",
     output:
         gfastatsGapsBedgraph="{sample}/s6_build_pretextmap/gfastats_gaps/gfastats_gaps.bedgraph",
