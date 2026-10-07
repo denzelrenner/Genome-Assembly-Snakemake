@@ -148,7 +148,7 @@ rule create_gfastats_gaps_bedgraph:
 
 rule create_barrnap_bedgraph:
     input:
-        fa=lambda w:"{w.sample}/s5_run_yahs/combined_haps/yahs_hap1_hap2.fa" if sampleInfo[w.sample]['ploidy'] == 2 else "{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
+        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/yahs_hap1_hap2.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
         pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext",
     output:
         barrnapGff="{sample}/s6_build_pretextmap/barrnap/RNA.gff",
