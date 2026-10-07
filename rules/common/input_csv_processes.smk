@@ -99,8 +99,8 @@ for sample in SAMPLES:
 
 # hifiasm ploidy, set to 2 automatically if no HiC
 df['hifiasm_ploidy'] = df.apply(set_hifiasm_ploidy,axis=1)
-df['merge_hic1_files'],df['hic1_input_file'] = zip(*df.apply(set_hic1_files_to_merge,axis=1))
-df['merge_hic2_files'],df['hic2_input_file'] = zip(*df.apply(set_hic2_files_to_merge,axis=1))
+df['hic1_files'],df['hic1_input_file'] = zip(*df.apply(set_hic1_files_to_merge,axis=1))
+df['hic2_files'],df['hic2_input_file'] = zip(*df.apply(set_hic2_files_to_merge,axis=1))
 df['scaffolding_tool'] = df.apply(set_scaffolding_tool,axis=1)
 
 # convert df to diction
@@ -109,9 +109,18 @@ sampleInfo = df.to_dict("index")
 # add all HiC files we expect to have in input dir
 for smpl in sampleInfo:
 
-    if sampleInfo[smpl]['hic1_input_file'] and sampleInfo[smpl]['hic2_input_file']:
-        sampleInfo[smpl]['all_hic1_files'] = ' '.join([sampleInfo[smpl]['hic1_input_file'], sampleInfo[smpl]['merge_hic1_files']])
-        sampleInfo[smpl]['all_hic2_files'] = ' '.join([sampleInfo[smpl]['hic2_input_file'], sampleInfo[smpl]['merge_hic2_files']])
+    # if we are using HiC which implies there is a HiC file that exists
+    if sampleInfo[smpl]['useHiC']:
+
+        if (sampleInfo[smpl]['hic1_input_file'] in sampleInfo[smpl]['hic1_files']):
+            sampleInfo[smpl]['all_hic1_files'] = sampleInfo[smpl]['hic1_files']
+            sampleInfo[smpl]['all_hic2_files'] = sampleInfo[smpl]['hic2_files']
+
+        elif (sampleInfo[smpl]['hic1_input_file'] not in sampleInfo[smpl]['hic1_files']):
+            sampleInfo[smpl]['all_hic1_files'] = ' '.join([sampleInfo[smpl]['hic1_input_file'], sampleInfo[smpl]['hic1_files']])
+            sampleInfo[smpl]['all_hic2_files'] = ' '.join([sampleInfo[smpl]['hic2_input_file'], sampleInfo[smpl]['hic2_files']])
+    
+    # if we are not using HiC then we dont even include it 
     else:
         sampleInfo[smpl]['all_hic1_files'] = []
         sampleInfo[smpl]['all_hic2_files'] = []
@@ -119,10 +128,10 @@ for smpl in sampleInfo:
 # add merge HiC column
 for smpl in sampleInfo:
 
-    sampleInfo[smpl]['merge_hic'] = 0
+    sampleInfo[smpl]['merge_hic'] = 'false'
 
-    if (sampleInfo[smpl]['hic1_input_file'] not in sampleInfo[smpl]['merge_hic1_files']) and sampleInfo[smpl]['useHiC']:
-        sampleInfo[smpl]['merge_hic'] = 1
+    if (sampleInfo[smpl]['hic1_input_file'] not in sampleInfo[smpl]['hic1_files']) and sampleInfo[smpl]['useHiC']:
+        sampleInfo[smpl]['merge_hic'] = 'true'
 
 # add has bash true false or use HiC
 for smpl in sampleInfo:
