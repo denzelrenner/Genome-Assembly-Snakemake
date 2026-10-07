@@ -71,11 +71,17 @@ def set_hic2_files_to_merge(row):
 
 def set_scaffolding_tool(row):
 
-    if row['ploidy'] > 2:
-        return 'haphic'
+    if row['useHiC']:
 
-    elif row['ploidy'] <= 2:
-        return 'yahs'
+        if row['ploidy'] > 2:
+            return 'haphic'
+
+        elif row['ploidy'] <= 2:
+            return 'yahs'
+
+    elif not row['useHiC']:
+
+        return 'none'
 
 
 
@@ -137,6 +143,14 @@ for smpl in sampleInfo:
 for smpl in sampleInfo:
     
     sampleInfo[smpl]['use_hic_shell'] = 'false'
+
+    if sampleInfo[smpl]['useHiC']:
+        sampleInfo[smpl]['use_hic_shell'] = 'true'
+
+# add has bash true false or use HiC
+for smpl in sampleInfo:
+    
+    sampleInfo[smpl]['ploidyAsArray'] = [i for i in range(1,sampleInfo[smpl]['ploidy']+1)]
 
     if sampleInfo[smpl]['useHiC']:
         sampleInfo[smpl]['use_hic_shell'] = 'true'
