@@ -59,7 +59,6 @@ rule run_yahs:
         
         
 rule combine_yahs_fastas:
-
     input:
         fa=lambda w:expand("{{sample}}/s5_run_yahs/hap{hap}/hap{hap}_yahs.fa",hap=sampleInfo[w.sample]['ploidyAsArray']),
     output:
