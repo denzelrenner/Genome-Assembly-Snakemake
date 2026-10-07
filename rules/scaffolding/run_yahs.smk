@@ -2,12 +2,10 @@ rule align_hic_to_hifiasm_haplome:
     input:
         fa='{sample}/s4_run_hifiasm/{sample}.hap{haplomeNumber}.fa'
     output:
-        bam="{sample}/s5_run_yahs/hap{haplomeNumber}/mapped.PT.bam"
-        fai='{sample}/s4_run_hifiasm/{sample}.hap{haplomeNumber}.fa.fai'
+        bam="{sample}/s5_run_yahs/hap{haplomeNumber}/mapped.PT.bam",
+        fai='{sample}/s4_run_hifiasm/{sample}.hap{haplomeNumber}.fa.fai',
         ctgSizes='{sample}/s4_run_hifiasm/{sample}.hap{haplomeNumber}.fa.contigsizes'
     params:
-        useHiCShell=lambda w: sampleInfo[w.sample]["use_hic_shell"],
-        ploidy=lambda w: sampleInfo[w.sample]["ploidy"],
         hic1=lambda w: sampleInfo[w.sample]['hic1_input_file'],
         hic2=lambda w: sampleInfo[w.sample]['hic2_input_file'],
     conda:
@@ -42,14 +40,8 @@ rule run_yahs:
         fa='{sample}/s4_run_hifiasm/{sample}.hap{haplomeNumber}.fa',
         bam="{sample}/s5_run_yahs/hap{haplomeNumber}/mapped.PT.bam"
     output:
-        complete="{sample}/s4_run_hifiasm/.done.txt"
-        yahsScaffoldOutput="{sample}/s5_run_yahs/hap{haplomeNumber}/yahs.out_scaffolds_final.fa"
+        yahsScaffoldOutput="{sample}/s5_run_yahs/hap{haplomeNumber}/yahs.out_scaffolds_final.fa",
         pretextInput="{sample}/s5_run_yahs/hap{haplomeNumber}/hap{haplomeNumber}_yahs.fa"
-    params:
-        useHiCShell=lambda w: sampleInfo[w.sample]["use_hic_shell"],
-        ploidy=lambda w: sampleInfo[w.sample]["ploidy"],
-        hic1=lambda w: sampleInfo[w.sample]['hic1_input_file'],
-        hic2=lambda w: sampleInfo[w.sample]['hic2_input_file'],
     conda:
         "../../envs/yahs.yml"
     threads:
