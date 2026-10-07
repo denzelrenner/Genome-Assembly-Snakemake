@@ -159,7 +159,7 @@ rule create_barrnap_bedgraph:
     output:
         barrnapGff="{sample}/s6_build_pretextmap/barrnap/RNA.gff",
         barrnapHits="{sample}/s6_build_pretextmap/barrnap/all_hits.fa",
-        barrnapBedgraph="{sample}/s6_build_pretextmap/barrnap/RNA.bedgraph"
+        barrnapBedgraph="{sample}/s6_build_pretextmap/barrnap/RNA.bedgraph",
 
     conda:
         "../../envs/manual-curation.yml"
@@ -167,7 +167,7 @@ rule create_barrnap_bedgraph:
         int(workflow.cores * 0.10)
     resources:
         runtime=60,
-        mem_mb=10000
+        mem_mb=10000,
     shell:
         '''
         echo 'rDNA'
@@ -185,7 +185,7 @@ rule create_barrnap_bedgraph:
 # rule create_trash_bedgraph:
 #     input:
 #         fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/yahs_hap1_hap2.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
-        pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext",
+#        pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext",
 #         bam="{sample}/s5_run_yahs/hap{haplomeNumber}/mapped.PT.bam"
 #         hifiFastq="{sample}/s1_bam_to_fastq/{sample}.fastq.gz"
 #         pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext",
