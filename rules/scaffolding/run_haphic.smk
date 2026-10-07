@@ -29,8 +29,8 @@ rule run_haphic:
         fa='{sample}/s4_run_hifiasm/{sample}.hic.p_utg.fa',
         bam="{sample}/s5_run_haphic/align_hic_to_utg/HiC.filtered.bam"
     output:
-        agp="{sample}/s5_run_haphic/04.build/scaffolds.agp"
-        fa="{sample}/s5_run_haphic/04.build/scaffolds.fa"
+        agp="{sample}/s5_run_haphic/04.build/scaffolds.agp",
+        fa="{sample}/s5_run_haphic/04.build/scaffolds.fa",
         pdf="{sample}/s5_run_haphic/plot/{sample}_contact_map.pdf"
     params:
         nchrs=lambda w: sampleInfo[w.sample]["ploidy"] * sampleInfo[w.sample]["chrom"],
