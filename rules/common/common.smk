@@ -42,7 +42,7 @@ def set_rule_target():
     outFiles.extend(expand("{smp}/s6_build_pretextmap/{outFile}",smp=HICSAMPLES,outFile=HICTARGETFILES))
 
     # get target file for individuals without HIC
-    outFiles.extend(expand("{smp}/s4_run_hifiasm/quality_control/{smp}.hap{hap}/QC_Summary/output_MasterSpreadsheet.xlsx'",smp=NOHICSAMPLES,hap=[1,2]))
+    outFiles.extend(expand("{smp}/s4_run_hifiasm/quality_control/{smp}.hap{hap}/QC_Summary/output_MasterSpreadsheet.xlsx",smp=NOHICSAMPLES,hap=[1,2]))
     
     return outFiles
 
