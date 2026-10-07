@@ -1,8 +1,6 @@
 rule build_pretextmap:
     input:
-        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/yahs_hap1_hap2.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
-        pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext",
-        
+        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/yahs_hap1_hap2.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",        
     output:
         pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext",
         hicToAssem="{sample}/s6_build_pretextmap/pretextmap/hic_sorted.bam",
@@ -23,7 +21,7 @@ rule build_pretextmap:
         bwa index {input.fa} && \
         bwa mem -t {threads} {input.fa} {params.hic1} {params.hic2} | \
         samtools sort -@{threads} -o {output.hicToAssem} && \
-        samtools view -@{threads} -h {output.hicToAssem} | PretextMap -o {input.pretextmap} --mapq 0
+        samtools view -@{threads} -h {output.hicToAssem} | PretextMap -o {output.pretextmap} --mapq 0
 
         # create index of fasta
         samtools faidx {input.fa} -o {input.fa}.fai
@@ -33,7 +31,6 @@ rule create_telomeres_bedgraph:
     input:
         fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/yahs_hap1_hap2.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
         pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext",
-        pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext"
     output:
         telomereBedgraph="{sample}/s6_build_pretextmap/telomeres/telomeres_telomeric_repeat_windows.bedgraph",
     conda:
