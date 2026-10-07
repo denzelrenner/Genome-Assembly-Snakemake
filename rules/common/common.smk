@@ -25,15 +25,25 @@ wildcard_constraints:
 
 ### GENERAL ###
 
+# set list of output files for HiC 
+HICTARGETFILES=["barrnap/RNA.gff","barrnap/all_hits.fa","barrnap/RNA.bedgraph",
+                "gfastats_gaps/gfastats_gaps.bedgraph",
+                "coverage_gaps/gaps.bedgraph",
+                "pretextmap/hifi_sorted.bam","mapping_coverage/coverage_output_hifi.bedgraph",
+                "mapping_coverage/coverage_output_hic.bedgraph",
+                "telomeres/telomeres_telomeric_repeat_windows.bedgraph",
+                "pretextmap/hic_sorted.bam"]
+
 def set_rule_target():
 
     outFiles = []
 
-    for smpl in sampleInfo:
+    # get target files for individuals with HiC
+    outFiles.extend(expand("{smp}/s6_build_pretextmap/{outFile}",smp=HICSAMPLES,outFile=HICTARGETFILES))
 
-        for i in range(1,sampleInfo[smpl]['ploidy']+1):
-            outFiles.append(f'{smpl}/s0_end_pipe/{smpl}.hap{i}/done.txt')
-
+    # get target file for individuals without HIC
+    outFiles.extend(expand("{smp}/s4_run_hifiasm/quality_control/{smp}.hap{hap}/QC_Summary/output_MasterSpreadsheet.xlsx'",smp=NOHICSAMPLES,hap=[1,2]))
+    
     return outFiles
 
 

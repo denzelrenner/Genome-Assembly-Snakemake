@@ -64,8 +64,7 @@ include:"rules/common/end_results.smk"
 include:"rules/prepare_input_data/bam_to_fastq.smk"
 
 # merge HiC
-if HASHIC:
-    include:"rules/prepare_input_data/merge_hic.smk"
+include:"rules/prepare_input_data/merge_hic.smk"
 
 # input data stats
 include:"rules/prepare_input_data/input_data_stats.smk"
@@ -82,6 +81,10 @@ include:"rules/run_hifiasm/run_hifiasm.smk"
 include:"rules/run_hifiasm/gfa_to_fa.smk"
 include:"rules/run_hifiasm/run_hifiasm_qc.smk"
 
+### SCAFFOLDING 
+include:"rules/scaffolding/build_pretextmap.smk"
+include:"rules/scaffolding/run_yahs.smk"
+include:"rules/scaffolding/run_haphic.smk"
 
 
 # all rule

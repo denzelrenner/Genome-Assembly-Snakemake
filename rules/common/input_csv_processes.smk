@@ -154,3 +154,8 @@ for smpl in sampleInfo:
 
     if sampleInfo[smpl]['useHiC']:
         sampleInfo[smpl]['use_hic_shell'] = 'true'
+
+# set HiC individuals and non HiC indivuals
+HICSAMPLES = [s for s in sampleInfo if sampleInfo[s]['useHiC']]
+
+NOHICSAMPLES = [s for s in sampleInfo if not sampleInfo[s]['useHiC']]
