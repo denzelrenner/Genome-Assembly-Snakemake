@@ -1,6 +1,6 @@
 rule run_smudgeplot:
     input:
-        fastq="{sample}/s1_bam_to_fastq/{sample}.fastq.gz"
+        fastq="{sample}/s1_get_input_data/Hifi/{sample}.fastq.gz"
     output:
         plots=expand("{{sample}}/s3_estimate_ploidy/smudgeplot/plots/{png}.png",png=['output_smudgeplot','output_smudgeplot_log10','output_centralities'])
     params:

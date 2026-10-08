@@ -1,6 +1,6 @@
 rule run_genomescope:
     input:
-        fastq="{sample}/s1_bam_to_fastq/{sample}.fastq.gz"
+        fastq="{sample}/s1_get_input_data/Hifi/{sample}.fastq.gz"
 
     output:
         plots=expand("{{sample}}/s3_estimate_ploidy/genomescope/plots/{png}.png",png=['transformed_log_plot','transformed_linear_plot','log_plot','linear_plot'])
