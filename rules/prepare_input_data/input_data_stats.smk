@@ -21,8 +21,8 @@ rule get_input_hic_stats:
         hic1=lambda w: sampleInfo[w.sample]["hic1_input_file"],
         hic2=lambda w: sampleInfo[w.sample]["hic2_input_file"],
     output:
-        outhic1="{sample}/s2_input_data_qc/HiC1/{sample}.hic1.tsv",
-        outhic2="{sample}/s2_input_data_qc/HiC2/{sample}.hic2.tsv",
+        tsv1="{sample}/s2_input_data_qc/HiC1/{sample}.hic1.tsv",
+        tsv2="{sample}/s2_input_data_qc/HiC2/{sample}.hic2.tsv",
     params:
         inhic1=lambda w: sampleInfo[w.sample]["all_hic1_files"],
         inhic2=lambda w: sampleInfo[w.sample]["all_hic2_files"],
@@ -35,6 +35,6 @@ rule get_input_hic_stats:
         mem_mb=10000
     shell:
         '''
-        seqkit stats {params.inhic1} --threads {threads} -Ta -o {output.outhic1}
-        seqkit stats {params.inhic2} --threads {threads} -Ta -o {output.outhic2}
+        seqkit stats {params.inhic1} --threads {threads} -Ta -o {output.tsv1}
+        seqkit stats {params.inhic2} --threads {threads} -Ta -o {output.tsv2}
         '''
