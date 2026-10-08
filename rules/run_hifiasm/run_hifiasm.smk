@@ -1,8 +1,6 @@
 rule run_hifiasm:
     input:
         hifiFastq="{sample}/s1_bam_to_fastq/{sample}.fastq.gz",
-        smudgeplots=expand("{{sample}}/s3_estimate_ploidy/smudgeplot/plots/{png}.png",png=['output_smudgeplot','output_smudgeplot_log10','output_centralities']),
-        genomescopeplots=expand("{{sample}}/s3_estimate_ploidy/genomescope/plots/{png}.png",png=['transformed_log_plot','transformed_linear_plot','log_plot','linear_plot']),
         inputdatastats="{sample}/s2_input_data_qc/.done.txt"
     output:
         complete="{sample}/s4_run_hifiasm/.done.txt"

@@ -43,6 +43,10 @@ def set_rule_target():
 
     # get target file for individuals without HIC
     outFiles.extend(expand("{smp}/s4_run_hifiasm/quality_control/{smp}.hap{hap}/QC_Summary/output_MasterSpreadsheet.xlsx",smp=NOHICSAMPLES,hap=[1,2]))
+
+    # regardless of HiC or not, add smudgeplot and genomescope to target files, and remove as input for hifiasm
+    outFiles.extend(expand("{smp}/s3_estimate_ploidy/smudgeplot/plots/{png}.png",smp=SAMPLES,png=['output_smudgeplot','output_smudgeplot_log10','output_centralities']))
+    outFiles.extend(expand("{smp}/s3_estimate_ploidy/genomescope/plots/{png}.png",smp=SAMPLES,png=['transformed_log_plot','transformed_linear_plot','log_plot','linear_plot']))
     
     return outFiles
 
