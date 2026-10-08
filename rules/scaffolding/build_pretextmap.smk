@@ -11,7 +11,7 @@ rule build_pretextmap:
     threads:
         int(workflow.cores * 0.75)
     resources:
-        runtime=720,
+        runtime=1200,
         mem_mb=300000
     shell:
         '''
@@ -61,8 +61,8 @@ rule create_hic_coverage_bedgraph:
     threads:
         int(workflow.cores * 0.75)
     resources:
-        runtime=120,
-        mem_mb=5000
+        runtime=180,
+        mem_mb=10000
     shell:
         '''
         echo 'coverage graph hic'
@@ -109,7 +109,7 @@ rule create_hic_gaps_bedgraph:
     conda:
         "../../envs/manual-curation.yml"
     threads:
-        int(workflow.cores * 0.75)
+        2
     resources:
         runtime=30,
         mem_mb=1000
@@ -157,7 +157,7 @@ rule create_barrnap_bedgraph:
     threads:
         int(workflow.cores * 0.10)
     resources:
-        runtime=60,
+        runtime=90,
         mem_mb=10000,
     shell:
         '''

@@ -12,9 +12,9 @@ rule align_hic_to_utg:
     conda:
         "../../envs/manual-curation.yml"
     threads:
-        int(workflow.cores * 0.75)
+        int(workflow.cores * 0.9)
     resources:
-        runtime=720,
+        runtime=1200,
         mem_mb=300000
     shell:
         '''
@@ -43,7 +43,7 @@ rule run_haphic:
         int(workflow.cores * 0.50)
     resources:
         runtime=720,
-        mem_mb=300000
+        mem_mb=100000
     shell:
         '''
         {params.scriptPath}/haphic pipeline {input.fa} {input.bam} {params.nchrs} --threads {threads} --processes {threads} --outdir {sample}/s5_run_haphic

@@ -10,9 +10,9 @@ rule align_hic_to_hifiasm_haplome:
     conda:
         "../../envs/mapping-tools.yml"
     threads:
-        int(workflow.cores * 0.75)
+        int(workflow.cores * 0.9)
     resources:
-        runtime=720,
+        runtime=1200,
         mem_mb=300000
     shell:
         '''
