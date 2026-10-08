@@ -1,7 +1,6 @@
 rule get_input_hifi_stats:
     input:
         fastq="{sample}/s1_bam_to_fastq/{sample}.fastq.gz",
-        
     output:
         tsv="{sample}/s2_input_data_qc/Hifi/{sample}.hifi.tsv",
     conda:
