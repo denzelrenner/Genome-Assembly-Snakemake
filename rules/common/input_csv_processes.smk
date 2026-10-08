@@ -57,7 +57,7 @@ def set_hic2_files_to_merge(row):
         hic2OutputFile = []
 
         if len(hic2Files) == 1:
-            hic1OutputFile = hic1Files[0]
+            hic2OutputFile = hic2Files[0]
 
         elif len(hic2Files) > 1:
             hic2OutputFile = os.path.join(sampleHic2Dir,f"{row['sample']}.merged_2.fq.gz")
