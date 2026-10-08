@@ -1,12 +1,11 @@
 rule align_hic_to_utg:
     input:
         fa='{sample}/s4_run_hifiasm/{sample}.p_utg.fa',
+        hic1=lambda w: sampleInfo[w.sample]['hic1_workflow_file'],
+        hic2=lambda w: sampleInfo[w.sample]['hic2_workflow_file']
     output:
         bam="{sample}/s5_run_haphic/align_hic_to_utg/HiC.bam",
         filteredBam="{sample}/s5_run_haphic/align_hic_to_utg/HiC.filtered.bam"
-    params:
-        hic1=lambda w: sampleInfo[w.sample]['hic1_input_file'],
-        hic2=lambda w: sampleInfo[w.sample]['hic2_input_file'],
     conda:
         "../../envs/manual-curation.yml"
     threads:
@@ -18,7 +17,7 @@ rule align_hic_to_utg:
         '''
         # align Hi-C data to the assembly, remove PCR duplicates and filter out secondary and supplementary alignments
         bwa index {input.fa}
-        bwa mem -5SP -t {threads} {input.fa} {params.hic1} {params.hic2} | samblaster | samtools view - -@ {threads} -S -h -b -F 3340 -o {output.bam}
+        bwa mem -5SP -t {threads} {input.fa} {input.hic1} {input.hic2} | samblaster | samtools view - -@ {threads} -S -h -b -F 3340 -o {output.bam}
 
         # filter the alignments with MAPQ 1 (mapping quality M1 and NM 3 edit distance < 3)
         filter_bam {output.bam} 1 --nm 3 --threads {threads} | samtools view - -b -@ {threads} -o {output.filteredBam}
