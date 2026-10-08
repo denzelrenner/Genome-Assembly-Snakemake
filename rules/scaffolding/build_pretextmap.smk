@@ -1,12 +1,11 @@
 rule build_pretextmap:
     input:
-        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/yahs_hap1_hap2.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",        
+        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/yahs_hap1_hap2.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",    
+        hic1=lambda w: sampleInfo[w.sample]['hic1_workflow_file'],
+        hic2=lambda w: sampleInfo[w.sample]['hic2_workflow_file'],    
     output:
         pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext",
-        hicToAssem="{sample}/s6_build_pretextmap/pretextmap/hic_sorted.bam",
-    params:
-        hic1=lambda w: sampleInfo[w.sample]['hic1_input_file'],
-        hic2=lambda w: sampleInfo[w.sample]['hic2_input_file'],
+        bam="{sample}/s6_build_pretextmap/pretextmap/hic_sorted.bam",
     conda:
         "../../envs/manual-curation.yml"
     threads:
@@ -19,9 +18,9 @@ rule build_pretextmap:
         echo 'bwa pipe'
 
         bwa index {input.fa} && \
-        bwa mem -t {threads} {input.fa} {params.hic1} {params.hic2} | \
-        samtools sort -@{threads} -o {output.hicToAssem} && \
-        samtools view -@{threads} -h {output.hicToAssem} | PretextMap -o {output.pretextmap} --mapq 0
+        bwa mem -t {threads} {input.fa} {input.hic1} {input.hic2} | \
+        samtools sort -@{threads} -o {output.bam} && \
+        samtools view -@{threads} -h {output.bam} | PretextMap -o {output.pretextmap} --mapq 0
 
         # create index of fasta
         samtools faidx {input.fa} -o {input.fa}.fai
@@ -76,10 +75,10 @@ rule create_hifi_coverage_bedgraph:
     input:
         fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/yahs_hap1_hap2.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
         pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext",
-        hifiFastq="{sample}/s1_bam_to_fastq/{sample}.fastq.gz",
+        hifiFastq="{sample}/s1_get_input_data/Hifi/{sample}.fastq.gz",
     output:
         hifiCovBedgraph="{sample}/s6_build_pretextmap/mapping_coverage/coverage_output_hifi.bedgraph",
-        hifiToAssem="{sample}/s6_build_pretextmap/pretextmap/hifi_sorted.bam",
+        bam="{sample}/s6_build_pretextmap/pretextmap/hifi_sorted.bam",
     conda:
         "../../envs/manual-curation.yml"
     threads:
@@ -91,11 +90,11 @@ rule create_hifi_coverage_bedgraph:
         '''
         echo 'minimap mapping hifi reads to scaffold assem'
 
-        minimap2 -ax map-pb -t {threads} {input.fa} {input.hifiFastq} | samtools sort -@{threads} -O BAM -o {output.hifiToAssem} -
+        minimap2 -ax map-pb -t {threads} {input.fa} {input.hifiFastq} | samtools sort -@{threads} -O BAM -o {output.bam} -
         
         echo 'coverage graph hifi'
         
-        bedtools genomecov -ibam {output.hifiToAssem} -bga > {output.hifiCovBedgraph}
+        bedtools genomecov -ibam {output.bam} -bga > {output.hifiCovBedgraph}
         cat {output.hifiCovBedgraph} | PretextGraph -i {input.pretextmap} -n "coveragehifi"
         ''' 
 
@@ -179,7 +178,7 @@ rule create_barrnap_bedgraph:
 #         fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/yahs_hap1_hap2.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
 #        pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext",
 #         bam="{sample}/s5_run_yahs/hap{haplomeNumber}/mapped.PT.bam"
-#         hifiFastq="{sample}/s1_bam_to_fastq/{sample}.fastq.gz"
+#         hifiFastq="{sample}/s1_get_input_data/Hifi/{sample}.fastq.gz"
 #         pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext",
 #         hicCovBedgraph="{sample}/s6_build_pretextmap/mapping_coverage/coverage_output_hic.bedgraph",
         
@@ -193,8 +192,8 @@ rule create_barrnap_bedgraph:
 
 #     params:
 #         ploidy=lambda w: sampleInfo[w.sample]["ploidy"],
-#         hic1=lambda w: sampleInfo[w.sample]['hic1_input_file'],
-#         hic2=lambda w: sampleInfo[w.sample]['hic2_input_file'],
+#         hic1=lambda w: sampleInfo[w.sample]['hic1_workflow_file'],
+#         hic2=lambda w: sampleInfo[w.sample]['hic2_workflow_file'],
 #     conda:
 #         "../../envs/manual-curation.yml"
 #     threads:
