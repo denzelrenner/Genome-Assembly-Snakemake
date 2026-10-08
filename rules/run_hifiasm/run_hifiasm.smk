@@ -1,8 +1,8 @@
 rule run_hifiasm:
     input:
-        hifi="{sample}/s1_bam_to_fastq/{sample}.fastq.gz",
-        hic1=lambda w: sampleInfo[w.sample]['hic1_input_file'],
-        hic2=lambda w: sampleInfo[w.sample]['hic2_input_file']
+        hifi="{sample}/s1_get_input_data/Hifi/{sample}.fastq.gz",
+        hic1=lambda w: sampleInfo[w.sample]['hic1_workflow_file'],
+        hic2=lambda w: sampleInfo[w.sample]['hic2_workflow_file']
     output:
         complete="{sample}/s4_run_hifiasm/.done.txt",
         utg='{sample}/s4_run_hifiasm/{sample}.p_utg.gfa',
