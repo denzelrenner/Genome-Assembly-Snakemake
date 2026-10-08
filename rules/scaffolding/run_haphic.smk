@@ -8,7 +8,7 @@ rule align_hic_to_utg:
         bam="{sample}/s5_run_haphic/align_hic_to_utg/HiC.bam",
         filteredBam="{sample}/s5_run_haphic/align_hic_to_utg/HiC.filtered.bam",
     params:
-        scriptPath=scriptPath=os.path.join(config['script_dir'],"HapHiC","utils"),
+        scriptPath=os.path.join(config['script_dir'],"HapHiC","utils"),
     conda:
         "../../envs/manual-curation.yml"
     threads:
