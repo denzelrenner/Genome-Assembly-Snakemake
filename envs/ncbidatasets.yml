@@ -1,9 +1,0 @@
-name: ncbi-datasets
-channels:
-  - conda-forge
-  - bioconda
-  - defaults
-dependencies:
-  - ca-certificates=2026.1.4=hbd8a1cb_0
-  - ncbi-datasets-cli=18.15.0=ha770c72_0
-prefix: /cfs/klemming/projects/supr/yantlab_storage/Denzel/miniconda3/envs/ncbi-datasets
