@@ -1,13 +1,14 @@
 rule run_hifiasm:
     input:
         hifiFastq="{sample}/s1_bam_to_fastq/{sample}.fastq.gz",
+        hic1=lambda w: sampleInfo[w.sample]['hic1_input_file'],
+        hic2=lambda w: sampleInfo[w.sample]['hic2_input_file']
     output:
         complete="{sample}/s4_run_hifiasm/.done.txt"
     params:
         useHiCShell=lambda w: sampleInfo[w.sample]["use_hic_shell"],
         ploidy=lambda w: sampleInfo[w.sample]["ploidy"],
-        hic1=lambda w: sampleInfo[w.sample]['hic1_input_file'],
-        hic2=lambda w: sampleInfo[w.sample]['hic2_input_file'],
+        
     conda:
         "../../envs/hifiasm.yml"
     threads:
@@ -21,7 +22,7 @@ rule run_hifiasm:
 
         if [ {params.useHiCShell} = true ];then
 
-	        hifiasm -o {wildcards.sample}/s4_run_hifiasm/{wildcards.sample} --n-hap {params.ploidy} --h1 {params.hic1} --h2 {params.hic2} -t {threads} {input.hifiFastq}
+	        hifiasm -o {wildcards.sample}/s4_run_hifiasm/{wildcards.sample} --n-hap {params.ploidy} --h1 {input.hic1} --h2 {input.hic2} -t {threads} {input.hifiFastq}
         
         else
             
