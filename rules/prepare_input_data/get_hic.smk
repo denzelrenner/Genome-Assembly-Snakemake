@@ -20,7 +20,7 @@ rule merge_hic:
 
 rule get_hic:
     output:
-        hic1="{sample}/s1_get_input_data/HiC1/{sample}.hic_1.fq.gz".
+        hic1="{sample}/s1_get_input_data/HiC1/{sample}.hic_1.fq.gz",
         hic2="{sample}/s1_get_input_data/HiC2/{sample}.hic_2.fq.gz",
     params:
         in1=lambda w: sampleInfo[w.sample]["input_hic1_files"],
