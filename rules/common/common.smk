@@ -26,7 +26,7 @@ wildcard_constraints:
 ### GENERAL ###
 
 # set list of output files for HiC 
-HICTARGETFILES=["barrnap/RNA.gff","barrnap/all_hits.fa","barrnap/RNA.bedgraph",
+SCAFFOLDINGTARGETFILES=["barrnap/RNA.gff","barrnap/all_hits.fa","barrnap/RNA.bedgraph",
                 "gfastats_gaps/gfastats_gaps.bedgraph",
                 "coverage_gaps/gaps.bedgraph",
                 "pretextmap/hifi_sorted.bam","mapping_coverage/coverage_output_hifi.bedgraph",
@@ -39,7 +39,7 @@ def set_rule_target():
     outFiles = []
 
     # get target files for individuals with HiC
-    outFiles.extend(expand("{smp}/s6_build_pretextmap/{outFile}",smp=HICSAMPLES,outFile=HICTARGETFILES))
+    outFiles.extend(expand("{smp}/s6_build_pretextmap/{outFile}",smp=HICSAMPLES,outFile=SCAFFOLDINGTARGETFILES))
 
     # get target file for individuals without HIC
     outFiles.extend(expand("{smp}/s4_run_hifiasm/quality_control/{smp}.hap{hap}/QC_Summary/output_MasterSpreadsheet.xlsx",smp=NOHICSAMPLES,hap=[1,2]))
@@ -47,6 +47,12 @@ def set_rule_target():
     # regardless of HiC or not, add smudgeplot and genomescope to target files, and remove as input for hifiasm
     outFiles.extend(expand("{smp}/s3_estimate_ploidy/smudgeplot/plots/{png}.png",smp=SAMPLES,png=['output_smudgeplot','output_smudgeplot_log10','output_centralities']))
     outFiles.extend(expand("{smp}/s3_estimate_ploidy/genomescope/plots/{png}.png",smp=SAMPLES,png=['transformed_log_plot','transformed_linear_plot','log_plot','linear_plot']))
+
+    # add hifi stats file for all individuals
+    outFiles.extend(expand("{smp}/s2_input_data_qc/Hifi/{smp}.hifi.tsv",smp=HICSAMPLES))
+    
+    # add hic stats file for HIC individuals
+    outFiles.extend(expand("{smp}/s2_input_data_qc/HiC{pairedEnd}/{smp}.hic{pairedEnd}.tsv",smp=HICSAMPLES,pairedEnd=[1,2]))
     
     return outFiles
 
