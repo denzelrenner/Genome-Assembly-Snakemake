@@ -1,3 +1,4 @@
+import os
 rule align_hic_to_utg:
     input:
         fa='{sample}/s4_run_hifiasm/{sample}.p_utg.fa',
@@ -5,7 +6,9 @@ rule align_hic_to_utg:
         hic2=lambda w: sampleInfo[w.sample]['hic2_workflow_file']
     output:
         bam="{sample}/s5_run_haphic/align_hic_to_utg/HiC.bam",
-        filteredBam="{sample}/s5_run_haphic/align_hic_to_utg/HiC.filtered.bam"
+        filteredBam="{sample}/s5_run_haphic/align_hic_to_utg/HiC.filtered.bam",
+    params:
+        scriptPath=scriptPath=os.path.join(config['script_dir'],"HapHiC","utils"),
     conda:
         "../../envs/manual-curation.yml"
     threads:
@@ -20,7 +23,7 @@ rule align_hic_to_utg:
         bwa mem -5SP -t {threads} {input.fa} {input.hic1} {input.hic2} | samblaster | samtools view - -@ {threads} -S -h -b -F 3340 -o {output.bam}
 
         # filter the alignments with MAPQ 1 (mapping quality M1 and NM 3 edit distance < 3)
-        filter_bam {output.bam} 1 --nm 3 --threads {threads} | samtools view - -b -@ {threads} -o {output.filteredBam}
+        {params.scriptPath}/filter_bam {output.bam} 1 --nm 3 --threads {threads} | samtools view - -b -@ {threads} -o {output.filteredBam}
         '''
         
 rule run_haphic:
@@ -33,6 +36,7 @@ rule run_haphic:
         pdf="{sample}/s5_run_haphic/plot/{sample}_contact_map.pdf"
     params:
         nchrs=lambda w: sampleInfo[w.sample]["ploidy"] * sampleInfo[w.sample]["chrom"],
+        scriptPath=os.path.join(config['script_dir'],"HapHiC"),
     conda:
         "../../envs/haphic.yml"
     threads:
@@ -42,9 +46,9 @@ rule run_haphic:
         mem_mb=300000
     shell:
         '''
-        haphic pipeline {input.fa} {input.bam} {params.nchrs} --threads {threads} --processes {threads} --outdir {sample}/s5_run_haphic
+        {params.scriptPath}/haphic pipeline {input.fa} {input.bam} {params.nchrs} --threads {threads} --processes {threads} --outdir {sample}/s5_run_haphic
 
-        haphic plot {output.agp} {input.bam} --prefix {sample}/s5_run_haphic/plot/{sample}_contact_map
+        {params.scriptPath}/haphic plot {output.agp} {input.bam} --prefix {sample}/s5_run_haphic/plot/{sample}_contact_map
         '''
         
         

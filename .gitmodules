@@ -1,0 +1,3 @@
+[submodule "scripts/HapHiC"]
+	path = scripts/HapHiC
+	url = https://github.com/zengxiaofei/HapHiC.git
