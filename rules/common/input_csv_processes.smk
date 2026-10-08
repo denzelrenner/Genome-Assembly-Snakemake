@@ -31,7 +31,7 @@ def set_hic1_files_to_merge(row):
         hic1OutputFile = []
 
         if len(hic1Files) >= 1:
-            hic1OutputFile = f"{row[sample]}/s1_get_input_data/HiC1/{row[sample]}.hic_1.fq.gz"
+            hic1OutputFile = f"{row['sample']}/s1_get_input_data/HiC1/{row['sample']}.hic_1.fq.gz"
 
         else:
             hic1OutputFile = []
@@ -54,7 +54,7 @@ def set_hic2_files_to_merge(row):
         hic2OutputFile = []
 
         if len(hic2Files) >= 1:
-            hic2OutputFile = f"{row[sample]}/s1_get_input_data/HiC2/{row[sample]}.hic_2.fq.gz"
+            hic2OutputFile = f"{row['sample']}/s1_get_input_data/HiC2/{row['sample']}.hic_2.fq.gz"
 
         else:
             hic2OutputFile = []
