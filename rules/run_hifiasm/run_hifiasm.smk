@@ -4,12 +4,11 @@ rule run_hifiasm:
         hic1=lambda w: sampleInfo[w.sample]['hic1_input_file'],
         hic2=lambda w: sampleInfo[w.sample]['hic2_input_file']
     output:
-        complete="{sample}/s4_run_hifiasm/.done.txt"
+        complete="{sample}/s4_run_hifiasm/.done.txt",
         utg='{sample}/s4_run_hifiasm/{sample}.p_utg.gfa',
     params:
         useHiCShell=lambda w: sampleInfo[w.sample]["use_hic_shell"],
         ploidy=lambda w: sampleInfo[w.sample]["ploidy"],
-        
     conda:
         "../../envs/hifiasm.yml"
     threads:
