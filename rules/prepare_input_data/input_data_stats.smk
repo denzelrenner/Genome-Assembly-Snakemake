@@ -24,7 +24,7 @@ rule get_input_hic_stats:
         tsv2="{sample}/s2_input_data_qc/HiC2/{sample}.hic2.tsv",
     params:
         inhic1=lambda w,input: ' '.join([sampleInfo[w.sample]["input_hic1_files"],input.hic1]) if sampleInfo[w.sample]["merge_hic"] else input.hic1,
-        inhic2=lambda w,input: ' '.join([sampleInfo[w.sample]["input_hic2_files"],input.hic2]) if sampleInfo[w.sample]["merge_hic"] else input.hic2, ,
+        inhic2=lambda w,input: ' '.join([sampleInfo[w.sample]["input_hic2_files"],input.hic2]) if sampleInfo[w.sample]["merge_hic"] else input.hic2,
     conda:
         "../../envs/seqkit.yml"
     threads:
