@@ -1,6 +1,6 @@
 rule align_hic_to_utg:
     input:
-        fa='{sample}/s4_run_hifiasm/{sample}.hic.p_utg.fa',
+        fa='{sample}/s4_run_hifiasm/{sample}.p_utg.fa',
     output:
         bam="{sample}/s5_run_haphic/align_hic_to_utg/HiC.bam",
         filteredBam="{sample}/s5_run_haphic/align_hic_to_utg/HiC.filtered.bam"
@@ -26,7 +26,7 @@ rule align_hic_to_utg:
         
 rule run_haphic:
     input:
-        fa='{sample}/s4_run_hifiasm/{sample}.hic.p_utg.fa',
+        fa='{sample}/s4_run_hifiasm/{sample}.p_utg.fa',
         bam="{sample}/s5_run_haphic/align_hic_to_utg/HiC.filtered.bam"
     output:
         agp="{sample}/s5_run_haphic/04.build/scaffolds.agp",

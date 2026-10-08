@@ -1,4 +1,4 @@
-rule gfa_to_fa:
+rule pctg_gfa_to_fa:
     input:
         "{sample}/s4_run_hifiasm/.done.txt"
     output:
@@ -8,8 +8,6 @@ rule gfa_to_fa:
     resources:
         runtime=10,
         mem_mb=1000
-    conda:
-        "../../envs/hifiasm.yml"
     shell:
         '''
         # go through all the gfa files
@@ -32,5 +30,18 @@ rule gfa_to_fa:
         done
         '''
         
-        
-
+rule putg_gfa_to_fa:
+    input:
+        '{sample}/s4_run_hifiasm/{sample}.p_utg.gfa',
+    output:
+        '{sample}/s4_run_hifiasm/{sample}.p_utg.fa',
+    threads:
+        1
+    resources:
+        runtime=15,
+        mem_mb=1000
+    shell:
+        '''
+        # convert to fasta file
+        awk '/^S/{{print ">"$2;print $3}}' {input} > {output}
+        '''
