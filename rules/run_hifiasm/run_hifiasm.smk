@@ -1,7 +1,6 @@
 rule run_hifiasm:
     input:
         hifiFastq="{sample}/s1_bam_to_fastq/{sample}.fastq.gz",
-        inputdatastats="{sample}/s2_input_data_qc/.done.txt"
     output:
         complete="{sample}/s4_run_hifiasm/.done.txt"
     params:
