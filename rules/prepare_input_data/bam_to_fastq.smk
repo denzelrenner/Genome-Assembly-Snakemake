@@ -1,6 +1,7 @@
+import os
 rule bam_to_fastq:
     input:
-        bam=config['hifi_reads'] + "/" + "{sample}.hifi_reads.bam"
+        bam=os.path.join([config['hifi_reads'],"{sample}.hifi_reads.bam"])
     output:
         fastq="{sample}/s1_bam_to_fastq/{sample}.fastq.gz"
     conda:
