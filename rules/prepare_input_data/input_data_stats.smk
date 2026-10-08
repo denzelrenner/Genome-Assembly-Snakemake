@@ -18,11 +18,14 @@ rule get_input_hifi_stats:
 
 rule get_input_hic_stats:
     input:
-        hic1=lambda w: sampleInfo[w.sample]["all_hic1_files"]
-        hic2=lambda w: sampleInfo[w.sample]["all_hic2_files"]
-        
+        hic1=lambda w: sampleInfo[w.sample]["hic1_input_file"],
+        hic2=lambda w: sampleInfo[w.sample]["hic2_input_file"],
     output:
-        inputDataStatsComplete="{sample}/s2_input_data_qc/.done.txt"
+        outhic1="{sample}/s2_input_data_qc/HiC1/{sample}.hic1.tsv",
+        outhic2="{sample}/s2_input_data_qc/HiC2/{sample}.hic2.tsv",
+    params:
+        inhic1=lambda w: sampleInfo[w.sample]["all_hic1_files"],
+        inhic2=lambda w: sampleInfo[w.sample]["all_hic2_files"],
     conda:
         "../../envs/seqkit.yml"
     threads:
@@ -32,6 +35,6 @@ rule get_input_hic_stats:
         mem_mb=10000
     shell:
         '''
-        seqkit stats {params.hic1} --threads {threads} -Ta -o {wildcards.sample}/s2_input_data_qc/HiC1/{wildcards.sample}.hic1.tsv
-        seqkit stats {params.hic2} --threads {threads} -Ta -o {wildcards.sample}/s2_input_data_qc/HiC2/{wildcards.sample}.hic2.tsv
+        seqkit stats {params.inhic1} --threads {threads} -Ta -o {output.outhic1}
+        seqkit stats {params.inhic2} --threads {threads} -Ta -o {output.outhic2}
         '''
