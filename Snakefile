@@ -61,10 +61,10 @@ include:"rules/common/end_results.smk"
 
 ### PREPARING INPUT DATA ###
 # bam to fastq
-include:"rules/prepare_input_data/bam_to_fastq.smk"
+include:"rules/prepare_input_data/get_fastq.smk"
 
 # merge HiC
-include:"rules/prepare_input_data/merge_hic.smk"
+include:"rules/prepare_input_data/get_hic.smk"
 
 # input data stats
 include:"rules/prepare_input_data/input_data_stats.smk"
