@@ -26,8 +26,8 @@ rule get_fastq:
         runtime=240,
         mem_mb=5000
     params:
-        hifi=lambda w: sampleInfo[w.sample]['hifi']
-        operation=lambda w: sampleInfo[w.sample]['hifiOperation']
+        hifi=lambda w: sampleInfo[w.sample]['hifi'],
+        operation=lambda w: sampleInfo[w.sample]['hifiOperation'],
     shell:
         '''
         if [ {params.operation} = 'convert' ];then
@@ -55,7 +55,7 @@ rule bam_to_fastq_with_filter:
 
     params:
         outdir="{sample}/s1_get_fastq",
-        DB=config['hifiadapterfiltDB_path']
+        DB=config['hifiadapterfiltDB_path'],
     
     conda:
         "../../envs/hifiadapterfilt.yml"
