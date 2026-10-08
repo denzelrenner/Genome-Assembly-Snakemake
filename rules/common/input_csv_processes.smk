@@ -30,11 +30,8 @@ def set_hic1_files_to_merge(row):
         # get input file name for downstream tools, this is dependent on how many files are in the HiC dir because thta determine if the file is merged or not
         hic1OutputFile = []
 
-        if len(hic1Files) == 1:
-            hic1OutputFile = hic1Files[0]
-
-        elif len(hic1Files) > 1:
-            hic1OutputFile = os.path.join(sampleHic1Dir,f"{row['sample']}.merged_1.fq.gz")
+        if len(hic1Files) >= 1:
+            hic1OutputFile = f"{row[sample]}/s1_get_input_data/HiC1/{row[sample]}.hic_1.fq.gz"
 
         else:
             hic1OutputFile = []
@@ -56,11 +53,8 @@ def set_hic2_files_to_merge(row):
         # get input file name for downstream tools, this is dependent on how many files are in the HiC dir because thta determine if the file is merged or not
         hic2OutputFile = []
 
-        if len(hic2Files) == 1:
-            hic2OutputFile = hic2Files[0]
-
-        elif len(hic2Files) > 1:
-            hic2OutputFile = os.path.join(sampleHic2Dir,f"{row['sample']}.merged_2.fq.gz")
+        if len(hic2Files) >= 1:
+            hic2OutputFile = f"{row[sample]}/s1_get_input_data/HiC2/{row[sample]}.hic_2.fq.gz"
 
         else:
             hic2OutputFile = []
@@ -105,8 +99,8 @@ for sample in SAMPLES:
 
 # hifiasm ploidy, set to 2 automatically if no HiC
 df['hifiasm_ploidy'] = df.apply(set_hifiasm_ploidy,axis=1)
-df['hic1_files'],df['hic1_input_file'] = zip(*df.apply(set_hic1_files_to_merge,axis=1))
-df['hic2_files'],df['hic2_input_file'] = zip(*df.apply(set_hic2_files_to_merge,axis=1))
+df['input_hic1_files'],df['hic1_workflow_file'] = zip(*df.apply(set_hic1_files_to_merge,axis=1))
+df['input_hic2_files'],df['hic2_workflow_file'] = zip(*df.apply(set_hic2_files_to_merge,axis=1))
 df['scaffolding_tool'] = df.apply(set_scaffolding_tool,axis=1)
 
 # convert df to diction
@@ -118,13 +112,13 @@ for smpl in sampleInfo:
     # if we are using HiC which implies there is a HiC file that exists
     if sampleInfo[smpl]['useHiC']:
 
-        if (sampleInfo[smpl]['hic1_input_file'] in sampleInfo[smpl]['hic1_files']):
-            sampleInfo[smpl]['all_hic1_files'] = sampleInfo[smpl]['hic1_files']
-            sampleInfo[smpl]['all_hic2_files'] = sampleInfo[smpl]['hic2_files']
+        if (sampleInfo[smpl]['hic1_workflow_file'] in sampleInfo[smpl]['input_hic1_files']):
+            sampleInfo[smpl]['all_hic1_files'] = sampleInfo[smpl]['input_hic1_files']
+            sampleInfo[smpl]['all_hic2_files'] = sampleInfo[smpl]['input_hic2_files']
 
-        elif (sampleInfo[smpl]['hic1_input_file'] not in sampleInfo[smpl]['hic1_files']):
-            sampleInfo[smpl]['all_hic1_files'] = ' '.join([sampleInfo[smpl]['hic1_input_file'], sampleInfo[smpl]['hic1_files']])
-            sampleInfo[smpl]['all_hic2_files'] = ' '.join([sampleInfo[smpl]['hic2_input_file'], sampleInfo[smpl]['hic2_files']])
+        elif (sampleInfo[smpl]['hic1_workflow_file'] not in sampleInfo[smpl]['input_hic1_files']):
+            sampleInfo[smpl]['all_hic1_files'] = ' '.join([sampleInfo[smpl]['hic1_workflow_file'], sampleInfo[smpl]['input_hic1_files']])
+            sampleInfo[smpl]['all_hic2_files'] = ' '.join([sampleInfo[smpl]['hic2_workflow_file'], sampleInfo[smpl]['input_hic2_files']])
     
     # if we are not using HiC then we dont even include it 
     else:
@@ -136,7 +130,7 @@ for smpl in sampleInfo:
 
     sampleInfo[smpl]['merge_hic'] = 'false'
 
-    if (sampleInfo[smpl]['hic1_input_file'] not in sampleInfo[smpl]['hic1_files']) and sampleInfo[smpl]['useHiC']:
+    if (sampleInfo[smpl]['hic1_workflow_file'] not in sampleInfo[smpl]['input_hic1_files']) and sampleInfo[smpl]['useHiC']:
         sampleInfo[smpl]['merge_hic'] = 'true'
 
 # add has bash true false or use HiC
@@ -154,6 +148,24 @@ for smpl in sampleInfo:
 
     if sampleInfo[smpl]['useHiC']:
         sampleInfo[smpl]['use_hic_shell'] = 'true'
+
+# get hifi reads
+for smpl in sampleInfo:
+
+    hifiFile = [f for f in get_directory_array(config['hifi_reads'],absPath=False) if f.startswith(smpl)][0]
+
+    sampleInfo[smpl]['hifi'] = os.path.join(config['hifi_reads'],hifiFile)
+
+    # also check what the extension is and do a different operation depending on what it is
+    if hifiFile.endswith('.fastq'):
+        sampleInfo[smpl]['hifiOperation'] = 'compress'
+
+    elif hifiFile.endswith('.fastq.gz'):
+        sampleInfo[smpl]['hifiOperation'] = 'copy'
+
+    elif hifiFile.endswith('.bam'):
+        sampleInfo[smpl]['hifiOperation'] = 'convert'
+
 
 # set HiC individuals and non HiC indivuals
 HICSAMPLES = [s for s in sampleInfo if sampleInfo[s]['useHiC']]
