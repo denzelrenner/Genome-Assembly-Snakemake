@@ -15,7 +15,7 @@ rule align_hic_to_utg:
         int(workflow.cores * 0.9)
     resources:
         runtime=1200,
-        mem_mb=300000
+        mem_mb=300000,
     shell:
         '''
         # align Hi-C data to the assembly, remove PCR duplicates and filter out secondary and supplementary alignments
@@ -43,7 +43,7 @@ rule run_haphic:
         int(workflow.cores * 0.50)
     resources:
         runtime=720,
-        mem_mb=100000
+        mem_mb=100000,
     shell:
         '''
         {params.scriptPath}/haphic pipeline {input.fa} {input.bam} {params.nchrs} --threads {threads} --processes {threads} --outdir {sample}/s5_run_haphic
