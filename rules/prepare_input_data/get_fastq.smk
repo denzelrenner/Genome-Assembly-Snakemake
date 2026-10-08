@@ -40,7 +40,7 @@ rule get_fastq:
 
         elif [ {params.operation} = 'copy' ];then
 
-            cp {params.hifi} > {output.fasq}
+            cp {params.hifi} > {output.fastq}
 
         fi
         '''
