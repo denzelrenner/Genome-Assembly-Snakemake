@@ -1,13 +1,12 @@
 rule align_hic_to_hifiasm_haplome:
     input:
-        fa='{sample}/s4_run_hifiasm/{sample}.hap{haplomeNumber}.fa'
+        fa='{sample}/s4_run_hifiasm/{sample}.hap{haplomeNumber}.fa',
+        hic1=lambda w: sampleInfo[w.sample]['hic1_workflow_file'],
+        hic2=lambda w: sampleInfo[w.sample]['hic2_workflow_file']
     output:
         bam="{sample}/s5_run_yahs/hap{haplomeNumber}/mapped.PT.bam",
         fai='{sample}/s4_run_hifiasm/{sample}.hap{haplomeNumber}.fa.fai',
         ctgSizes='{sample}/s4_run_hifiasm/{sample}.hap{haplomeNumber}.fa.contigsizes'
-    params:
-        hic1=lambda w: sampleInfo[w.sample]['hic1_input_file'],
-        hic2=lambda w: sampleInfo[w.sample]['hic2_input_file'],
     conda:
         "../../envs/mapping-tools.yml"
     threads:
@@ -26,7 +25,7 @@ rule align_hic_to_hifiasm_haplome:
 		bwa index {input.fa}
 
 		# map hic reads to fasta from hifiasm
-		bwa mem -5SP -T0 -t {threads} {input.fa} {params.hic1} {params.hic2} | \
+		bwa mem -5SP -T0 -t {threads} {input.fa} {input.hic1} {input.hic2} | \
 		pairtools parse --min-mapq 40 --walks-policy 5unique \
 		--max-inter-align-gap 30 --nproc-in {threads} --nproc-out {threads} --chroms-path {output.ctgSizes} | \
 		pairtools sort --tmpdir=tmp_pairtools | pairtools dedup --mark-dups --output-stats stats.txt | \
