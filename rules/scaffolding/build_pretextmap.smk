@@ -7,7 +7,7 @@ rule build_pretextmap:
         pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext",
         bam="{sample}/s6_build_pretextmap/pretextmap/hic_sorted.bam",
     conda:
-        "../../envs/manual-curation.yml"
+        "../../envs/mapping-tools.yml"
     threads:
         int(workflow.cores * 0.75)
     resources:
@@ -138,7 +138,7 @@ rule create_gfastats_gaps_bedgraph:
         '''
         echo 'gfastats gaps'	
 
-        gfastats ${input.fa} -b gaps | sed "s/$/\t200/" > {output.gfastatsGapsBedgraph}
+        gfastats {input.fa} -b gaps | sed "s/$/\t200/" > {output.gfastatsGapsBedgraph}
 
         cat {output.gfastatsGapsBedgraph} | PretextGraph -i {input.pretextmap} -n "gfastats_gaps"
         ''' 

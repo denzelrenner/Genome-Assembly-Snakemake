@@ -10,7 +10,7 @@ rule align_hic_to_utg:
     params:
         scriptPath=os.path.join(config['script_dir'],"HapHiC","utils"),
     conda:
-        "../../envs/manual-curation.yml"
+        "../../envs/mapping-tools.yml"
     threads:
         int(workflow.cores * 0.9)
     resources:
