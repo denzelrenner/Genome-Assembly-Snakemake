@@ -33,8 +33,10 @@ dependencies:
   - gxx_impl_linux-64=15.2.0=h6e002af_7
   - harfbuzz=12.3.0=h76b71e0_0
   - hmmer=3.4=h503566f_3
+  - htslib=1.21=h5efdd21_0
   - icu=73.2=h59595ed_0
   - jansson=2.15.0=hbcba0ee_0
+  - k8=1.2=he8db53b_6
   - kernel-headers_linux-64=4.18.0=h3108a97_1
   - ld_impl_linux-64=2.44=h9e0c5a2_3
   - lerc=4.1.0=h7354ed3_2
@@ -83,6 +85,7 @@ dependencies:
   - lz4-c=1.9.4=h7354ed3_5
   - mafft=7.407=1
   - make=4.2.1=h1bed415_1
+  - minimap2=2.31=h118bc1c_0
   - ncurses=6.6=hfaaeb4e_0
   - openssl=3.5.9=h1b28b03_0
   - pango=1.54.0=h4c5309f_1
@@ -96,6 +99,7 @@ dependencies:
   - pthread-stubs=0.3=h47b2149_2
   - r-base=4.4.0=h019f4a6_1
   - readline=8.3=hc2a1206_0
+  - samtools=1.21=h96c455f_1
   - sed=4.9=hb25bd0a_0
   - sysroot_linux-64=2.28=h3108a97_1
   - tidk=0.2.65=h3dc2dae_0

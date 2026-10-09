@@ -46,6 +46,10 @@ rule run_haphic:
         mem_mb=100000,
     shell:
         '''
+
+        # remove 04.build dir to prevent exists error by haphic
+        rm -d {wildcards.sample}/s5_run_haphic/04.build
+
         {params.scriptPath}/haphic pipeline {input.fa} {input.bam} {params.nchrs} --threads {threads} --processes {threads} --outdir {sample}/s5_run_haphic
 
         {params.scriptPath}/haphic plot {output.agp} {input.bam} --prefix {sample}/s5_run_haphic/plot/{sample}_contact_map

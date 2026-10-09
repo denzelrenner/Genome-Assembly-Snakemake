@@ -145,9 +145,7 @@ for smpl in sampleInfo:
 for smpl in sampleInfo:
     
     sampleInfo[smpl]['ploidyAsArray'] = [i for i in range(1,sampleInfo[smpl]['ploidy']+1)]
-
-    if sampleInfo[smpl]['useHiC']:
-        sampleInfo[smpl]['use_hic_shell'] = 'true'
+    sampleInfo[smpl]['hifiasmploidyAsArray'] = [i for i in range(1,sampleInfo[smpl]['hifiasm_ploidy']+1)]
 
 # get hifi reads
 for smpl in sampleInfo:
