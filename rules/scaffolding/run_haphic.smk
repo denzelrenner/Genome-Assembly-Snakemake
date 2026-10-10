@@ -46,6 +46,10 @@ rule run_haphic:
         mem_mb=100000,
     shell:
         '''
+        echo $CONDA_PREFIX
+        which python
+        which python3
+        echo $PATH
 
         # remove 04.build dir to prevent exists error by haphic
         rm -d {wildcards.sample}/s5_run_haphic/04.build
