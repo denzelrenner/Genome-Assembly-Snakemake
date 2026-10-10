@@ -41,7 +41,7 @@ rule create_telomeres_bedgraph:
     shell:
         '''
         echo 'tidk telomeres'
-        tidk search --extension bedgraph --string TTTAGGG --output telomeres --dir {sample}/s6_build_pretextmap/telomeres {input.fa}
+        tidk search --extension bedgraph --string TTTAGGG --output telomeres --dir {wildcards.sample}/s6_build_pretextmap/telomeres {input.fa}
 
         ''' 
 
@@ -185,12 +185,12 @@ rule add_tracks_to_pretext:
 
         cp {input.pretextmap} {output.pretextmap}
 
-        cat {output.telomereBedgraph} | PretextGraph -i {output.pretextmap} -n "telomeres"  
-        cat {output.hicCovBedgraph} | PretextGraph -i {output.pretextmap} -n "coveragehic"
-        cat {output.hifiCovBedgraph} | PretextGraph -i {output.pretextmap} -n "coveragehifi"
-        cat {output.covGapsBedgraph} | PretextGraph -i {output.pretextmap} -n "gaps"
-        cat {output.gfastatsGapsBedgraph} | PretextGraph -i {output.pretextmap} -n "gfastats_gaps"
-        cat {output.barrnapBedgraph} | PretextGraph -i {output.pretextmap} -n "rDNA"
+        cat {input.telomereBedgraph} | PretextGraph -i {output.pretextmap} -n "telomeres"  
+        cat {input.hicCovBedgraph} | PretextGraph -i {output.pretextmap} -n "coveragehic"
+        cat {input.hifiCovBedgraph} | PretextGraph -i {output.pretextmap} -n "coveragehifi"
+        cat {input.covGapsBedgraph} | PretextGraph -i {output.pretextmap} -n "gaps"
+        cat {input.gfastatsGapsBedgraph} | PretextGraph -i {output.pretextmap} -n "gfastats_gaps"
+        cat {input.barrnapBedgraph} | PretextGraph -i {output.pretextmap} -n "rDNA"
         ''' 
 
 
