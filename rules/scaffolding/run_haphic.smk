@@ -40,10 +40,10 @@ rule run_haphic:
     conda:
         "../../envs/haphic.yml"
     threads:
-        int(workflow.cores * 0.50)
+        int(workflow.cores * 0.10)
     resources:
         runtime=720,
-        mem_mb=100000,
+        mem_mb=10000,
     shell:
         '''
         echo $CONDA_PREFIX
@@ -56,10 +56,10 @@ rule run_haphic:
 
         {params.scriptPath}/haphic pipeline {input.fa} {input.bam} {params.nchrs} --threads {threads} --processes {threads} --outdir {sample}/s5_run_haphic
 
-        # move into plot dir otherwise supplementary files will not be properly placed
-        cd {wildcards.sample}/s5_run_haphic/plot
+	cd {sample}/s5_run_haphic/plot
 
-        {params.scriptPath}/haphic plot {output.agp} {input.bam} --prefix {sample}/s5_run_haphic/plot/{sample}_
+        # move into plot dir otherwise supplementary files will not be properly placed
+        {params.scriptPath}/haphic plot ../../../{output.agp} ../../../{input.bam} --prefix {sample}_
         '''
         
         

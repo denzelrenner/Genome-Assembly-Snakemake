@@ -41,7 +41,7 @@ rule create_telomeres_bedgraph:
     shell:
         '''
         echo 'tidk telomeres'
-        tidk search --fasta {input.fa} --string TTTAGGG --output telomeres --dir {sample}/s6_build_pretextmap/telomeres --extension bedgraph
+        tidk search --extension bedgraph --string TTTAGGG --output telomeres --dir {sample}/s6_build_pretextmap/telomeres {input.fa}
 
         ''' 
 
@@ -79,7 +79,7 @@ rule create_hifi_coverage_bedgraph:
         int(workflow.cores * 0.75)
     resources:
         runtime=720,
-        mem_mb=30000
+        mem_mb=100000
     shell:
         '''
         echo 'minimap mapping hifi reads to scaffold assem'
@@ -161,7 +161,6 @@ rule create_barrnap_bedgraph:
         ''' 
 
 rule add_tracks_to_pretext:
-
     input:
         pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext",
         telomereBedgraph="{sample}/s6_build_pretextmap/telomeres/telomeres_telomeric_repeat_windows.bedgraph",
