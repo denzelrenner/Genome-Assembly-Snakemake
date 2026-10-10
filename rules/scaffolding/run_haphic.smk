@@ -56,7 +56,10 @@ rule run_haphic:
 
         {params.scriptPath}/haphic pipeline {input.fa} {input.bam} {params.nchrs} --threads {threads} --processes {threads} --outdir {sample}/s5_run_haphic
 
-        {params.scriptPath}/haphic plot {output.agp} {input.bam} --prefix {sample}/s5_run_haphic/plot/{sample}_contact_map
+        # move into plot dir otherwise supplementary files will not be properly placed
+        cd {wildcards.sample}/s5_run_haphic/plot
+
+        {params.scriptPath}/haphic plot {output.agp} {input.bam} --prefix {sample}/s5_run_haphic/plot/{sample}_
         '''
         
         

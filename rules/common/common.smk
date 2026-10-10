@@ -39,7 +39,8 @@ def set_rule_target():
     outFiles = []
 
     # get target files for individuals with HiC
-    outFiles.extend(expand("{smp}/s6_build_pretextmap/{outFile}",smp=HICSAMPLES,outFile=SCAFFOLDINGTARGETFILES))
+    #outFiles.extend(expand("{smp}/s6_build_pretextmap/{outFile}",smp=HICSAMPLES,outFile=SCAFFOLDINGTARGETFILES))
+    outFiles.extend(expand("{smp}/s6_build_pretextmap/pretextmap/{smp}.wtracks.map.pretext",smp=HICSAMPLES))
 
     # get target qc file for all individuals
     for smp in SAMPLES:
