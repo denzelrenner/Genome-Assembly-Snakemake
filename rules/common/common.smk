@@ -40,7 +40,7 @@ def set_rule_target():
 
     # get target files for individuals with HiC
     #outFiles.extend(expand("{smp}/s6_build_pretextmap/{outFile}",smp=HICSAMPLES,outFile=SCAFFOLDINGTARGETFILES))
-    outFiles.extend(expand("{smp}/s6_build_pretextmap/pretextmap/{smp}.wtracks.map.pretext",smp=HICSAMPLES))
+    outFiles.extend(expand("{smp}/s6_build_pretextmap/pretextmap/{smp}.map.pretext",smp=HICSAMPLES))
 
     # get target qc file for all individuals
     for smp in SAMPLES:
@@ -51,7 +51,7 @@ def set_rule_target():
     outFiles.extend(expand("{smp}/s3_estimate_ploidy/genomescope/plots/{png}.png",smp=SAMPLES,png=['transformed_log_plot','transformed_linear_plot','log_plot','linear_plot']))
 
     # add hifi stats file for all individuals
-    outFiles.extend(expand("{smp}/s2_input_data_qc/Hifi/{smp}.hifi.tsv",smp=HICSAMPLES))
+    outFiles.extend(expand("{smp}/s2_input_data_qc/Hifi/{smp}.hifi.tsv",smp=SAMPLES))
     
     # add hic stats file for HIC individuals
     outFiles.extend(expand("{smp}/s2_input_data_qc/HiC{pairedEnd}/{smp}.hic{pairedEnd}.tsv",smp=HICSAMPLES,pairedEnd=[1,2]))

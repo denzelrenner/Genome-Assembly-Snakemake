@@ -1,30 +1,34 @@
 rule build_pretextmap:
     input:
-        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/yahs_hap1_hap2.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",    
-        hic1=lambda w: sampleInfo[w.sample]['hic1_workflow_file'],
-        hic2=lambda w: sampleInfo[w.sample]['hic2_workflow_file'],    
+        bam="{sample}/s6_build_pretextmap/mapping_coverage/hic/hic_sorted.bam",
+        telomereBedgraph="{sample}/s6_build_pretextmap/telomeres/telomeres_telomeric_repeat_windows.bedgraph",
+        hicCovBedgraph="{sample}/s6_build_pretextmap/mapping_coverage/hic/coverage_output_hic.bedgraph",
+        hifiCovBedgraph="{sample}/s6_build_pretextmap/mapping_coverage/hifi/coverage_output_hifi.bedgraph",
+        covGapsBedgraph="{sample}/s6_build_pretextmap/coverage_gaps/gaps.bedgraph",
+        gfastatsGapsBedgraph="{sample}/s6_build_pretextmap/gfastats_gaps/gfastats_gaps.bedgraph",
+        barrnapBedgraph="{sample}/s6_build_pretextmap/barrnap/RNA.bedgraph",
+
     output:
         pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext",
-        bam="{sample}/s6_build_pretextmap/pretextmap/hic_sorted.bam",
+        
     conda:
         "../../envs/mapping-tools.yml"
     threads:
-        int(workflow.cores * 0.75)
+        int(workflow.cores * 0.10)
     resources:
         runtime=1200,
-        mem_mb=300000
+        mem_mb=300000,
     shell:
         '''
-        echo 'bwa pipe'
+        samtools view -@{threads} -h {input.bam} | PretextMap -o {output.pretextmap} --mapq 0
 
-        bwa index {input.fa} && \
-        bwa mem -t {threads} {input.fa} {input.hic1} {input.hic2} | \
-        samtools sort -@{threads} -o {output.bam} && \
-        samtools view -@{threads} -h {output.bam} | PretextMap -o {output.pretextmap} --mapq 0
-
-        # create index of fasta
-        samtools faidx {input.fa} -o {input.fa}.fai
-        '''
+        cat {input.telomereBedgraph} | PretextGraph -i {output.pretextmap} -n "telomeres"  
+        cat {input.hicCovBedgraph} | PretextGraph -i {output.pretextmap} -n "coveragehic"
+        cat {input.hifiCovBedgraph} | PretextGraph -i {output.pretextmap} -n "coveragehifi"
+        cat {input.covGapsBedgraph} | PretextGraph -i {output.pretextmap} -n "gaps"
+        cat {input.gfastatsGapsBedgraph} | PretextGraph -i {output.pretextmap} -n "gfastats_gaps"
+        cat {input.barrnapBedgraph} | PretextGraph -i {output.pretextmap} -n "rDNA"
+        ''' 
     
 rule create_telomeres_bedgraph:
     input:
@@ -48,22 +52,29 @@ rule create_telomeres_bedgraph:
 rule create_hic_coverage_bedgraph:
     input:
         fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/yahs_hap1_hap2.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
-        hicToAssem="{sample}/s6_build_pretextmap/pretextmap/hic_sorted.bam",
-        
+        hic1=lambda w: sampleInfo[w.sample]['hic1_workflow_file'],
+        hic2=lambda w: sampleInfo[w.sample]['hic2_workflow_file'], 
     output:
-        hicCovBedgraph="{sample}/s6_build_pretextmap/mapping_coverage/coverage_output_hic.bedgraph",
+        hicCovBedgraph="{sample}/s6_build_pretextmap/mapping_coverage/hic/coverage_output_hic.bedgraph",
+        bam="{sample}/s6_build_pretextmap/mapping_coverage/hic/hic_sorted.bam",
     conda:
         "../../envs/manual-curation.yml"
     threads:
         int(workflow.cores * 0.75)
     resources:
-        runtime=180,
-        mem_mb=10000
+        runtime=1200,
+        mem_mb=300000
     shell:
         '''
+        echo 'map HiC to assembly'
+
+        bwa index {input.fa}
+
+        bwa mem -t {threads} {input.fa} {input.hic1} {input.hic2} | samtools sort -@{threads} -o {output.bam}
+
         echo 'coverage graph hic'
 
-        bedtools genomecov -ibam {input.hicToAssem} -bga > {output.hicCovBedgraph}
+        bedtools genomecov -ibam {output.bam} -bga > {output.hicCovBedgraph}
         ''' 
 
 rule create_hifi_coverage_bedgraph:
@@ -71,8 +82,8 @@ rule create_hifi_coverage_bedgraph:
         fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/yahs_hap1_hap2.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
         hifiFastq="{sample}/s1_get_input_data/Hifi/{sample}.fastq.gz",
     output:
-        hifiCovBedgraph="{sample}/s6_build_pretextmap/mapping_coverage/coverage_output_hifi.bedgraph",
-        bam="{sample}/s6_build_pretextmap/pretextmap/hifi_sorted.bam",
+        hifiCovBedgraph="{sample}/s6_build_pretextmap/mapping_coverage/hifi/coverage_output_hifi.bedgraph",
+        bam="{sample}/s6_build_pretextmap/mapping_coverage/hifi/hifi_sorted.bam",
     conda:
         "../../envs/manual-curation.yml"
     threads:
@@ -91,10 +102,12 @@ rule create_hifi_coverage_bedgraph:
         bedtools genomecov -ibam {output.bam} -bga > {output.hifiCovBedgraph}
         ''' 
 
+
+
 rule create_hic_gaps_bedgraph:
     input:
         fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/yahs_hap1_hap2.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
-        hicCovBedgraph="{sample}/s6_build_pretextmap/mapping_coverage/coverage_output_hic.bedgraph",
+        hicCovBedgraph="{sample}/s6_build_pretextmap/mapping_coverage/hic/coverage_output_hic.bedgraph",
     output:
         covGapsBedgraph="{sample}/s6_build_pretextmap/coverage_gaps/gaps.bedgraph",
 
@@ -160,38 +173,38 @@ rule create_barrnap_bedgraph:
 
         ''' 
 
-rule add_tracks_to_pretext:
-    input:
-        pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext",
-        telomereBedgraph="{sample}/s6_build_pretextmap/telomeres/telomeres_telomeric_repeat_windows.bedgraph",
-        hicCovBedgraph="{sample}/s6_build_pretextmap/mapping_coverage/coverage_output_hic.bedgraph",
-        hifiCovBedgraph="{sample}/s6_build_pretextmap/mapping_coverage/coverage_output_hifi.bedgraph",
-        covGapsBedgraph="{sample}/s6_build_pretextmap/coverage_gaps/gaps.bedgraph",
-        gfastatsGapsBedgraph="{sample}/s6_build_pretextmap/gfastats_gaps/gfastats_gaps.bedgraph",
-        barrnapBedgraph="{sample}/s6_build_pretextmap/barrnap/RNA.bedgraph",
+# rule add_tracks_to_pretext:
+#     input:
+#         pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext",
+#         telomereBedgraph="{sample}/s6_build_pretextmap/telomeres/telomeres_telomeric_repeat_windows.bedgraph",
+#         hicCovBedgraph="{sample}/s6_build_pretextmap/mapping_coverage/hic/coverage_output_hic.bedgraph",
+#         hifiCovBedgraph="{sample}/s6_build_pretextmap/mapping_coverage/hifi/coverage_output_hifi.bedgraph",
+#         covGapsBedgraph="{sample}/s6_build_pretextmap/coverage_gaps/gaps.bedgraph",
+#         gfastatsGapsBedgraph="{sample}/s6_build_pretextmap/gfastats_gaps/gfastats_gaps.bedgraph",
+#         barrnapBedgraph="{sample}/s6_build_pretextmap/barrnap/RNA.bedgraph",
 
-    output:
-        pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.wtracks.map.pretext",
+#     output:
+#         pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.wtracks.map.pretext",
         
-    conda:
-        "../../envs/manual-curation.yml"
-    threads:
-        int(workflow.cores * 0.10)
-    resources:
-        runtime=120,
-        mem_mb=10000,
-    shell:
-        '''
+#     conda:
+#         "../../envs/manual-curation.yml"
+#     threads:
+#         int(workflow.cores * 0.10)
+#     resources:
+#         runtime=120,
+#         mem_mb=10000,
+#     shell:
+#         '''
 
-        cp {input.pretextmap} {output.pretextmap}
+#         cp {input.pretextmap} {output.pretextmap}
 
-        cat {input.telomereBedgraph} | PretextGraph -i {output.pretextmap} -n "telomeres"  
-        cat {input.hicCovBedgraph} | PretextGraph -i {output.pretextmap} -n "coveragehic"
-        cat {input.hifiCovBedgraph} | PretextGraph -i {output.pretextmap} -n "coveragehifi"
-        cat {input.covGapsBedgraph} | PretextGraph -i {output.pretextmap} -n "gaps"
-        cat {input.gfastatsGapsBedgraph} | PretextGraph -i {output.pretextmap} -n "gfastats_gaps"
-        cat {input.barrnapBedgraph} | PretextGraph -i {output.pretextmap} -n "rDNA"
-        ''' 
+#         cat {input.telomereBedgraph} | PretextGraph -i {output.pretextmap} -n "telomeres"  
+#         cat {input.hicCovBedgraph} | PretextGraph -i {output.pretextmap} -n "coveragehic"
+#         cat {input.hifiCovBedgraph} | PretextGraph -i {output.pretextmap} -n "coveragehifi"
+#         cat {input.covGapsBedgraph} | PretextGraph -i {output.pretextmap} -n "gaps"
+#         cat {input.gfastatsGapsBedgraph} | PretextGraph -i {output.pretextmap} -n "gfastats_gaps"
+#         cat {input.barrnapBedgraph} | PretextGraph -i {output.pretextmap} -n "rDNA"
+#         ''' 
 
 
 # rule create_trash_bedgraph:
@@ -201,7 +214,7 @@ rule add_tracks_to_pretext:
 #         bam="{sample}/s5_run_yahs/hap{haplomeNumber}/mapped.PT.bam"
 #         hifiFastq="{sample}/s1_get_input_data/Hifi/{sample}.fastq.gz"
 #         pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext",
-#         hicCovBedgraph="{sample}/s6_build_pretextmap/mapping_coverage/coverage_output_hic.bedgraph",
+#         hicCovBedgraph="{sample}/s6_build_pretextmap/mapping_coverage/hic/coverage_output_hic.bedgraph",
         
 #     output:
 #         covGapsBedgraph="{sample}/s6_build_pretextmap/coverage_gaps/gaps.bedgraph",

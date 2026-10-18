@@ -46,6 +46,8 @@ rule run_haphic:
         mem_mb=10000,
     shell:
         '''
+
+        # error handling/check, bug where python from the haphic env is not being used in the shell
         echo $CONDA_PREFIX
         which python
         which python3
@@ -56,11 +58,12 @@ rule run_haphic:
 
         {params.scriptPath}/haphic pipeline {input.fa} {input.bam} {params.nchrs} --threads {threads} --processes {threads} --outdir {sample}/s5_run_haphic
 
-	cd {sample}/s5_run_haphic/plot
+	    cd {sample}/s5_run_haphic/plot
 
         # move into plot dir otherwise supplementary files will not be properly placed
         {params.scriptPath}/haphic plot ../../../{output.agp} ../../../{input.bam} --prefix {sample}_
         '''
         
+
         
 

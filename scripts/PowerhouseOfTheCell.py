@@ -4,6 +4,7 @@ import os
 from functools import reduce
 import numpy as np
 import pandas as pd
+import math
 
 class FastaRecord():
 
@@ -321,7 +322,7 @@ def merge_multiple_dataframes(dfs:list,on:str='',how:str='inner'):
     return reduce(lambda left,right: pd.merge(left,right,on=on,how=how),dfs)
 
 # write df to excel and tsv, only single sheet in excel file
-def write_to_tsv_and_excel(df:pd.DataFrame,outputDir:str,outputFilePrefix:str,excel=True,csv=True,seperator='\t'):
+def write_to_tsv_and_excel(df:pd.DataFrame,outputDir:str,outputFilePrefix:str,excel=True,csv=True,seperator='\t',sheetName='Sheet1'):
 
     # make dirs if it does not exist
     os.makedirs(outputDir,exist_ok=True)
@@ -331,7 +332,18 @@ def write_to_tsv_and_excel(df:pd.DataFrame,outputDir:str,outputFilePrefix:str,ex
         df.to_csv(f'{outputDir}/{outputFilePrefix}.tsv',sep=seperator,index=False)
 
     if excel:
-        df.to_excel(f'{outputDir}/{outputFilePrefix}.xlsx',index=False)
+        df.to_excel(f'{outputDir}/{outputFilePrefix}.xlsx',sheet_name=sheetName,index=False)
+
+# write multuple dfs to an excel spreadsheet
+# df_sheetname is an array containing a pandas dataframe and its sheet name
+def many_df_to_excel(df_sheetName:list,outputDir:str,outputFilePrefix:str):
+
+    with pd.ExcelWriter(f'{outputDir}/{outputFilePrefix}.xlsx') as writer:
+
+        for df,sheetName in df_sheetName:
+
+            df.to_excel(writer,sheet_name=sheetName,index=False)
+      
     
 ## apply functions
 
@@ -339,3 +351,17 @@ def write_to_tsv_and_excel(df:pd.DataFrame,outputDir:str,outputFilePrefix:str,ex
 def join_columns(row,join_string:str=''):
     return join_string.join(row)
 
+
+## general functions
+# Source - https://stackoverflow.com/a/14822210
+# Posted by James Sapam, modified by community. See post 'Timeline' for change history
+# Retrieved 2026-10-17, License - CC BY-SA 3.0
+
+def convert_size(size_bytes):
+   if size_bytes == 0:
+       return "0B"
+   size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+   i = int(math.floor(math.log(size_bytes, 1024)))
+   p = math.pow(1024, i)
+   s = round(size_bytes / p, 2)
+   return "%s %s" % (s, size_name[i])
