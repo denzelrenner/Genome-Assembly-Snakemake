@@ -103,7 +103,7 @@ df['input_hic1_files'],df['hic1_workflow_file'] = zip(*df.apply(set_hic1_files_t
 df['input_hic2_files'],df['hic2_workflow_file'] = zip(*df.apply(set_hic2_files_to_merge,axis=1))
 df['scaffolding_tool'] = df.apply(set_scaffolding_tool,axis=1)
 
-# convert df to diction
+# convert df to dictionary
 sampleInfo = df.to_dict("index")
 
 # add all HiC files we expect to have in input dir

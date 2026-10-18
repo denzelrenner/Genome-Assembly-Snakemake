@@ -317,9 +317,13 @@ def output_fasta_file_upper(FastaRefDict:dict,file_name:str,output_directory:str
 
 ### pandas tools
 
+# function to concat multiple dfs
+def conact_multiple_dataframes(dfs:list):
+    return pd.concat(dfs) if len(dfs) > 1 else dfs[0]
+
 # function to merge multiple dataframes, input is list of dataframe 
 def merge_multiple_dataframes(dfs:list,on:str='',how:str='inner'):
-    return reduce(lambda left,right: pd.merge(left,right,on=on,how=how),dfs)
+    return reduce(lambda left,right: pd.merge(left,right,on=on,how=how),dfs) if len(dfs) > 1 else dfs[0]
 
 # write df to excel and tsv, only single sheet in excel file
 def write_to_tsv_and_excel(df:pd.DataFrame,outputDir:str,outputFilePrefix:str,excel=True,csv=True,seperator='\t',sheetName='Sheet1'):
