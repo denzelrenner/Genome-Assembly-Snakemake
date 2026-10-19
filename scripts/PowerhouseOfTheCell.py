@@ -317,7 +317,7 @@ def output_fasta_file_upper(FastaRefDict:dict,file_name:str,output_directory:str
 
 ### pandas tools
 
-# function to concat multiple dfs
+# function to merge multiple dataframes, input is list of dataframe 
 def conact_multiple_dataframes(dfs:list):
     return pd.concat(dfs) if len(dfs) > 1 else dfs[0]
 
@@ -336,18 +336,28 @@ def write_to_tsv_and_excel(df:pd.DataFrame,outputDir:str,outputFilePrefix:str,ex
         df.to_csv(f'{outputDir}/{outputFilePrefix}.tsv',sep=seperator,index=False)
 
     if excel:
-        df.to_excel(f'{outputDir}/{outputFilePrefix}.xlsx',sheet_name=sheetName,index=False)
+        df.to_excel(f'{outputDir}/{outputFilePrefix}.xlsx',sheet_name=sheetName,index=False)            
 
 # write multuple dfs to an excel spreadsheet
 # df_sheetname is an array containing a pandas dataframe and its sheet name
 def many_df_to_excel(df_sheetName:list,outputDir:str,outputFilePrefix:str):
 
-    with pd.ExcelWriter(f'{outputDir}/{outputFilePrefix}.xlsx') as writer:
+    with pd.ExcelWriter(f'{outputDir}/{outputFilePrefix}.xlsx',engine='xlsxwriter') as writer:
 
         for df,sheetName in df_sheetName:
 
             df.to_excel(writer,sheet_name=sheetName,index=False)
-      
+
+            # get workbook and current sheet
+            workbook = writer.book
+            worksheet = writer.sheets[sheetName]
+
+            # set format
+            format = workbook.add_format({'text_wrap': True})
+
+            # from col 1 to the end setting the column width to 200 characters, and adding text wrap format
+            worksheet.set_column(1,len(df.columns.tolist()), 30, format)
+
     
 ## apply functions
 
