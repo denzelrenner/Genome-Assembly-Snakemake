@@ -17,7 +17,7 @@ from PowerhouseOfTheCell import *
 
 vars = argparse.ArgumentParser(description='Create summary statistics from seqkit analysis for an individual sample or many samples')
 
-vars.add_argument('-s','--sample',dest='sample',nargs='+', type=str, required=True, help='sample(s) to process stats for')
+vars.add_argument('-s','--samples',dest='sample',nargs='+', type=str, required=True, help='sample(s) to process stats for')
 
 vars.add_argument('-o','--output_prefix',dest='outputPrefix', type=str, required=False,default='output', help='prefix for the output file')
 
@@ -55,6 +55,17 @@ def seqkit_tsv_to_df(inputFilePath:str,sampleAsCol:bool=False,combineRows:bool=F
     if combineRows:
         df = df.groupby('sample').agg(lambda x:'\n\n\n'.join(x)).reset_index()
 
+    # add last 5 columns to start of column list
+    cols = list(df.columns)
+    cols = cols[-5:][::-1] + cols[:-5]
+
+    # insert file column in first position
+    cols.remove('file')
+    cols.insert(1,'file')
+
+    # subset the df using the new column arrangeemnt
+    df = df[cols]
+
     return df
 
 # by default directory to write output to is current wd
@@ -71,9 +82,9 @@ if not os.path.isdir(outdir):
 if len(args.sample) == 1:
 
     # first check if we have hifi, hic1, and hic2 files
-    hifi = (seqkit_tsv_to_df(f'{args.sample[0]}/s2_input_data_qc/Hifi/{args.sample[0]}.hifi.tsv'),'hifi') if os.path.exists(f'{args.sample[0]}/s2_input_data_qc/Hifi/{args.sample[0]}.hifi.tsv') else None
-    hic1 = (seqkit_tsv_to_df(f'{args.sample[0]}/s2_input_data_qc/HiC1/{args.sample[0]}.hic1.tsv'),'hic1') if os.path.exists(f'{args.sample[0]}/s2_input_data_qc/HiC1/{args.sample[0]}.hic1.tsv') else None
-    hic2 = (seqkit_tsv_to_df(f'{args.sample[0]}/s2_input_data_qc/HiC2/{args.sample[0]}.hic2.tsv'),'hic2') if os.path.exists(f'{args.sample[0]}/s2_input_data_qc/HiC2/{args.sample[0]}.hic2.tsv') else None
+    hifi = (seqkit_tsv_to_df(f'{args.sample[0]}/s2_input_data_qc/Hifi/{args.sample[0]}.hifi.tsv',sampleAsCol=True),'hifi') if os.path.exists(f'{args.sample[0]}/s2_input_data_qc/Hifi/{args.sample[0]}.hifi.tsv') else None
+    hic1 = (seqkit_tsv_to_df(f'{args.sample[0]}/s2_input_data_qc/HiC1/{args.sample[0]}.hic1.tsv',sampleAsCol=True),'hic1') if os.path.exists(f'{args.sample[0]}/s2_input_data_qc/HiC1/{args.sample[0]}.hic1.tsv') else None
+    hic2 = (seqkit_tsv_to_df(f'{args.sample[0]}/s2_input_data_qc/HiC2/{args.sample[0]}.hic2.tsv',sampleAsCol=True),'hic2') if os.path.exists(f'{args.sample[0]}/s2_input_data_qc/HiC2/{args.sample[0]}.hic2.tsv') else None
 
     # array to store tuples of df and sheet name
     dataframes_sheetnames = [i for i in [hifi,hic1,hic2] if i]
@@ -131,30 +142,19 @@ elif len(args.sample) > 1:
 
     # merge and add to dataframe sheetname, explode to separate cells that are multiline, remove sample from array of columns be different size to the others
     if toMergeHifi:
-        dataframes_sheetnames.append((conact_multiple_dataframes(dfs=toMergeHifi),'hifi'))
+        dataframes_sheetnames.append((concat_multiple_dataframes(dfs=toMergeHifi),'hifi'))
 
     if toMergeHic1:
-        dataframes_sheetnames.append((conact_multiple_dataframes(dfs=toMergeHic2),'hic1'))
+        dataframes_sheetnames.append((concat_multiple_dataframes(dfs=toMergeHic2),'hic1'))
 
     if toMergeHic2:
-        dataframes_sheetnames.append((conact_multiple_dataframes(dfs=toMergeHic2),'hic2'))
+        dataframes_sheetnames.append((concat_multiple_dataframes(dfs=toMergeHic2),'hic2'))
 
 
     # create excel out 
     with pd.ExcelWriter(f'{outdir}/{args.outputPrefix}.xlsx',engine='xlsxwriter') as writer:
 
         for df,sheetName in dataframes_sheetnames:
-
-            # add last 5 columns to start of column list
-            cols = list(df.columns)
-            cols = cols[-5:][::-1] + cols[:-5]
-
-            # insert file column in first position
-            cols.remove('file')
-            cols.insert(1,'file')
-
-            # subset the df using the new column arrangeemnt
-            df = df[cols]
 
             # write to excel out
             df.to_excel(writer,sheet_name=sheetName,index=False)
@@ -167,7 +167,7 @@ elif len(args.sample) > 1:
             format = workbook.add_format({'text_wrap': True})
 
             # from col 1 to the end setting the column width to 200 characters, and adding text wrap format
-            worksheet.set_column(1,len(df.columns.tolist()), 50, format)
+            worksheet.set_column(0,len(df.columns.tolist()), 50, format)
 
             # merge columns for hic1 and hic2, we dont do this for hifi because there will only ever be one hifi file
             # we will always have more than hic1/hic2 file if its available because we have the file that is copied to the working dir, and the original file

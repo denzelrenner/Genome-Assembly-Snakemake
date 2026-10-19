@@ -318,35 +318,28 @@ def output_fasta_file_upper(FastaRefDict:dict,file_name:str,output_directory:str
 ### pandas tools
 
 # function to merge multiple dataframes, input is list of dataframe 
-def conact_multiple_dataframes(dfs:list):
+def concat_multiple_dataframes(dfs:list):
     return pd.concat(dfs) if len(dfs) > 1 else dfs[0]
 
 # function to merge multiple dataframes, input is list of dataframe 
-def merge_multiple_dataframes(dfs:list,on:str='',how:str='inner'):
-    return reduce(lambda left,right: pd.merge(left,right,on=on,how=how),dfs) if len(dfs) > 1 else dfs[0]
+def merge_multiple_dataframes(dfs:list,on:str=None,how:str='inner',left_index=False,right_index=False):
+    return reduce(lambda left,right: pd.merge(left,right,on=on,how=how,left_index=left_index,right_index=right_index),dfs) if len(dfs) > 1 else dfs[0]
 
 # write df to excel and tsv, only single sheet in excel file
-def write_to_tsv_and_excel(df:pd.DataFrame,outputDir:str,outputFilePrefix:str,excel=True,csv=True,seperator='\t',sheetName='Sheet1'):
+def write_to_tsv_and_excel(df:pd.DataFrame,outputDir:str,outputFilePrefix:str,excel=True,csv=True,seperator='\t',sheetName='Sheet1',keep_index:bool=False):
 
     # make dirs if it does not exist
     os.makedirs(outputDir,exist_ok=True)
 
     # write to tsv and excel file
     if csv:
-        df.to_csv(f'{outputDir}/{outputFilePrefix}.tsv',sep=seperator,index=False)
+        df.to_csv(f'{outputDir}/{outputFilePrefix}.tsv',sep=seperator,index=keep_index)
 
     if excel:
-        df.to_excel(f'{outputDir}/{outputFilePrefix}.xlsx',sheet_name=sheetName,index=False)            
 
-# write multuple dfs to an excel spreadsheet
-# df_sheetname is an array containing a pandas dataframe and its sheet name
-def many_df_to_excel(df_sheetName:list,outputDir:str,outputFilePrefix:str):
+        with pd.ExcelWriter(f'{outputDir}/{outputFilePrefix}.xlsx',engine='xlsxwriter') as writer:
 
-    with pd.ExcelWriter(f'{outputDir}/{outputFilePrefix}.xlsx',engine='xlsxwriter') as writer:
-
-        for df,sheetName in df_sheetName:
-
-            df.to_excel(writer,sheet_name=sheetName,index=False)
+            df.to_excel(writer,sheet_name=sheetName,index=keep_index)
 
             # get workbook and current sheet
             workbook = writer.book
@@ -357,6 +350,27 @@ def many_df_to_excel(df_sheetName:list,outputDir:str,outputFilePrefix:str):
 
             # from col 1 to the end setting the column width to 200 characters, and adding text wrap format
             worksheet.set_column(1,len(df.columns.tolist()), 30, format)
+         
+
+# write multuple dfs to an excel spreadsheet
+# df_sheetname is an array containing a pandas dataframe and its sheet name
+def many_df_to_excel(df_sheetName:list,outputDir:str,outputFilePrefix:str,keep_index:bool=False,col_width:int=30):
+
+    with pd.ExcelWriter(f'{outputDir}/{outputFilePrefix}.xlsx',engine='xlsxwriter') as writer:
+
+        for df,sheetName in df_sheetName:
+
+            df.to_excel(writer,sheet_name=sheetName,index=keep_index)
+
+            # get workbook and current sheet
+            workbook = writer.book
+            worksheet = writer.sheets[sheetName]
+
+            # set format
+            format = workbook.add_format({'text_wrap': True})
+
+            # from col 1 to the end setting the column width to 30 characters, and adding text wrap format
+            worksheet.set_column(0,len(df.columns.tolist()), col_width, format)
 
     
 ## apply functions
