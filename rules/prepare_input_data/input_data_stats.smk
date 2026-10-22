@@ -41,8 +41,8 @@ rule get_input_hic_stats:
 rule summarise_input_data_single_sample:
     input:
         hifi="{sample}/s2_input_data_qc/Hifi/{sample}.hifi.tsv",
-        hic1=lambda w: [] if not sampleInfo[w.sample]["useHiC"] else "{w.sample}/s2_input_data_qc/HiC1/{w.sample}.hic1.tsv",
-        hic2=lambda w: [] if not sampleInfo[w.sample]["useHiC"] else "{w.sample}/s2_input_data_qc/HiC2/{w.sample}.hic2.tsv",
+        hic1=lambda w: expand("{s}/s2_input_data_qc/HiC1/{s}.hic1.tsv",s=[w.sample]) if sampleInfo[w.sample]["useHiC"] else [],
+        hic2=lambda w: expand("{s}/s2_input_data_qc/HiC2/{s}.hic2.tsv",s=[w.sample]) if sampleInfo[w.sample]["useHiC"] else [],
     output:
         excel=f'{{sample}}/s2_input_data_qc/qc_results/{{sample}}_input_data_qc_{CURRENTDATE}.xlsx',
     params:
