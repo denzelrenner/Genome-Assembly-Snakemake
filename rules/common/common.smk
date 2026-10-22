@@ -45,13 +45,14 @@ def set_rule_target():
         outFiles.extend(expand('{s}/s4_run_hifiasm/quality_control/{s}.hap{i}/compleasm/summary.txt',s=[smp],i=sampleInfo[smp]['hifiasmploidyAsArray']))
         outFiles.extend(expand('{s}/s4_run_hifiasm/quality_control/{s}.hap{i}/gfastats/stats.txt',s=[smp],i=sampleInfo[smp]['hifiasmploidyAsArray']))
         outFiles.append(f'{smp}/s4_run_hifiasm/quality_control/qc_summary/{smp}_hifiasm_qc_{CURRENTDATE}.xlsx')
+        outFiles.append(f'{smp}/s2_input_data_qc/qc_results/{smp}_input_data_qc_{CURRENTDATE}.xlsx')
 
     # add excel spreadhseet which summarises hifiasm results for all samples
     outFiles.append(f'summary_results/hifiasm_qc/hifiasm_qc_{NUMBEROFINPUTSAMPLES}samples_{CURRENTDATE}.xlsx')
 
     # get target files for sequencing read qc
     # individual sample files
-    outFiles.extend(expand(f'{{s}}/s2_input_data_qc/qc_results/{{s}}_input_data_qc_{CURRENTDATE}.xlsx',s=SAMPLES))
+    # outFiles.extend(expand(f'{{s}}/s2_input_data_qc/qc_results/{{s}}_input_data_qc_{CURRENTDATE}.xlsx',s=SAMPLES))
     
     # all sampels file
     outFiles.append(f'summary_results/input_data_qc/input_data_qc_{NUMBEROFINPUTSAMPLES}samples_{CURRENTDATE}.xlsx')
