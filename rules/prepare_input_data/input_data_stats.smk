@@ -18,7 +18,7 @@ rule get_input_hifi_stats:
 rule get_input_hic_stats:
     input:
         hic1=lambda w: sampleInfo[w.sample]['hic1_workflow_file'],
-        hic2=lambda w: sampleInfo[w.sample]['hic2_workflow_file']
+        hic2=lambda w: sampleInfo[w.sample]['hic2_workflow_file'],
     output:
         tsv1="{sample}/s2_input_data_qc/HiC1/{sample}.hic1.tsv",
         tsv2="{sample}/s2_input_data_qc/HiC2/{sample}.hic2.tsv",
@@ -41,8 +41,8 @@ rule get_input_hic_stats:
 rule summarise_input_data_single_sample:
     input:
         hifi="{sample}/s2_input_data_qc/Hifi/{sample}.hifi.tsv",
-        hic1="{sample}/s2_input_data_qc/HiC1/{sample}.hic1.tsv",
-        hic2="{sample}/s2_input_data_qc/HiC2/{sample}.hic2.tsv",
+        hic1=lambda w:"{w.sample}/s2_input_data_qc/HiC1/{w.sample}.hic1.tsv" if sampleInfo[w.sample]["useHiC"] else [],
+        hic2=lambda w:"{w.sample}/s2_input_data_qc/HiC2/{w.sample}.hic2.tsv" if sampleInfo[w.sample]["useHiC"] else [],
     output:
         excel=f'{{sample}}/s2_input_data_qc/qc_results/{{sample}}_input_data_qc_{CURRENTDATE}.xlsx',
     params:
