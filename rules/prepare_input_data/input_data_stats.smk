@@ -41,14 +41,16 @@ rule get_input_hic_stats:
 rule summarise_input_data_single_sample:
     input:
         hifi="{sample}/s2_input_data_qc/Hifi/{sample}.hifi.tsv",
-        hic1=lambda w:"{w.sample}/s2_input_data_qc/HiC1/{w.sample}.hic1.tsv" if sampleInfo[w.sample]["useHiC"] else [],
-        hic2=lambda w:"{w.sample}/s2_input_data_qc/HiC2/{w.sample}.hic2.tsv" if sampleInfo[w.sample]["useHiC"] else [],
+        hic1=lambda w: "{w.sample}/s2_input_data_qc/HiC1/{w.sample}.hic1.tsv" if sampleInfo[w.sample]["useHiC"] else [],
+        hic2=lambda w: "{w.sample}/s2_input_data_qc/HiC2/{w.sample}.hic2.tsv" if sampleInfo[w.sample]["useHiC"] else [],
     output:
         excel=f'{{sample}}/s2_input_data_qc/qc_results/{{sample}}_input_data_qc_{CURRENTDATE}.xlsx',
     params:
         qcScript=os.path.join(config['script_dir'],'python_scripts','summarise_sequencing_reads.py'),
         outfilePrefix=f'{{sample}}_input_data_qc_{CURRENTDATE}',
         genomesize=lambda w:sampleInfo[w.sample]['haplomeSize'],
+    conda:
+        "../../envs/qc-tools.yml",
     resources:
         runtime=20,
     threads:
@@ -70,6 +72,8 @@ rule summarise_input_data_all_samples:
         outfilePrefix=f'input_data_qc_{NUMBEROFINPUTSAMPLES}samples_{CURRENTDATE}',
         inputSamples=SAMPLES,
         genomesizeSamples=GENOMESIZEFORSAMPLES,
+    conda:
+        "../../envs/qc-tools.yml",
     resources:
         runtime=20,
     threads:
