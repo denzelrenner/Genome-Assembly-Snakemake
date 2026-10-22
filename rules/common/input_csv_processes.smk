@@ -176,3 +176,6 @@ HIFIASMPLOIDYFORSAMPLES = [sampleInfo[s]['hifiasm_ploidy'] for s in SAMPLES]
 
 # create list of genome sizes, order is in the same order as the sample so no missagnments
 GENOMESIZEFORSAMPLES = [sampleInfo[s]['haplomeSize'] for s in SAMPLES]
+
+# set number of samples
+NUMBEROFINPUTSAMPLES = len(SAMPLES)

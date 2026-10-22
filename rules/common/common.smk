@@ -9,6 +9,9 @@ wildcard_constraints:
 
 ### GENERAL ###
 
+# get current date which will be used to name combined QC files
+CURRENTDATE=datetime.today().strftime('%d_%m_%Y')
+
 # set list of output files for HiC 
 SCAFFOLDINGTARGETFILES=["barrnap/RNA.gff","barrnap/all_hits.fa","barrnap/RNA.bedgraph",
                 "gfastats_gaps/gfastats_gaps.bedgraph",
@@ -26,10 +29,6 @@ def set_rule_target():
     #outFiles.extend(expand("{smp}/s6_build_pretextmap/{outFile}",smp=HICSAMPLES,outFile=SCAFFOLDINGTARGETFILES))
     outFiles.extend(expand("{smp}/s6_build_pretextmap/pretextmap/{smp}.map.pretext",smp=HICSAMPLES))
 
-    # get target qc file for all individuals
-    for smp in SAMPLES:
-        outFiles.extend(expand(f"{smp}/s4_run_hifiasm/quality_control/{smp}.hap{{hap}}/QC_Summary/output_MasterSpreadsheet.xlsx",hap=[i for i in range(1,sampleInfo[smp]['hifiasm_ploidy']+1)]))
-
     # regardless of HiC or not, add smudgeplot and genomescope to target files, and remove as input for hifiasm
     outFiles.extend(expand("{smp}/s3_estimate_ploidy/smudgeplot/plots/{png}.png",smp=SAMPLES,png=['output_smudgeplot','output_smudgeplot_log10','output_centralities']))
     outFiles.extend(expand("{smp}/s3_estimate_ploidy/genomescope/plots/{png}.png",smp=SAMPLES,png=['transformed_log_plot','transformed_linear_plot','log_plot','linear_plot']))
@@ -40,9 +39,24 @@ def set_rule_target():
     # add hic stats file for HIC individuals
     outFiles.extend(expand("{smp}/s2_input_data_qc/HiC{pairedEnd}/{smp}.hic{pairedEnd}.tsv",smp=HICSAMPLES,pairedEnd=[1,2]))
 
-    # get current date which will be used to name combined QC files
-    CURRENTDATE=datetime.today().strftime('%d_%m_%Y')
+    # get target hifiasm qc file for all individuals
+    for smp in SAMPLES:
+        
+        outFiles.extend(expand('{s}/s4_run_hifiasm/quality_control/{s}.hap{i}/compleasm/summary.txt',s=[smp],i=sampleInfo[smp]['hifiasmploidyAsArray']))
+        outFiles.extend(expand('{s}/s4_run_hifiasm/quality_control/{s}.hap{i}/gfastats/stats.txt',s=[smp],i=sampleInfo[smp]['hifiasmploidyAsArray']))
+        outFiles.append(f'{smp}/s4_run_hifiasm/quality_control/qc_summary/{smp}_hifiasm_qc_{CURRENTDATE}.xlsx')
+
+    # add excel spreadhseet which summarises hifiasm results for all samples
+    outFiles.append(f'summary_results/hifiasm_qc/hifiasm_qc_{NUMBEROFINPUTSAMPLES}samples_{CURRENTDATE}.xlsx')
+
+    # get target files for sequencing read qc
+    # individual sample files
+    outFiles.extend(expand(f'{{s}}/s2_input_data_qc/qc_results/{{s}}_input_data_qc_{CURRENTDATE}.xlsx',s=SAMPLES))
     
+    # all sampels file
+    outFiles.append(f'summary_results/input_data_qc/input_data_qc_{NUMBEROFINPUTSAMPLES}samples_{CURRENTDATE}.xlsx')
+
+
     return outFiles
 
 

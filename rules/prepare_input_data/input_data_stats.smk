@@ -38,23 +38,43 @@ rule get_input_hic_stats:
         seqkit stats {params.inhic2} --threads {threads} -Ta -o {output.tsv2}
         '''
 
-rule summarise_input_data:
+rule summarise_input_data_single_sample:
     input:
-        hifi=expand("{smp}/s2_input_data_qc/Hifi/{smp}.hifi.tsv",smp=SAMPLES),
-        hic1=expand("{smp}/s2_input_data_qc/HiC1/{smp}.hic1.tsv",smp=HICSAMPLES),
-        hic2=expand("{smp}/s2_input_data_qc/HiC2/{smp}.hic2.tsv",smp=HICSAMPLES),
+        hifi="{sample}/s2_input_data_qc/Hifi/{sample}.hifi.tsv",
+        hic1="{sample}/s2_input_data_qc/HiC1/{sample}.hic1.tsv",
+        hic2="{sample}/s2_input_data_qc/HiC2/{sample}.hic2.tsv",
     output:
-        excel=f'shared_results/input_data_qc/input_data_qc_all_samples_{CURRENTDATE}.xlsx',
+        excel=f'{{sample}}/s2_input_data_qc/qc_results/{{sample}}_input_data_qc_{CURRENTDATE}.xlsx',
     params:
         qcScript=os.path.join(config['script_dir'],'python_scripts','summarise_sequencing_reads.py'),
-        inputSamples=SAMPLES,
-        ploidySamples=HIFIASMPLOIDYFORSAMPLES,
-        outputDate=CURRENTDATA,
+        outfilePrefix=f'{{sample}}_input_data_qc_{CURRENTDATE}',
+        genomesize=lambda w:sampleInfo[w.sample]['haplomeSize'],
     resources:
         runtime=20,
     threads:
         1
     shell:
         '''
-        python3 {params.qcScript} -s {params.inputSamples} -nhap {params.ploidySamples} -o input_data_qc_all_samples_{params.outputDate} -od shared_results/input_data_qc
+        python3 {params.qcScript} -s {wildcards.sample} -g {params.genomesize} -o {params.outfilePrefix} -od {wildcards.sample}/s2_input_data_qc/qc_results
+        '''
+
+rule summarise_input_data_all_samples:
+    input:
+        hifi=expand("{smp}/s2_input_data_qc/Hifi/{smp}.hifi.tsv",smp=SAMPLES),
+        hic1=expand("{smp}/s2_input_data_qc/HiC1/{smp}.hic1.tsv",smp=HICSAMPLES),
+        hic2=expand("{smp}/s2_input_data_qc/HiC2/{smp}.hic2.tsv",smp=HICSAMPLES),
+    output:
+        excel=f'summary_results/input_data_qc/input_data_qc_{NUMBEROFINPUTSAMPLES}samples_{CURRENTDATE}.xlsx',
+    params:
+        qcScript=os.path.join(config['script_dir'],'python_scripts','summarise_sequencing_reads.py'),
+        outfilePrefix=f'input_data_qc_{NUMBEROFINPUTSAMPLES}samples_{CURRENTDATE}',
+        inputSamples=SAMPLES,
+        genomesizeSamples=GENOMESIZEFORSAMPLES,
+    resources:
+        runtime=20,
+    threads:
+        1
+    shell:
+        '''
+        python3 {params.qcScript} -s {params.inputSamples} -nhap {params.genomesizeSamples} -o {params.outfilePrefix} -od summary_results/input_data_qc
         '''
