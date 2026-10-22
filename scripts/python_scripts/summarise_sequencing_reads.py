@@ -23,12 +23,12 @@ vars.add_argument('-o','--output_prefix',dest='outputPrefix', type=str, required
 
 vars.add_argument('-od','--out_dir',dest='output_directory', type=str, required=True,default=None, help='name of directory for output. will be stored in current working directory if none given')
 
-vars.add_argument('-g','--genome_size',dest='genomeSize', type=int, required=True,default=210000000, help='expected haplome size (in bp)')
+vars.add_argument('-g','--genome_size',dest='genomeSize', nargs='+',type=int, required=True, help='expected haplome size (in bp), order should follow that of samples')
 
 args = vars.parse_args()
 
 # function to create data frame from seqkit tsv input
-def seqkit_tsv_to_df(inputFilePath:str,sampleAsCol:bool=False,combineRows:bool=False):
+def seqkit_tsv_to_df(inputFilePath:str,haplomeSize:int,sampleAsCol:bool=False,combineRows:bool=False):
 
     # open tsv file
     df = pd.read_csv(inputFilePath,sep='\t',header=0)
@@ -41,7 +41,7 @@ def seqkit_tsv_to_df(inputFilePath:str,sampleAsCol:bool=False,combineRows:bool=F
     df['sum_len (in Gigabases)'] = df['sum_len']//(10**9)
 
     # add column for sequencing depth
-    df['sequencing_depth'] = round(df['sum_len']/args.genomeSize,2)
+    df['sequencing_depth'] = round(df['sum_len']/haplomeSize,2)
 
     # add , to everything that is not a string, i.e the first 3 columns of output
     numcols = list(set(df.columns.values) - set(['file','format','type']))
@@ -78,18 +78,23 @@ if args.output_directory:
 if not os.path.isdir(outdir):
     os.makedirs(outdir)
 
+# create dictionary of sample and haplome size
+sample_haplomeSize = dict(zip(args.sample,args.genomeSize))
+
 # run different analysis depending on if we have a single sample or many
-if len(args.sample) == 1:
+if len(sample_haplomeSize) == 1:
 
-    # first check if we have hifi, hic1, and hic2 files
-    hifi = (seqkit_tsv_to_df(f'{args.sample[0]}/s2_input_data_qc/Hifi/{args.sample[0]}.hifi.tsv',sampleAsCol=True),'hifi') if os.path.exists(f'{args.sample[0]}/s2_input_data_qc/Hifi/{args.sample[0]}.hifi.tsv') else None
-    hic1 = (seqkit_tsv_to_df(f'{args.sample[0]}/s2_input_data_qc/HiC1/{args.sample[0]}.hic1.tsv',sampleAsCol=True),'hic1') if os.path.exists(f'{args.sample[0]}/s2_input_data_qc/HiC1/{args.sample[0]}.hic1.tsv') else None
-    hic2 = (seqkit_tsv_to_df(f'{args.sample[0]}/s2_input_data_qc/HiC2/{args.sample[0]}.hic2.tsv',sampleAsCol=True),'hic2') if os.path.exists(f'{args.sample[0]}/s2_input_data_qc/HiC2/{args.sample[0]}.hic2.tsv') else None
+    for s,hapSize in sample_haplomeSize.items():
 
-    # array to store tuples of df and sheet name
-    dataframes_sheetnames = [i for i in [hifi,hic1,hic2] if i]
+        # first check if we have hifi, hic1, and hic2 files
+        hifi = (seqkit_tsv_to_df(f'{s}/s2_input_data_qc/Hifi/{s}.hifi.tsv',haplomeSize=hapSize,sampleAsCol=True),'hifi') if os.path.exists(f'{s}/s2_input_data_qc/Hifi/{s}.hifi.tsv') else None
+        hic1 = (seqkit_tsv_to_df(f'{s}/s2_input_data_qc/HiC1/{s}.hic1.tsv',haplomeSize=hapSize,sampleAsCol=True),'hic1') if os.path.exists(f'{s}/s2_input_data_qc/HiC1/{s}.hic1.tsv') else None
+        hic2 = (seqkit_tsv_to_df(f'{s}/s2_input_data_qc/HiC2/{s}.hic2.tsv',haplomeSize=hapSize,sampleAsCol=True),'hic2') if os.path.exists(f'{s}/s2_input_data_qc/HiC2/{s}.hic2.tsv') else None
 
-    many_df_to_excel(dataframes_sheetnames,outputDir=outdir,outputFilePrefix=args.outputPrefix)
+        # array to store tuples of df and sheet name
+        dataframes_sheetnames = [i for i in [hifi,hic1,hic2] if i]
+
+        many_df_to_excel(dataframes_sheetnames,outputDir=outdir,outputFilePrefix=args.outputPrefix)
 
 # if many samples given we want summary stats for all of them
 elif len(args.sample) > 1:
@@ -107,12 +112,12 @@ elif len(args.sample) > 1:
     counter = 1
     
     # go through each of the samples
-    for s in args.sample:
+    for s,hapSize in sample_haplomeSize.items():
 
         # create dfs for each input data type
-        hifi = seqkit_tsv_to_df(f'{s}/s2_input_data_qc/Hifi/{s}.hifi.tsv',sampleAsCol=True) if os.path.exists(f'{s}/s2_input_data_qc/Hifi/{s}.hifi.tsv') else None
-        hic1 = seqkit_tsv_to_df(f'{s}/s2_input_data_qc/HiC1/{s}.hic1.tsv',sampleAsCol=True) if os.path.exists(f'{s}/s2_input_data_qc/HiC1/{s}.hic1.tsv') else None
-        hic2 = seqkit_tsv_to_df(f'{s}/s2_input_data_qc/HiC2/{s}.hic2.tsv',sampleAsCol=True) if os.path.exists(f'{s}/s2_input_data_qc/HiC2/{s}.hic2.tsv') else None
+        hifi = seqkit_tsv_to_df(f'{s}/s2_input_data_qc/Hifi/{s}.hifi.tsv',haplomeSize=hapSize,sampleAsCol=True) if os.path.exists(f'{s}/s2_input_data_qc/Hifi/{s}.hifi.tsv') else None
+        hic1 = seqkit_tsv_to_df(f'{s}/s2_input_data_qc/HiC1/{s}.hic1.tsv',haplomeSize=hapSize,sampleAsCol=True) if os.path.exists(f'{s}/s2_input_data_qc/HiC1/{s}.hic1.tsv') else None
+        hic2 = seqkit_tsv_to_df(f'{s}/s2_input_data_qc/HiC2/{s}.hic2.tsv',haplomeSize=hapSize,sampleAsCol=True) if os.path.exists(f'{s}/s2_input_data_qc/HiC2/{s}.hic2.tsv') else None
 
         # add to list of dfs to be merged if file was found
         if isinstance(hifi,pd.DataFrame):

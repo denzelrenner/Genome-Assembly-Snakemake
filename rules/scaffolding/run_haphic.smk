@@ -56,12 +56,12 @@ rule run_haphic:
         # remove 04.build dir to prevent exists error by haphic
         rm -d {wildcards.sample}/s5_run_haphic/04.build
 
-        {params.scriptPath}/haphic pipeline {input.fa} {input.bam} {params.nchrs} --threads {threads} --processes {threads} --outdir {sample}/s5_run_haphic
+        {params.scriptPath}/haphic pipeline {input.fa} {input.bam} {params.nchrs} --threads {threads} --processes {threads} --outdir {wildcards.sample}/s5_run_haphic
 
-	    cd {sample}/s5_run_haphic/plot
+	    cd {wildcards.sample}/s5_run_haphic/plot
 
         # move into plot dir otherwise supplementary files will not be properly placed
-        {params.scriptPath}/haphic plot ../../../{output.agp} ../../../{input.bam} --prefix {sample}_
+        {params.scriptPath}/haphic plot ../../../{output.agp} ../../../{input.bam} --prefix {wildcards.sample}_
         '''
         
 

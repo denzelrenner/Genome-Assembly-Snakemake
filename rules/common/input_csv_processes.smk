@@ -103,7 +103,7 @@ df['input_hic1_files'],df['hic1_workflow_file'] = zip(*df.apply(set_hic1_files_t
 df['input_hic2_files'],df['hic2_workflow_file'] = zip(*df.apply(set_hic2_files_to_merge,axis=1))
 df['scaffolding_tool'] = df.apply(set_scaffolding_tool,axis=1)
 
-# convert df to dictionary
+# convert df to dictionary, this is why we set sample as index in the pandas read csv, and we also dont drop its comment either
 sampleInfo = df.to_dict("index")
 
 # add all HiC files we expect to have in input dir
@@ -169,3 +169,10 @@ for smpl in sampleInfo:
 HICSAMPLES = [s for s in sampleInfo if sampleInfo[s]['useHiC']]
 
 NOHICSAMPLES = [s for s in sampleInfo if not sampleInfo[s]['useHiC']]
+
+
+# create list of hifiasm ploidys, order is in the same order as the samples so no misassignemnets
+HIFIASMPLOIDYFORSAMPLES = [sampleInfo[s]['hifiasm_ploidy'] for s in SAMPLES]
+
+# create list of genome sizes, order is in the same order as the sample so no missagnments
+GENOMESIZEFORSAMPLES = [sampleInfo[s]['haplomeSize'] for s in SAMPLES]
