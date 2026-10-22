@@ -49,12 +49,12 @@ rule summarise_input_data:
         qcScript=os.path.join(config['script_dir'],'python_scripts','summarise_sequencing_reads.py'),
         inputSamples=SAMPLES,
         ploidySamples=HIFIASMPLOIDYFORSAMPLES,
-        
+        outputDate=CURRENTDATA,
     resources:
         runtime=20,
     threads:
         1
     shell:
         '''
-        python3 {params.qcScript}
+        python3 {params.qcScript} -s {params.inputSamples} -nhap {params.ploidySamples} -o input_data_qc_all_samples_{params.outputDate} -od shared_results/input_data_qc
         '''

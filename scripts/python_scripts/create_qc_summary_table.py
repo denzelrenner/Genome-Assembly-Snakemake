@@ -22,13 +22,13 @@ vars = argparse.ArgumentParser(description='Create summary statistics from gfast
 
 vars.add_argument('-s','--samples',dest='sample',nargs='+', type=str, required=True, help='sample(s) to process stats for')
 
-vars.add_argument('-nhap',dest='haplomes',nargs='+', type=int, required=True, help='number of haplomes after running hifiasm')
+vars.add_argument('-nhap',dest='haplomeNumber',nargs='+', type=int, required=True, help='number of haplomes after running hifiasm')
 
 vars.add_argument('-o','--output_prefix',dest='outputPrefix', type=str, required=False,default='output', help='prefix for the output file')
 
 vars.add_argument('-od','--out_dir',dest='output_directory', type=str, required=True,default=None, help='name of directory for output. will be stored in current working directory if none given')
 
-vars.add_argument('-c',dest='chrs', type=int, required=False,default=8, help='Expected number of chromsomes in the assembly. Default = 8')
+# vars.add_argument('-c',dest='chrs', type=int, required=False,default=8, help='Expected number of chromsomes in the assembly. Default = 8')
 
 args = vars.parse_args()
 
@@ -54,7 +54,7 @@ def get_chromosome_sizes(haplome_name:str,file:str):
     # sort dict based on size of chromosomes
     AssemblyFastaRefDict = dict(sorted(AssemblyFastaRefDict.items(),key=lambda name_size:name_size[1].sequence_length,reverse=True))
 
-    # add chrom id and its size separated by colon
+    # add chrom id and its size separated by arrow
     AssemblyInfo[haplome_name].extend([f"{record.header} ---> {record.sequence_length:,}" for record in list(AssemblyFastaRefDict.values())])
 
     return pd.DataFrame(AssemblyInfo)
@@ -130,53 +130,54 @@ def compleasm_to_df(haplome_name:str,file:str):
 
     return pd.DataFrame(MainSummaryTable)
 
+# make pairs of sample and haplome number
+sample_haplome = list(zip(args.sample,args.haplomeNumber))
 
 # run different analysis depending on if we have a single sample or many
-if len(args.sample) == 1:
+if len(sample_haplome) == 1:
 
     # merged qc stats and chrom sizes
     toMergeQcStats = []
     toMergeChromSizes = []
 
-    for i in range(1,args.haplomes[0]+1):
+    for s,h in sample_haplome:
+        
+        for i in range(1,h+1):
 
-        # get haplome name
-        haplome = f'{args.sample[0]}.hap{i}'
+            # get haplome name
+            haplome = f'{s}.hap{i}'
 
-        # get chrom sizes df
-        chromSizes = get_chromosome_sizes(haplome_name=haplome,file=f'{args.sample[0]}/s4_run_hifiasm/{args.sample[0]}.hap{i}.fa')
+            # get chrom sizes df
+            chromSizes = get_chromosome_sizes(haplome_name=haplome,file=f'{s}/s4_run_hifiasm/{s}.hap{i}.fa')
 
-        # get gfastats df
-        gfastats = gfastats_to_df(haplome_name=haplome,file=f'{args.sample[0]}/s4_run_hifiasm/quality_control/{args.sample[0]}.hap{i}/gfastats/stats.txt')
+            # get gfastats df
+            gfastats = gfastats_to_df(haplome_name=haplome,file=f'{s}/s4_run_hifiasm/quality_control/{s}.hap{i}/gfastats/stats.txt')
 
-        # get compleams df
-        compleasm = compleasm_to_df(haplome_name=haplome,file=f'{args.sample[0]}/s4_run_hifiasm/quality_control/{args.sample[0]}.hap{i}/compleasm/summary.txt')
-       
-        # combine stats
-        qcStats = concat_multiple_dataframes([gfastats,compleasm])
+            # get compleams df
+            compleasm = compleasm_to_df(haplome_name=haplome,file=f'{s}/s4_run_hifiasm/quality_control/{s}.hap{i}/compleasm/summary.txt')
+        
+            # combine stats
+            qcStats = concat_multiple_dataframes([gfastats,compleasm])
 
-        # add to dfs to merge 
-        toMergeQcStats.append(qcStats)
-        toMergeChromSizes.append(chromSizes)
+            # add to dfs to merge 
+            toMergeQcStats.append(qcStats)
+            toMergeChromSizes.append(chromSizes)
 
-    # merge dfs and then output
-    mergedQcStats = merge_multiple_dataframes(dfs=toMergeQcStats,on='')
-    mergedChromSizes = merge_multiple_dataframes(dfs=toMergeChromSizes,how='outer',left_index=True,right_index=True)
+        # merge dfs and then output
+        mergedQcStats = merge_multiple_dataframes(dfs=toMergeQcStats,on='')
+        mergedChromSizes = merge_multiple_dataframes(dfs=toMergeChromSizes,how='outer',left_index=True,right_index=True)
 
-    # create df sheet name output
-    df_sheetname = [(mergedQcStats,'qc stats'),(mergedChromSizes,'scaffold info')]
-    
-    # output 
-    many_df_to_excel(df_sheetName=df_sheetname,outputDir=outdir,outputFilePrefix=args.outputPrefix,col_width=40)
+        # create df sheet name output
+        df_sheetname = [(mergedQcStats,'qc stats'),(mergedChromSizes,'scaffold info')]
+        
+        # output 
+        many_df_to_excel(df_sheetName=df_sheetname,outputDir=outdir,outputFilePrefix=args.outputPrefix,col_width=40)
 
-elif len(args.sample) > 1:
+elif len(sample_haplome) > 1:
 
-    # merged qc stats and chrom sizes
+    # list of dfs of qc stats and chrom sizes to merge
     toMergeQcStats = []
     toMergeChromSizes = []
-
-    # make pairs of sample and haplome
-    sample_haplome = list(zip(args.sample,args.haplomes))
     
     for s,h in sample_haplome:
 

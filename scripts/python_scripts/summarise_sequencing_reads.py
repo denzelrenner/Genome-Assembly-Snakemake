@@ -97,7 +97,7 @@ if len(sample_haplomeSize) == 1:
         many_df_to_excel(dataframes_sheetnames,outputDir=outdir,outputFilePrefix=args.outputPrefix)
 
 # if many samples given we want summary stats for all of them
-elif len(args.sample) > 1:
+elif len(sample_haplomeSize) > 1:
 
     # array to store tuples of df and sheet name
     dataframes_sheetnames = []
