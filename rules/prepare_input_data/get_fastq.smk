@@ -7,12 +7,12 @@ rule bam_to_fastq:
     conda:
         "../../envs/minimap2_samtools.yml"
     threads:
-        2
+        8
     resources:
         runtime=240,
         mem_mb=5000
     shell:
-        "samtools fastq --threads {threads} {input.bam} | gzip > {output.fastq}"
+        "samtools fastq --threads {threads} {input.bam} | pigz -p {threads} -6 > {output.fastq}"
 
 
 rule get_fastq:
@@ -21,7 +21,7 @@ rule get_fastq:
     conda:
         "../../envs/minimap2_samtools.yml"
     threads:
-        2
+        8
     resources:
         runtime=240,
         mem_mb=5000
@@ -32,11 +32,11 @@ rule get_fastq:
         '''
         if [ {params.operation} = 'convert' ];then
 
-            samtools fastq --threads {threads} {params.hifi} | gzip > {output.fastq}
+            samtools fastq --threads {threads} {params.hifi} | pigz -p {threads} -6 > {output.fastq}
 
         elif [ {params.operation} = 'compress' ];then
 
-            gzip {params.hifi} > {output.fastq}
+            piqz -p {threads} -6 -c {params.hifi} > {output.fastq}
 
         elif [ {params.operation} = 'copy' ];then
 

@@ -128,9 +128,11 @@ for smpl in sampleInfo:
 # add merge HiC column
 for smpl in sampleInfo:
 
+    sampleInfo[smpl]['merge_hic_shell'] = 'false'
     sampleInfo[smpl]['merge_hic'] = False
 
     if (sampleInfo[smpl]['hic1_workflow_file'] not in sampleInfo[smpl]['input_hic1_files']) and sampleInfo[smpl]['useHiC']:
+        sampleInfo[smpl]['merge_hic_shell'] = 'true'
         sampleInfo[smpl]['merge_hic'] = True
 
 # add has bash true false or use HiC

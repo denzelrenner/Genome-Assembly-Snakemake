@@ -25,7 +25,7 @@ rule get_hic:
     params:
         in1=lambda w: sampleInfo[w.sample]["input_hic1_files"],
         in2=lambda w: sampleInfo[w.sample]["input_hic2_files"],
-        merge=lambda w: sampleInfo[w.sample]["merge_hic"],
+        merge=lambda w: sampleInfo[w.sample]["merge_hic_shell"],
     threads:
         1
     resources:
