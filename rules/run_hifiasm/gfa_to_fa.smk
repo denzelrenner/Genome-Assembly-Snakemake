@@ -1,6 +1,7 @@
 rule pctg_gfa_to_fa:
     input:
-        "{sample}/s4_run_hifiasm/.done.txt"
+        done="{sample}/s4_run_hifiasm/.done.txt"
+        gfa="{sample}/s4_run_hifiasm/{sample}.hap{haplomeNumber}.p_ctg.gfa"
     output:
         '{sample}/s4_run_hifiasm/{sample}.hap{haplomeNumber}.fa'
     threads:
@@ -12,24 +13,9 @@ rule pctg_gfa_to_fa:
         True
     shell:
         '''
-        # go through all the gfa files
-        for gfa in {wildcards.sample}/s4_run_hifiasm/*hap*.p_ctg.gfa; do
+        # convert to fasta file
+        awk '/^S/{{print ">"$2;print $3}}' {input.gfa} > {output}
 
-            echo $gfa
-
-            if [ -f $gfa ]; then
-
-                # get only file name and not whole path
-                file=$(basename "${{gfa}}")
-
-                # find haplome number
-                hap=$(awk -F'.' '{{print $(NF-2)}}' <<< $file)
-
-                # convert to fasta file
-                awk '/^S/{{print ">"$2;print $3}}' $gfa > {wildcards.sample}/s4_run_hifiasm/{wildcards.sample}."${{hap}}".fa
-
-            fi
-        done
         '''
         
 rule putg_gfa_to_fa:
