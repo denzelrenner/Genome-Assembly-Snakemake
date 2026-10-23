@@ -19,7 +19,7 @@ rule get_fastq:
     output:
         fastq="{sample}/s1_get_input_data/Hifi/{sample}.fastq.gz"
     conda:
-        "../../envs/minimap2_samtools.yml"
+        "../../envs/mapping-tools.yml"
     threads:
         8
     resources:
@@ -30,6 +30,8 @@ rule get_fastq:
         operation=lambda w: sampleInfo[w.sample]['hifiOperation'],
     shell:
         '''
+        export PATH=$CONDA_PREFIX/bin:$PATH
+
         if [ {params.operation} = 'convert' ];then
 
             samtools fastq --threads {threads} {params.hifi} | pigz -p {threads} -6 > {output.fastq}

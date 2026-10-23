@@ -20,6 +20,8 @@ rule build_pretextmap:
         mem_mb=300000,
     shell:
         '''
+        export PATH=$CONDA_PREFIX/bin:$PATH
+
         samtools view -@{threads} -h {input.bam} | PretextMap -o {output.pretextmap} --mapq 0
 
         cat {input.telomereBedgraph} | PretextGraph -i {output.pretextmap} -n "telomeres"  
@@ -66,6 +68,8 @@ rule create_hic_coverage_bedgraph:
         mem_mb=300000
     shell:
         '''
+        export PATH=$CONDA_PREFIX/bin:$PATH
+
         echo 'map HiC to assembly'
 
         bwa index {input.fa}
@@ -93,6 +97,8 @@ rule create_hifi_coverage_bedgraph:
         mem_mb=100000
     shell:
         '''
+        export PATH=$CONDA_PREFIX/bin:$PATH
+
         echo 'minimap mapping hifi reads to scaffold assem'
 
         minimap2 -ax map-pb -t {threads} {input.fa} {input.hifiFastq} | samtools sort -@{threads} -O BAM -o {output.bam} -
@@ -110,14 +116,13 @@ rule create_hic_gaps_bedgraph:
         hicCovBedgraph="{sample}/s6_build_pretextmap/mapping_coverage/hic/coverage_output_hic.bedgraph",
     output:
         covGapsBedgraph="{sample}/s6_build_pretextmap/coverage_gaps/gaps.bedgraph",
-
-    conda:
-        "../../envs/manual-curation.yml"
     threads:
         2
     resources:
         runtime=30,
         mem_mb=1000
+    localrule:
+        True
     shell:
         '''
         echo 'gaps graph'
@@ -139,6 +144,8 @@ rule create_gfastats_gaps_bedgraph:
         mem_mb=5000
     shell:
         '''
+        export PATH=$CONDA_PREFIX/bin:$PATH
+
         echo 'gfastats gaps'	
 
         gfastats {input.fa} -b gaps | sed "s/$/\t200/" > {output.gfastatsGapsBedgraph}
@@ -162,6 +169,8 @@ rule create_barrnap_bedgraph:
         mem_mb=10000,
     shell:
         '''
+        export PATH=$CONDA_PREFIX/bin:$PATH
+        
         echo 'rDNA'
 
         barrnap --threads {threads} \
