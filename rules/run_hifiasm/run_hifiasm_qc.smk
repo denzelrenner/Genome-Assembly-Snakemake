@@ -62,7 +62,7 @@ rule summarise_hifiasm_qc_single_sample:
     threads:
         1
     conda:
-        "../../envs/qc-tools.yml"
+        "../../envs/pd-tools.yml"
     shell:
         '''
         # run qc summary excel file
@@ -84,7 +84,7 @@ rule summarise_hifiasm_qc_all_samples:
     threads:
         1,
     conda:
-        "../../envs/qc-tools.yml"
+        "../../envs/pd-tools.yml"
     shell:
         '''
         python3 {params.qcScript} -s {params.inputSamples} -nhap {params.ploidySamples} -o {params.outfilePrefix} -od summary_results/hifiasm_qc

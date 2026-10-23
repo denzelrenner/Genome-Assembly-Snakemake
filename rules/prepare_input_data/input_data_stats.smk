@@ -50,9 +50,9 @@ rule summarise_input_data_single_sample:
         outfilePrefix=f'{{sample}}_input_data_qc_{CURRENTDATE}',
         genomesize=lambda w:sampleInfo[w.sample]['haplomeSize'],
     conda:
-        "../../envs/qc-tools.yml",
+        "../../envs/pd-tools.yml",
     resources:
-        runtime=20,
+        runtime=30,
     threads:
         1
     shell:
@@ -73,9 +73,9 @@ rule summarise_input_data_all_samples:
         inputSamples=SAMPLES,
         genomesizeSamples=GENOMESIZEFORSAMPLES,
     conda:
-        "../../envs/qc-tools.yml",
+        "../../envs/pd-tools.yml",
     resources:
-        runtime=20,
+        runtime=30,
     threads:
         1
     shell:
