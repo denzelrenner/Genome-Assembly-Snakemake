@@ -59,6 +59,9 @@ rule summarise_hifiasm_qc_single_sample:
         outfilePrefix=f'{{sample}}_hifiasm_qc_{CURRENTDATE}',
     resources:
         runtime=30,
+        mem_mb=1000,
+    localrule:
+        True
     threads:
         1
     conda:
@@ -81,6 +84,9 @@ rule summarise_hifiasm_qc_all_samples:
         ploidySamples=HIFIASMPLOIDYFORSAMPLES,
     resources:
         runtime=30,
+        mem_mb=1000,
+    localrule:
+        True
     threads:
         1,
     conda:

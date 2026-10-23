@@ -12,13 +12,16 @@ rule run_genomescope:
     conda:
         "../../envs/genomescope.yml"
 
-    resources:
-        mem_mb=200000
     threads:
         int(workflow.cores * 0.5)
+
     resources:
         runtime=240,
-        mem_mb=200000
+        mem_mb=200000,
+
+    priority:
+        50
+
     shell:
         '''
         mkdir -p {params.outdir}/tmp 

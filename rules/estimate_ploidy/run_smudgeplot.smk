@@ -12,7 +12,9 @@ rule run_smudgeplot:
         int(workflow.cores * 0.25)
     resources:
         runtime=480,
-        mem_mb=200000
+        mem_mb=200000,
+    priority:
+        50
     shell:
         '''
         mkdir -p {params.outdir}/plots

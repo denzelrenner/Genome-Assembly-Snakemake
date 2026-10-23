@@ -8,6 +8,8 @@ rule merge_hic:
         hic2=lambda w: sampleInfo[w.sample]["input_hic2_files"],
     threads:
         1
+    localrule:
+        True
     resources:
         runtime=120,
         mem_mb=1000
@@ -28,6 +30,8 @@ rule get_hic:
         merge=lambda w: sampleInfo[w.sample]["merge_hic_shell"],
     threads:
         1
+    localrule:
+        True
     resources:
         runtime=120,
         mem_mb=1000

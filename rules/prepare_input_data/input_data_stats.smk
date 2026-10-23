@@ -10,6 +10,8 @@ rule get_input_hifi_stats:
     resources:
         runtime=30,
         mem_mb=2000
+    priority:
+        100
     shell:
         '''
         seqkit stats {input.fastq} --threads {threads} -Ta -o {output.tsv}
@@ -32,6 +34,8 @@ rule get_input_hic_stats:
     resources:
         runtime=120,
         mem_mb=10000
+    priority:
+        100
     shell:
         '''
         seqkit stats {params.inhic1} --threads {threads} -Ta -o {output.tsv1}
@@ -53,8 +57,13 @@ rule summarise_input_data_single_sample:
         "../../envs/pd-tools.yml",
     resources:
         runtime=30,
+        mem_mb=1000,
+    localrule:
+        True
     threads:
         1
+    priority:
+        100
     shell:
         '''
         python3 {params.qcScript} -s {wildcards.sample} -g {params.genomesize} -o {params.outfilePrefix} -od {wildcards.sample}/s2_input_data_qc/qc_results
@@ -76,8 +85,13 @@ rule summarise_input_data_all_samples:
         "../../envs/pd-tools.yml",
     resources:
         runtime=30,
+        mem_mb=1000,
+    localrule:
+        True
     threads:
         1
+    priority:
+        100
     shell:
         '''
         python3 {params.qcScript} -s {params.inputSamples} -nhap {params.genomesizeSamples} -o {params.outfilePrefix} -od summary_results/input_data_qc

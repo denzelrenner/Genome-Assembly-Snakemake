@@ -7,7 +7,9 @@ rule pctg_gfa_to_fa:
         1
     resources:
         runtime=10,
-        mem_mb=1000
+        mem_mb=1000,
+    localrule:
+        True
     shell:
         '''
         # go through all the gfa files
@@ -37,6 +39,8 @@ rule putg_gfa_to_fa:
         '{sample}/s4_run_hifiasm/{sample}.p_utg.fa',
     threads:
         1
+    localrule:
+        True
     resources:
         runtime=15,
         mem_mb=1000
