@@ -18,6 +18,8 @@ rule run_hifiasm:
         mem_mb=300000
     shell:
         '''
+        export PATH=$CONDA_PREFIX/bin:$PATH
+
         hifiasm -v # confirm hifiasm version
 
         if [ {params.useHiCShell} = true ];then

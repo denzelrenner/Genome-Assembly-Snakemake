@@ -20,13 +20,19 @@ rule align_hic_to_hifiasm_haplome:
         mem_mb=300000
     shell:
         '''
+        export PATH=$CONDA_PREFIX/bin:$PATH
+
+        which python
+        which python3
+        echo $PATH
+
         samtools faidx {input.fa} -o {output.fai}
 
 		# create tsv of name and size
 		cut -f1,2 {output.fai} > {output.ctgSizes}
 
-                # make pairtools tmp dir
-                mkdir -p {params.tmpdir}
+        # make pairtools tmp dir
+        mkdir -p {params.tmpdir}
 	
 		# index with bwa
 		bwa index {input.fa}
@@ -57,6 +63,8 @@ rule run_yahs:
         mem_mb=5000
     shell:
         '''
+        export PATH=$CONDA_PREFIX/bin:$PATH
+
         yahs -o {wildcards.sample}/s5_run_yahs/hap{wildcards.haplomeNumber}/yahs.out {input.fa} {input.bam}
 
         # specify hap1 or hap2 for fasta headers
@@ -74,6 +82,8 @@ rule combine_yahs_fastas:
     resources:
         runtime=20,
         mem_mb=1000
+    localrule:
+        True
     shell:
         '''
         cat {input.fa} > {output.combFasta}

@@ -18,6 +18,8 @@ rule align_hic_to_utg:
         mem_mb=300000,
     shell:
         '''
+        export PATH=$CONDA_PREFIX/bin:$PATH
+        
         # align Hi-C data to the assembly, remove PCR duplicates and filter out secondary and supplementary alignments
         bwa index {input.fa}
         bwa mem -5SP -t {threads} {input.fa} {input.hic1} {input.hic2} | samblaster | samtools view - -@ {threads} -S -h -b -F 3340 -o {output.bam}
@@ -46,6 +48,7 @@ rule run_haphic:
         mem_mb=10000,
     shell:
         '''
+        export PATH=$CONDA_PREFIX/bin:$PATH
 
         # error handling/check, bug where python from the haphic env is not being used in the shell
         echo $CONDA_PREFIX

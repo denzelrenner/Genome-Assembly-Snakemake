@@ -17,6 +17,8 @@ rule run_smudgeplot:
         50
     shell:
         '''
+        export PATH=$CONDA_PREFIX/bin:$PATH
+        
         mkdir -p {params.outdir}/plots
 
         echo 'run fastk'

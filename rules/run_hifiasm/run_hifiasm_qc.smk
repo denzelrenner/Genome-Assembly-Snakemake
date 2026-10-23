@@ -40,6 +40,8 @@ rule hifiasm_qc_on_individual_haplome:
         "../../envs/qc-tools.yml"
     shell:
         '''
+        export PATH=$CONDA_PREFIX/bin:$PATH
+
         # run compleasm
         compleasm run -a {input.fa} -o {wildcards.sample}/s4_run_hifiasm/quality_control/{wildcards.sample}.hap{wildcards.haplomeNumber}/compleasm -l {params.lineage} --odb {params.odb} -L {params.libpath} -t {threads}
 
@@ -68,6 +70,8 @@ rule summarise_hifiasm_qc_single_sample:
         "../../envs/pd-tools.yml"
     shell:
         '''
+        export PATH=$CONDA_PREFIX/bin:$PATH
+
         # run qc summary excel file
         python3 {params.qcScript} -s {wildcards.sample} -nhap {params.ploidy} -o {params.outfilePrefix} -od {wildcards.sample}/s4_run_hifiasm/quality_control/qc_summary
         '''
@@ -93,6 +97,8 @@ rule summarise_hifiasm_qc_all_samples:
         "../../envs/pd-tools.yml"
     shell:
         '''
+        export PATH=$CONDA_PREFIX/bin:$PATH
+
         python3 {params.qcScript} -s {params.inputSamples} -nhap {params.ploidySamples} -o {params.outfilePrefix} -od summary_results/hifiasm_qc
         '''
 

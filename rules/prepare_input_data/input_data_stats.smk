@@ -14,6 +14,8 @@ rule get_input_hifi_stats:
         100
     shell:
         '''
+        export PATH=$CONDA_PREFIX/bin:$PATH
+
         seqkit stats {input.fastq} --threads {threads} -Ta -o {output.tsv}
         '''
 
@@ -38,6 +40,8 @@ rule get_input_hic_stats:
         100
     shell:
         '''
+        export PATH=$CONDA_PREFIX/bin:$PATH
+
         seqkit stats {params.inhic1} --threads {threads} -Ta -o {output.tsv1}
         seqkit stats {params.inhic2} --threads {threads} -Ta -o {output.tsv2}
         '''
@@ -66,6 +70,8 @@ rule summarise_input_data_single_sample:
         100
     shell:
         '''
+        export PATH=$CONDA_PREFIX/bin:$PATH
+
         python3 {params.qcScript} -s {wildcards.sample} -g {params.genomesize} -o {params.outfilePrefix} -od {wildcards.sample}/s2_input_data_qc/qc_results
         '''
 
@@ -94,5 +100,7 @@ rule summarise_input_data_all_samples:
         100
     shell:
         '''
+        export PATH=$CONDA_PREFIX/bin:$PATH
+        
         python3 {params.qcScript} -s {params.inputSamples} -g {params.genomesizeSamples} -o {params.outfilePrefix} -od summary_results/input_data_qc
         '''
