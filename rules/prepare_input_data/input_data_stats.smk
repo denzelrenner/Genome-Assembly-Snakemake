@@ -94,5 +94,5 @@ rule summarise_input_data_all_samples:
         100
     shell:
         '''
-        python3 {params.qcScript} -s {params.inputSamples} -nhap {params.genomesizeSamples} -o {params.outfilePrefix} -od summary_results/input_data_qc
+        python3 {params.qcScript} -s {params.inputSamples} -g {params.genomesizeSamples} -o {params.outfilePrefix} -od summary_results/input_data_qc
         '''
