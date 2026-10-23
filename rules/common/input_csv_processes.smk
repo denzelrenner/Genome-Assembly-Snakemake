@@ -79,11 +79,10 @@ def set_scaffolding_tool(row):
 
 
 
-
 # process samples
 
 # load in csv
-df = pd.read_csv(config['samples_file']).set_index("sample", drop=False)
+df = pd.read_csv(config['samples_file'],comment='#').set_index("sample", drop=False)
 
 # get index values, which are sample names
 SAMPLES = df.index.values.tolist()
@@ -171,7 +170,6 @@ for smpl in sampleInfo:
 HICSAMPLES = [s for s in sampleInfo if sampleInfo[s]['useHiC']]
 
 NOHICSAMPLES = [s for s in sampleInfo if not sampleInfo[s]['useHiC']]
-
 
 # create list of hifiasm ploidys, order is in the same order as the samples so no misassignemnets
 HIFIASMPLOIDYFORSAMPLES = [sampleInfo[s]['hifiasm_ploidy'] for s in SAMPLES]
