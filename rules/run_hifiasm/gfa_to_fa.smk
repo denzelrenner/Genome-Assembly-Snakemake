@@ -15,7 +15,6 @@ rule pctg_gfa_to_fa:
         '''
         # convert to fasta file
         awk '/^S/{{print ">"$2;print $3}}' {input.gfa} > {output}
-
         '''
         
 rule putg_gfa_to_fa:

@@ -4,8 +4,10 @@ rule run_hifiasm:
         hic1=lambda w: sampleInfo[w.sample]['hic1_workflow_file'],
         hic2=lambda w: sampleInfo[w.sample]['hic2_workflow_file']
     output:
-        complete="{sample}/s4_run_hifiasm/.done.txt",
+        gfa=expand("{sample}/s4_run_hifiasm/{sample}.hap{hap}.p_ctg.gfa",hap=lambda w:sampleInfo[w.sample]['hifiasmploidyAsArray'])
         utg='{sample}/s4_run_hifiasm/{sample}.p_utg.gfa',
+    wildcard_constraints:
+
     params:
         useHiCShell=lambda w: sampleInfo[w.sample]["use_hic_shell"],
         ploidy=lambda w: sampleInfo[w.sample]["ploidy"],
