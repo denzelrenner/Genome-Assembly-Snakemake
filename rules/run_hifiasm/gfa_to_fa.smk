@@ -1,6 +1,5 @@
 rule pctg_gfa_to_fa:
     input:
-        done="{sample}/s4_run_hifiasm/.done.txt",
         gfa="{sample}/s4_run_hifiasm/{sample}.hap{haplomeNumber}.p_ctg.gfa",
     output:
         '{sample}/s4_run_hifiasm/{sample}.hap{haplomeNumber}.fa'
