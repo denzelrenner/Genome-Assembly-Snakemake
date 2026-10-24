@@ -64,7 +64,7 @@ rule run_hifiasm:
         numOfFiles=${{#gfaFiles[@]}}
 
         # echo complete signal if file number is the same
-        if [ "$numOfFiles" -eq "{params.hifiasmPloidy}"] && [ -f {wildcards.sample}/s4_run_hifiasm/{wildcards.sample}.p_utg.gfa ];then
+        if [ "$numOfFiles" -eq "{params.hifiasmPloidy}" ] && [ -f {wildcards.sample}/s4_run_hifiasm/{wildcards.sample}.p_utg.gfa ];then
 
             echo 'DONE' > {output.complete}
         
