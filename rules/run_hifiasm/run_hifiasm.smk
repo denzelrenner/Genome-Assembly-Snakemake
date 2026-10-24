@@ -5,6 +5,7 @@ rule run_hifiasm:
         hic2=lambda w: sampleInfo[w.sample]['hic2_workflow_file']
     output:
         complete='{sample}/s4_run_hifiasm/.done.txt',
+        utg='{sample}/s4_run_hifiasm/{sample}.p_utg.gfa',
     log:
         stdout='{sample}/s4_run_hifiasm/hifiasm_run.out',
         stderr='{sample}/s4_run_hifiasm/hifiasm_run.err',
