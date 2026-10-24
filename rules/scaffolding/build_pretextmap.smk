@@ -60,7 +60,7 @@ rule create_hic_coverage_bedgraph:
         hicCovBedgraph="{sample}/s6_build_pretextmap/mapping_coverage/hic/coverage_output_hic.bedgraph",
         bam="{sample}/s6_build_pretextmap/mapping_coverage/hic/hic_sorted.bam",
     conda:
-        "../../envs/manual-curation.yml"
+        "../../envs/mapping-tools.yml"
     threads:
         int(workflow.cores * 0.75)
     resources:
@@ -170,7 +170,7 @@ rule create_barrnap_bedgraph:
     shell:
         '''
         export PATH=$CONDA_PREFIX/bin:$PATH
-        
+
         echo 'rDNA'
 
         barrnap --threads {threads} \
