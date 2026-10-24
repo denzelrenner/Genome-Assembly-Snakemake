@@ -4,11 +4,14 @@ rule run_hifiasm:
         hic1=lambda w: sampleInfo[w.sample]['hic1_workflow_file'],
         hic2=lambda w: sampleInfo[w.sample]['hic2_workflow_file']
     output:
-        gfa=expand("{sample}/s4_run_hifiasm/{sample}.hap{hap}.p_ctg.gfa",hap=lambda w:sampleInfo[w.sample]['hifiasmploidyAsArray']),
-        utg='{sample}/s4_run_hifiasm/{sample}.p_utg.gfa',
+        complete='{sample}/s4_run_hifiasm/.done.txt',
+    log:
+        stdout='{sample}/s4_run_hifiasm/hifiasm_run.out',
+        stderr='{sample}/s4_run_hifiasm/hifiasm_run.err',
     params:
         useHiCShell=lambda w: sampleInfo[w.sample]["use_hic_shell"],
         ploidy=lambda w: sampleInfo[w.sample]["ploidy"],
+        hifiasmPloidy=lambda w: sampleInfo[w.sample]["hifiasm_ploidy"],
     conda:
         "../../envs/hifiasm.yml"
     threads:
@@ -24,11 +27,11 @@ rule run_hifiasm:
 
         if [ {params.useHiCShell} = true ];then
 
-	        hifiasm -o {wildcards.sample}/s4_run_hifiasm/{wildcards.sample} --n-hap {params.ploidy} --h1 {input.hic1} --h2 {input.hic2} -t {threads} {input.hifi}
+	        hifiasm -o {wildcards.sample}/s4_run_hifiasm/{wildcards.sample} --n-hap {params.ploidy} --h1 {input.hic1} --h2 {input.hic2} -t {threads} {input.hifi} > {log.stdout} 2> {log.stderr}
         
         else
             
-            hifiasm -o {wildcards.sample}/s4_run_hifiasm/{wildcards.sample} --n-hap {params.ploidy} -t {threads} {input.hifi}
+            hifiasm -o {wildcards.sample}/s4_run_hifiasm/{wildcards.sample} --n-hap {params.ploidy} -t {threads} {input.hifi} > {log.stdout} 2> {log.stderr}
 
         fi
     
@@ -55,7 +58,16 @@ rule run_hifiasm:
         # change name of utg file
         mv {wildcards.sample}/s4_run_hifiasm/*.p_utg.gfa {wildcards.sample}/s4_run_hifiasm/{wildcards.sample}.p_utg.gfa
 
-        echo 'DONE' > {output.complete}
+        # do a sense check for completion by making sure we had the expected number of gfa's
+        gfaFiles=({wildcards.sample}/s4_run_hifiasm/*hap*.p_ctg.gfa)
+        numOfFiles=${{#gfaFiles[@]}}
+
+        # echo complete signal if file number is the same
+        if [ "$numOfFiles" -eq "{params.hifiasmPloidy}"] && [ -f {wildcards.sample}/s4_run_hifiasm/{wildcards.sample}.p_utg.gfa ];then
+
+            echo 'DONE' > {output.complete}
+        
+        fi
         '''
         
         
