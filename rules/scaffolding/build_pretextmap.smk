@@ -7,6 +7,7 @@ rule build_pretextmap:
         covGapsBedgraph="{sample}/s6_build_pretextmap/coverage_gaps/gaps.bedgraph",
         gfastatsGapsBedgraph="{sample}/s6_build_pretextmap/gfastats_gaps/gfastats_gaps.bedgraph",
         barrnapBedgraph="{sample}/s6_build_pretextmap/barrnap/RNA.bedgraph",
+        trashBedgraph="{sample}/s6_build_pretextmap/trash/trash_filtered_repeat_arrays.bedgraph",
 
     output:
         pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext",
@@ -30,11 +31,12 @@ rule build_pretextmap:
         cat {input.covGapsBedgraph} | PretextGraph -i {output.pretextmap} -n "gaps"
         cat {input.gfastatsGapsBedgraph} | PretextGraph -i {output.pretextmap} -n "gfastats_gaps"
         cat {input.barrnapBedgraph} | PretextGraph -i {output.pretextmap} -n "rDNA"
+        cat {input.trashBedgraph} | PretextGraph -i {output.pretextmap} -n "trash"
         ''' 
     
 rule create_telomeres_bedgraph:
     input:
-        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/yahs_hap1_hap2.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
+        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
     output:
         telomereBedgraph="{sample}/s6_build_pretextmap/telomeres/telomeres_telomeric_repeat_windows.bedgraph",
     conda:
@@ -53,7 +55,7 @@ rule create_telomeres_bedgraph:
 
 rule create_hic_coverage_bedgraph:
     input:
-        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/yahs_hap1_hap2.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
+        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
         hic1=lambda w: sampleInfo[w.sample]['hic1_workflow_file'],
         hic2=lambda w: sampleInfo[w.sample]['hic2_workflow_file'], 
     output:
@@ -83,7 +85,7 @@ rule create_hic_coverage_bedgraph:
 
 rule create_hifi_coverage_bedgraph:
     input:
-        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/yahs_hap1_hap2.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
+        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
         hifiFastq="{sample}/s1_get_input_data/Hifi/{sample}.fastq.gz",
     output:
         hifiCovBedgraph="{sample}/s6_build_pretextmap/mapping_coverage/hifi/coverage_output_hifi.bedgraph",
@@ -108,11 +110,9 @@ rule create_hifi_coverage_bedgraph:
         bedtools genomecov -ibam {output.bam} -bga > {output.hifiCovBedgraph}
         ''' 
 
-
-
 rule create_hic_gaps_bedgraph:
     input:
-        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/yahs_hap1_hap2.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
+        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
         hicCovBedgraph="{sample}/s6_build_pretextmap/mapping_coverage/hic/coverage_output_hic.bedgraph",
     output:
         covGapsBedgraph="{sample}/s6_build_pretextmap/coverage_gaps/gaps.bedgraph",
@@ -132,7 +132,7 @@ rule create_hic_gaps_bedgraph:
 
 rule create_gfastats_gaps_bedgraph:
     input:
-        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/yahs_hap1_hap2.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
+        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
     output:
         gfastatsGapsBedgraph="{sample}/s6_build_pretextmap/gfastats_gaps/gfastats_gaps.bedgraph",
     conda:
@@ -154,7 +154,7 @@ rule create_gfastats_gaps_bedgraph:
 
 rule create_barrnap_bedgraph:
     input:
-        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/yahs_hap1_hap2.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
+        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
     output:
         barrnapGff="{sample}/s6_build_pretextmap/barrnap/RNA.gff",
         barrnapHits="{sample}/s6_build_pretextmap/barrnap/all_hits.fa",
@@ -182,78 +182,40 @@ rule create_barrnap_bedgraph:
 
         ''' 
 
-# rule add_tracks_to_pretext:
-#     input:
-#         pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext",
-#         telomereBedgraph="{sample}/s6_build_pretextmap/telomeres/telomeres_telomeric_repeat_windows.bedgraph",
-#         hicCovBedgraph="{sample}/s6_build_pretextmap/mapping_coverage/hic/coverage_output_hic.bedgraph",
-#         hifiCovBedgraph="{sample}/s6_build_pretextmap/mapping_coverage/hifi/coverage_output_hifi.bedgraph",
-#         covGapsBedgraph="{sample}/s6_build_pretextmap/coverage_gaps/gaps.bedgraph",
-#         gfastatsGapsBedgraph="{sample}/s6_build_pretextmap/gfastats_gaps/gfastats_gaps.bedgraph",
-#         barrnapBedgraph="{sample}/s6_build_pretextmap/barrnap/RNA.bedgraph",
+rule create_trash_bedgraph:
+    input:
+        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
+    output:
+        multiext("{sample}/s6_build_pretextmap/trash/trash_filtered_repeat_arrays",filtered_repeat_arrays_gff=".gff",filtered_repeat_arrays_bedgraph='.bedgraph'),        
+    params:
+        trash_dir=os.path.join(config['script_dir'],'TRASH_2'),
+        trash_src_dir=os.path.join(config['script_dir'],'TRASH_2','src'),
+        trash_filter_dir=os.path.join(config['script_dir'],'trash_filter_scripts'),
+        outdir="{sample}/s6_build_pretextmap/trash",
+    threads:
+        16
+    resources:
+        runtime=240,
+        mem_mb=10000,
+    conda:
+        '../../envs/trash-v2.yml'
+    shell:
+        '''
+        # export PATHs
+        export PATH=$CONDA_PREFIX/bin:$PATH
+        export PATH={params.trash_dir}:$PATH
+        export PATH={params.trash_src_dir}:$PATH
+        export PATH={params.trash_filter_dir}:$PATH
 
-#     output:
-#         pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.wtracks.map.pretext",
-        
-#     conda:
-#         "../../envs/manual-curation.yml"
-#     threads:
-#         int(workflow.cores * 0.10)
-#     resources:
-#         runtime=120,
-#         mem_mb=10000,
-#     shell:
-#         '''
+        # run TRASH
+        Rscript TRASH.R -f {input.fa} -o {params.outdir} -p {threads}
 
-#         cp {input.pretextmap} {output.pretextmap}
+        # filter trash output 
+        Rscript filter_trash.R {params.outdir}/scaffolds.fa_repeats_with_seq.csv {params.outdir}/scaffolds.fa_arrays.csv {params.outdir}/scaffolds.fa_repeats_filtered.csv {params.outdir}/scaffolds.fa_arrays_filtered.csv
 
-#         cat {input.telomereBedgraph} | PretextGraph -i {output.pretextmap} -n "telomeres"  
-#         cat {input.hicCovBedgraph} | PretextGraph -i {output.pretextmap} -n "coveragehic"
-#         cat {input.hifiCovBedgraph} | PretextGraph -i {output.pretextmap} -n "coveragehifi"
-#         cat {input.covGapsBedgraph} | PretextGraph -i {output.pretextmap} -n "gaps"
-#         cat {input.gfastatsGapsBedgraph} | PretextGraph -i {output.pretextmap} -n "gfastats_gaps"
-#         cat {input.barrnapBedgraph} | PretextGraph -i {output.pretextmap} -n "rDNA"
-#         ''' 
+        # csv to bedgraph
+        awk -F "," -v 'OFS=\\t' '{{ print $3,$1,$2,$11 }}' {params.outdir}/scaffolds.fa_arrays_filtered.csv | sed s/'"'/''/g | sed s/'seqID'/'Chr'/g > {output.filtered_repeat_arrays_bedgraph}
 
-
-# rule create_trash_bedgraph:
-#     input:
-#         fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/yahs_hap1_hap2.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
-#        pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext",
-#         bam="{sample}/s5_run_yahs/hap{haplomeNumber}/mapped.PT.bam"
-#         hifiFastq="{sample}/s1_get_input_data/Hifi/{sample}.fastq.gz"
-#         pretextmap="{sample}/s6_build_pretextmap/pretextmap/{sample}.map.pretext",
-#         hicCovBedgraph="{sample}/s6_build_pretextmap/mapping_coverage/hic/coverage_output_hic.bedgraph",
-        
-#     output:
-#         covGapsBedgraph="{sample}/s6_build_pretextmap/coverage_gaps/gaps.bedgraph",
-#         gfastatsGapsBedgraph="{sample}/s6_build_pretextmap/gfastats_gaps/gfastats_gaps.bedgraph",
-#         barrnapGff="{sample}/s6_build_pretextmap/barrnap/RNA.gff",
-#         barrnapHits="{sample}/s6_build_pretextmap/barrnap/all_hits.fa",
-#         barrnapBedgraph="{sample}/s6_build_pretextmap/barrnap/RNA.bedgraph"
-
-
-#     params:
-#         ploidy=lambda w: sampleInfo[w.sample]["ploidy"],
-#         hic1=lambda w: sampleInfo[w.sample]['hic1_workflow_file'],
-#         hic2=lambda w: sampleInfo[w.sample]['hic2_workflow_file'],
-#     conda:
-#         "../../envs/manual-curation.yml"
-#     threads:
-#         int(workflow.cores * 0.75)
-#     resources:
-#         runtime=720,
-#         mem_mb=300000
-#     shell:
-#         '''
-
-#         echo 'run trash'
-
-#         TRASH_run.sh {input.fa} --o $yahsdir/s2_pretext/tracks/trash --par 48
-
-#         fasta_base=$(basename "${{input.fa}}")
-
-#         trash_analysis_for_pretext.py -i "Summary.of.repetitive.regions.${fasta_base}.csv"
-
-#         cat trashrepeat_all.bedgraph | PretextGraph -i $premap -n "trash"
-#         ''' 
+        # create gff
+        cut -f 1,2,3 {output.filtered_repeat_arrays_bedgraph} > {output.filtered_repeat_arrays_gff}
+        '''

@@ -12,14 +12,6 @@ wildcard_constraints:
 # get current date which will be used to name combined QC files
 CURRENTDATE=datetime.today().strftime('%d_%m_%Y')
 
-# set list of output files for HiC 
-SCAFFOLDINGTARGETFILES=["barrnap/RNA.gff","barrnap/all_hits.fa","barrnap/RNA.bedgraph",
-                "gfastats_gaps/gfastats_gaps.bedgraph",
-                "coverage_gaps/gaps.bedgraph",
-                "pretextmap/hifi_sorted.bam","mapping_coverage/coverage_output_hifi.bedgraph",
-                "mapping_coverage/coverage_output_hic.bedgraph",
-                "telomeres/telomeres_telomeric_repeat_windows.bedgraph",
-                "pretextmap/hic_sorted.bam"]
 
 def set_rule_target():
 
