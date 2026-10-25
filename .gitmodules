@@ -1,3 +1,6 @@
 [submodule "scripts/HapHiC"]
 	path = scripts/HapHiC
 	url = https://github.com/zengxiaofei/HapHiC.git
+[submodule "scripts/TRASH_2"]
+	path = scripts/TRASH_2
+	url = https://github.com/vlothec/TRASH_2.git
