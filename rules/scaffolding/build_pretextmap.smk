@@ -36,7 +36,7 @@ rule build_pretextmap:
     
 rule create_telomeres_bedgraph:
     input:
-        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
+        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/scaffolding/04.build/scaffolds.fa",
     output:
         telomereBedgraph="{sample}/s6_build_pretextmap/telomeres/telomeres_telomeric_repeat_windows.bedgraph",
     conda:
@@ -55,7 +55,7 @@ rule create_telomeres_bedgraph:
 
 rule create_hic_coverage_bedgraph:
     input:
-        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
+        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/scaffolding/04.build/scaffolds.fa",
         hic1=lambda w: sampleInfo[w.sample]['hic1_workflow_file'],
         hic2=lambda w: sampleInfo[w.sample]['hic2_workflow_file'], 
     output:
@@ -85,7 +85,7 @@ rule create_hic_coverage_bedgraph:
 
 rule create_hifi_coverage_bedgraph:
     input:
-        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
+        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/scaffolding/04.build/scaffolds.fa",
         hifiFastq="{sample}/s1_get_input_data/Hifi/{sample}.fastq.gz",
     output:
         hifiCovBedgraph="{sample}/s6_build_pretextmap/mapping_coverage/hifi/coverage_output_hifi.bedgraph",
@@ -112,7 +112,7 @@ rule create_hifi_coverage_bedgraph:
 
 rule create_hic_gaps_bedgraph:
     input:
-        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
+        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/scaffolding/04.build/scaffolds.fa",
         hicCovBedgraph="{sample}/s6_build_pretextmap/mapping_coverage/hic/coverage_output_hic.bedgraph",
     output:
         covGapsBedgraph="{sample}/s6_build_pretextmap/coverage_gaps/gaps.bedgraph",
@@ -132,7 +132,7 @@ rule create_hic_gaps_bedgraph:
 
 rule create_gfastats_gaps_bedgraph:
     input:
-        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
+        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/scaffolding/04.build/scaffolds.fa",
     output:
         gfastatsGapsBedgraph="{sample}/s6_build_pretextmap/gfastats_gaps/gfastats_gaps.bedgraph",
     conda:
@@ -154,7 +154,7 @@ rule create_gfastats_gaps_bedgraph:
 
 rule create_barrnap_bedgraph:
     input:
-        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
+        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/scaffolding/04.build/scaffolds.fa",
     output:
         barrnapGff="{sample}/s6_build_pretextmap/barrnap/RNA.gff",
         barrnapHits="{sample}/s6_build_pretextmap/barrnap/all_hits.fa",
@@ -184,7 +184,7 @@ rule create_barrnap_bedgraph:
 
 rule create_trash_bedgraph:
     input:
-        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
+        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/scaffolding/04.build/scaffolds.fa",
     output:
         bed="{sample}/s6_build_pretextmap/trash/trash_filtered_repeat_arrays.bed",
         bedgraph="{sample}/s6_build_pretextmap/trash/trash_filtered_repeat_arrays.bedgraph",
