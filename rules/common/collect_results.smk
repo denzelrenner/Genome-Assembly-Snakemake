@@ -15,8 +15,8 @@ rule build_rsync_folder:
         seqkit_out=f'{config['rsync_folder']}/individual_sample/{{sample}}/input_reads_qc_excel/{{sample}}_input_data_qc_{CURRENTDATE}.xlsx',
         pretext_signal=f'{config['rsync_folder']}/individual_sample/{{sample}}/pretextmap/.done.txt',
     params:
-        inputDate=CURRENTDATE
-        outdir=lambda w:f"{config['rsync_folder']}/individual_sample/{w.sample}"
+        inputDate=CURRENTDATE,
+        outdir=lambda w:f"{config['rsync_folder']}/individual_sample/{w.sample}",
         useHiCShell=lambda w: 'true' if sampleInfo[w.sample]["useHiC"] else 'false',
     threads:
         1
