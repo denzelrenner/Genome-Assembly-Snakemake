@@ -35,6 +35,8 @@ rule download_compleasm_lineages:
         runtime=240,
     threads:
         1
+    priority:
+        200
     conda:
         "../../envs/qc-tools.yml"
     localrule:
