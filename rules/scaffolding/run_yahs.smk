@@ -74,7 +74,7 @@ rule run_yahs:
         
 rule combine_yahs_fastas:
     input:
-        fa=lambda w:expand("{{sample}}/s5_run_yahs/hap{hap}/hap{hap}_yahs.fa",hap=sampleInfo[w.sample]['ploidyAsArray']),
+        fa=lambda w:expand(f"{w.sample}/s5_run_yahs/hap{{hap}}/hap{{hap}}_yahs.fa",hap=sampleInfo[w.sample]['ploidyAsArray']),
     output:
         combFasta="{sample}/s5_run_yahs/combined_haps/scaffolds.fa"
     threads:

@@ -17,6 +17,7 @@ configIni.read(configIniPath)
 # build snakemake config
 ### DEFAULTS ###
 config['samples_file'] = configIni['DEFAULT'].get('samples_file',fallback='samples.csv')
+config['rsync_folder'] = configIni['DEFAULT'].get('rsync_folder',fallback='results')
 
 ### PREPARING HIFI READS
 config['filter_hifi_reads'] = configIni['PREPARING_HIFI_READS'].getboolean('filter_hifi_reads',fallback=False)
@@ -53,7 +54,7 @@ config['shared_data_dir'] = os.path.join(workflow.basedir,'shared_data')
 # shared rules
 include:"rules/common/input_csv_processes.smk"
 include:"rules/common/common.smk"
-include:"rules/common/end_results.smk"
+include:"rules/common/collect_results.smk"
 
 ### PREPARING INPUT DATA ###
 # bam to fastq

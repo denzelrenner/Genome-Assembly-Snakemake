@@ -52,10 +52,9 @@ rule summarise_input_data_single_sample:
         hic1=lambda w: expand("{s}/s2_input_data_qc/HiC1/{s}.hic1.tsv",s=[w.sample]) if sampleInfo[w.sample]["useHiC"] else [],
         hic2=lambda w: expand("{s}/s2_input_data_qc/HiC2/{s}.hic2.tsv",s=[w.sample]) if sampleInfo[w.sample]["useHiC"] else [],
     output:
-        excel=f'{{sample}}/s2_input_data_qc/qc_results/{{sample}}_input_data_qc_{CURRENTDATE}.xlsx',
+        excel='{sample}/s2_input_data_qc/qc_results/{sample}_input_data_qc.xlsx',
     params:
         qcScript=os.path.join(config['script_dir'],'python_scripts','summarise_sequencing_reads.py'),
-        outfilePrefix=f'{{sample}}_input_data_qc_{CURRENTDATE}',
         genomesize=lambda w:sampleInfo[w.sample]['haplomeSize'],
     conda:
         "../../envs/pd-tools.yml",
@@ -72,7 +71,7 @@ rule summarise_input_data_single_sample:
         '''
         export PATH=$CONDA_PREFIX/bin:$PATH
 
-        python3 {params.qcScript} -s {wildcards.sample} -g {params.genomesize} -o {params.outfilePrefix} -od {wildcards.sample}/s2_input_data_qc/qc_results
+        python3 {params.qcScript} -s {wildcards.sample} -g {params.genomesize} -o {wildcards.sample}_input_data_qc -od {wildcards.sample}/s2_input_data_qc/qc_results
         '''
 
 rule summarise_input_data_all_samples:
@@ -81,7 +80,7 @@ rule summarise_input_data_all_samples:
         hic1=expand("{smp}/s2_input_data_qc/HiC1/{smp}.hic1.tsv",smp=HICSAMPLES),
         hic2=expand("{smp}/s2_input_data_qc/HiC2/{smp}.hic2.tsv",smp=HICSAMPLES),
     output:
-        excel=f'results/all_samples/input_data_qc/input_data_qc_{NUMBEROFINPUTSAMPLES}samples_{CURRENTDATE}.xlsx',
+        excel=f'{config['rsync_folder']}/all_samples/input_data_qc_excel/input_data_qc_{NUMBEROFINPUTSAMPLES}samples_{CURRENTDATE}.xlsx',
     params:
         qcScript=os.path.join(config['script_dir'],'python_scripts','summarise_sequencing_reads.py'),
         outfilePrefix=f'input_data_qc_{NUMBEROFINPUTSAMPLES}samples_{CURRENTDATE}',
@@ -102,5 +101,5 @@ rule summarise_input_data_all_samples:
         '''
         export PATH=$CONDA_PREFIX/bin:$PATH
         
-        python3 {params.qcScript} -s {params.inputSamples} -g {params.genomesizeSamples} -o {params.outfilePrefix} -od results/all_samples/input_data_qc
+        python3 {params.qcScript} -s {params.inputSamples} -g {params.genomesizeSamples} -o {params.outfilePrefix} -od results/all_samples/input_data_qc_excel
         '''

@@ -86,11 +86,10 @@ rule summarise_hifiasm_qc_single_sample:
         compleasm=lambda w:expand('{s}/s4b_run_hifiasm_qc/{s}.hap{hapNum}/compleasm/summary.txt',s=[w.sample],hapNum=sampleInfo[w.sample]['hifiasmploidyAsArray']),
         gfastats=lambda w:expand('{s}/s4b_run_hifiasm_qc/{s}.hap{hapNum}/gfastats/stats.txt',s=[w.sample],hapNum=sampleInfo[w.sample]['hifiasmploidyAsArray']),
     output:
-        qcSummary=f'{{sample}}/s4b_run_hifiasm_qc/qc_summary/{{sample}}_hifiasm_qc_{CURRENTDATE}.xlsx',
+        qcSummary='{sample}/s4b_run_hifiasm_qc/qc_summary/{sample}_hifiasm_qc.xlsx',
     params:
         qcScript=os.path.join(config['script_dir'],'python_scripts','create_hifiasm_qc_summary.py'),
         ploidy=lambda w:sampleInfo[w.sample]['hifiasm_ploidy'],
-        outfilePrefix=f'{{sample}}_hifiasm_qc_{CURRENTDATE}',
     resources:
         runtime=30,
         mem_mb=1000,
@@ -105,14 +104,14 @@ rule summarise_hifiasm_qc_single_sample:
         export PATH=$CONDA_PREFIX/bin:$PATH
 
         # run qc summary excel file
-        python3 {params.qcScript} -s {wildcards.sample} -nhap {params.ploidy} -o {params.outfilePrefix} -od {wildcards.sample}/s4b_run_hifiasm_qc/qc_summary
+        python3 {params.qcScript} -s {wildcards.sample} -nhap {params.ploidy} -o {wildcards.sample}_hifiasm_qc -od {wildcards.sample}/s4b_run_hifiasm_qc/qc_summary
         '''
 
 rule summarise_hifiasm_qc_all_samples:
     input:
         get_hifiasm_qc_files_all_samples
     output:
-        excel=f'results/all_samples/hifiasm_qc/hifiasm_qc_{NUMBEROFINPUTSAMPLES}samples_{CURRENTDATE}.xlsx',
+        excel=f'{config['rsync_folder']}/all_samples/hifiasm_qc_excel/hifiasm_qc_{NUMBEROFINPUTSAMPLES}samples_{CURRENTDATE}.xlsx',
     params:
         qcScript=os.path.join(config['script_dir'],'python_scripts','create_hifiasm_qc_summary.py'),
         outfilePrefix=f'hifiasm_qc_{NUMBEROFINPUTSAMPLES}samples_{CURRENTDATE}',
@@ -131,6 +130,6 @@ rule summarise_hifiasm_qc_all_samples:
         '''
         export PATH=$CONDA_PREFIX/bin:$PATH
 
-        python3 {params.qcScript} -s {params.inputSamples} -nhap {params.ploidySamples} -o {params.outfilePrefix} -od results/all_samples/hifiasm_qc
+        python3 {params.qcScript} -s {params.inputSamples} -nhap {params.ploidySamples} -o {params.outfilePrefix} -od results/all_samples/hifiasm_qc_excel
         '''
 
