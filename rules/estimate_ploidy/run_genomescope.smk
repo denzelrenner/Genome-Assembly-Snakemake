@@ -3,7 +3,7 @@ rule run_genomescope:
         fastq="{sample}/s1_get_input_data/Hifi/{sample}.fastq.gz"
 
     output:
-        plots=expand("{{sample}}/s3_estimate_ploidy/genomescope/plots/{{sample}}_{png}.png",png=['transformed_log_plot','transformed_linear_plot','log_plot','linear_plot'])
+        plots=expand("{{sample}}/s3_estimate_ploidy/genomescope/{{sample}}_{png}.png",png=['transformed_log_plot','transformed_linear_plot','log_plot','linear_plot'])
 
     params:
         ploidy=lambda w: sampleInfo[w.sample]["ploidy"],
