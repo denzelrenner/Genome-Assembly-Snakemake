@@ -21,16 +21,40 @@ def get_hifiasm_qc_files_all_samples(w):
 
     return outputFiles
 
+rule download_compleasm_lineages:
+    output:
+        done=f"{config['compleasm_download_path']}/{{lineage_odb}}.done",
+    params:
+        libpath=config['compleasm_download_path'],
+        lineage=lambda w: w.lineage_odb.split('_')[0],
+        odb=lambda w: w.lineage_odb.split('_')[1],
+    resources:
+        runtime=240,
+    threads:
+        1
+    conda:
+        "../../envs/qc-tools.yml"
+    localrule:
+        True
+    shell:
+        '''
+        export PATH=$CONDA_PREFIX/bin:$PATH
+
+        compleasm download -L {params.libpath} --odb {params.odb} {params.lineage}
+        '''
+
+
 
 rule hifiasm_qc_on_individual_haplome:
     input:
         fa='{sample}/s4_run_hifiasm/{sample}.hap{haplomeNumber}.fa',
+        compleasm_lineage_downloads=expand(f"{config['compleasm_download_path']}/{{lineage}}.done",lineage=ALLCOMPLEASMLINEAGES)
     output:
         compleasm='{sample}/s4_run_hifiasm/quality_control/{sample}.hap{haplomeNumber}/compleasm/summary.txt',
         gfastats='{sample}/s4_run_hifiasm/quality_control/{sample}.hap{haplomeNumber}/gfastats/stats.txt',
     params:
-        odb=config['compleasm_odb'],
-        lineage=config['compleasm_lineage'],
+        odb=lambda w: sampleInfo[w.sample]['odb'],
+        lineage=lambda w: sampleInfo[w.sample]['lineage'],
         libpath=config['compleasm_download_path'],
     resources:
         runtime=240,

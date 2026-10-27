@@ -41,12 +41,17 @@ def set_rule_target():
     # add excel spreadhseet which summarises hifiasm results for all samples
     outFiles.append(f'summary_results/hifiasm_qc/hifiasm_qc_{NUMBEROFINPUTSAMPLES}samples_{CURRENTDATE}.xlsx')
 
+    # get target files for compleasm dbs
+    outFiles.extend(expand(f"{config['compleasm_download_path']}/{{lineage}}.done",lineage=ALLCOMPLEASMLINEAGES))
+
     # get target files for sequencing read qc
     # individual sample files
     outFiles.extend(expand(f'{{s}}/s2_input_data_qc/qc_results/{{s}}_input_data_qc_{CURRENTDATE}.xlsx',s=SAMPLES))
     
-    # all sampels file
+    # all samples file
     outFiles.append(f'summary_results/input_data_qc/input_data_qc_{NUMBEROFINPUTSAMPLES}samples_{CURRENTDATE}.xlsx')
+
+
 
 
     return outFiles

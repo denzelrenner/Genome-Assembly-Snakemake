@@ -18,7 +18,7 @@ rule pctg_gfa_to_fa:
         
 rule putg_gfa_to_fa:
     input:
-        '{sample}/s4_run_hifiasm/{sample}.p_utg.gfa',
+        '{sample}/s4_run_hifiasm/.done.txt',
     output:
         '{sample}/s4_run_hifiasm/{sample}.p_utg.fa',
     threads:
@@ -31,5 +31,5 @@ rule putg_gfa_to_fa:
     shell:
         '''
         # convert to fasta file
-        awk '/^S/{{print ">"$2;print $3}}' {input} > {output}
+        awk '/^S/{{print ">"$2;print $3}}' {wildcards.sample}/s4_run_hifiasm/{wildcards.sample}.p_utg.gfa' > {output}
         '''

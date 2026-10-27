@@ -77,6 +77,9 @@ def set_scaffolding_tool(row):
 
         return 'none'
 
+def separate_lineage_and_odb(row):
+
+    return row['compleasm_lineage_odb'].split('_')
 
 
 # process samples
@@ -101,6 +104,7 @@ df['hifiasm_ploidy'] = df.apply(set_hifiasm_ploidy,axis=1)
 df['input_hic1_files'],df['hic1_workflow_file'] = zip(*df.apply(set_hic1_files_to_merge,axis=1))
 df['input_hic2_files'],df['hic2_workflow_file'] = zip(*df.apply(set_hic2_files_to_merge,axis=1))
 df['scaffolding_tool'] = df.apply(set_scaffolding_tool,axis=1)
+df['lineage'],df['odb'] = zip(*df.apply(separate_lineage_and_odb,axis=1))
 
 # convert df to dictionary, this is why we set sample as index in the pandas read csv, and we also dont drop its comment either
 sampleInfo = df.to_dict("index")
@@ -133,14 +137,6 @@ for smpl in sampleInfo:
     if (sampleInfo[smpl]['hic1_workflow_file'] not in sampleInfo[smpl]['input_hic1_files']) and sampleInfo[smpl]['useHiC']:
         sampleInfo[smpl]['merge_hic_shell'] = 'true'
         sampleInfo[smpl]['merge_hic'] = True
-
-# add has bash true false or use HiC
-for smpl in sampleInfo:
-    
-    sampleInfo[smpl]['use_hic_shell'] = 'false'
-
-    if sampleInfo[smpl]['useHiC']:
-        sampleInfo[smpl]['use_hic_shell'] = 'true'
 
 # add has bash true false or use HiC
 for smpl in sampleInfo:
@@ -179,3 +175,7 @@ GENOMESIZEFORSAMPLES = [sampleInfo[s]['haplomeSize'] for s in SAMPLES]
 
 # set number of samples
 NUMBEROFINPUTSAMPLES = len(SAMPLES)
+
+# get all lineages to be download
+ALLCOMPLEASMLINEAGES = list(set([sampleInfo[s]['compleasm_lineage_odb'] for s in SAMPLES]))
+

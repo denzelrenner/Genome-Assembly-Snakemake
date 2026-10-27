@@ -16,7 +16,6 @@ configIni.read(configIniPath)
 
 # build snakemake config
 ### DEFAULTS ###
-config['ploidy'] = configIni['DEFAULT'].getint('ploidy',fallback=2)
 config['samples_file'] = configIni['DEFAULT'].get('samples_file',fallback='samples.csv')
 
 ### PREPARING HIFI READS
@@ -27,13 +26,10 @@ config['hifiadapterfiltDB_path'] = configIni['PREPARING_HIFI_READS'].get('hifiad
 config['hifi_reads'] = configIni['HIFIASM'].get('hifi_reads',fallback='')
 config['hic1_reads'] = configIni['HIFIASM'].get('hic1_reads',fallback='')
 config['hic2_reads'] = configIni['HIFIASM'].get('hic2_reads',fallback='')
-config['homcov'] = configIni['HIFIASM'].getint('homcov',fallback=0)
 config['use_genomescope_homcov'] = configIni['HIFIASM'].getboolean('use_genomescope_homcov',fallback=False)
 
 ### QUALITY CONTROL
 config['compleasm_download_path'] = configIni['QUALITY_CONTROL'].get('compleasm_download_path',fallback='')
-config['compleasm_lineage'] = configIni['QUALITY_CONTROL'].get('compleasm_lineage',fallback='brassicales')
-config['compleasm_odb'] = configIni['QUALITY_CONTROL'].get('compleasm_odb',fallback='odb12')
 
 ### SCAFFOLDING
 config['telomere_motif'] = configIni['SCAFFOLDING'].getboolean('telomere_motif',fallback='TTTAGGG')
