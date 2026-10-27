@@ -1,12 +1,12 @@
 rule align_hic_to_hifiasm_haplome:
     input:
-        fa='{sample}/s4_run_hifiasm/{sample}.hap{haplomeNumber}.fa',
+        fa='{sample}/s4a_run_hifiasm/{sample}.hap{haplomeNumber}.fa',
         hic1=lambda w: sampleInfo[w.sample]['hic1_workflow_file'],
         hic2=lambda w: sampleInfo[w.sample]['hic2_workflow_file']
     output:
         bam="{sample}/s5_run_yahs/hap{haplomeNumber}/mapped.PT.bam",
-        fai='{sample}/s4_run_hifiasm/{sample}.hap{haplomeNumber}.fa.fai',
-        ctgSizes='{sample}/s4_run_hifiasm/{sample}.hap{haplomeNumber}.fa.contigsizes',
+        fai='{sample}/s4a_run_hifiasm/{sample}.hap{haplomeNumber}.fa.fai',
+        ctgSizes='{sample}/s4a_run_hifiasm/{sample}.hap{haplomeNumber}.fa.contigsizes',
         stats="{sample}/s5_run_yahs/hap{haplomeNumber}/stats.txt",
         pairs="{sample}/s5_run_yahs/hap{haplomeNumber}/mapped.pairs",
     params:
@@ -49,7 +49,7 @@ rule align_hic_to_hifiasm_haplome:
 
 rule run_yahs:
     input:
-        fa='{sample}/s4_run_hifiasm/{sample}.hap{haplomeNumber}.fa',
+        fa='{sample}/s4a_run_hifiasm/{sample}.hap{haplomeNumber}.fa',
         bam="{sample}/s5_run_yahs/hap{haplomeNumber}/mapped.PT.bam"
     output:
         yahsScaffoldOutput="{sample}/s5_run_yahs/hap{haplomeNumber}/yahs.out_scaffolds_final.fa",

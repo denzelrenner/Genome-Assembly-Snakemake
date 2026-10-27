@@ -1,7 +1,7 @@
 import os
 rule align_hic_to_utg:
     input:
-        fa='{sample}/s4_run_hifiasm/{sample}.p_utg.fa',
+        fa='{sample}/s4a_run_hifiasm/{sample}.p_utg.fa',
         hic1=lambda w: sampleInfo[w.sample]['hic1_workflow_file'],
         hic2=lambda w: sampleInfo[w.sample]['hic2_workflow_file']
     output:
@@ -30,12 +30,13 @@ rule align_hic_to_utg:
         
 rule run_haphic:
     input:
-        fa='{sample}/s4_run_hifiasm/{sample}.p_utg.fa',
+        fa='{sample}/s4a_run_hifiasm/{sample}.p_utg.fa',
         bam="{sample}/s5_run_haphic/align_hic_to_utg/HiC.filtered.bam"
     output:
-        agp="{sample}/s5_run_haphic/04.build/scaffolds.agp",
-        fa="{sample}/s5_run_haphic/04.build/scaffolds.fa",
-        pdf="{sample}/s5_run_haphic/plot/{sample}_contact_map.pdf"
+        outdir=directory("{sample}/s5_run_haphic/scaffolding")
+        agp="{sample}/s5_run_haphic/scaffolding/04.build/scaffolds.agp",
+        fa="{sample}/s5_run_haphic/scaffolding/04.build/scaffolds.fa",
+        pdf="{sample}/s5_run_haphic/scaffolding/plot/{sample}_contact_map.pdf"
     params:
         nchrs=lambda w: sampleInfo[w.sample]["ploidy"] * sampleInfo[w.sample]["chrom"],
         scriptPath=os.path.join(config['script_dir'],"HapHiC"),
@@ -56,15 +57,17 @@ rule run_haphic:
         which python3
         echo $PATH
 
-        # remove 04.build dir to prevent exists error by haphic
-        rm -d {wildcards.sample}/s5_run_haphic/04.build
+        # make outdir
+        mkdir -p {output.outdir}
 
-        {params.scriptPath}/haphic pipeline {input.fa} {input.bam} {params.nchrs} --threads {threads} --processes {threads} --outdir {wildcards.sample}/s5_run_haphic
+        {params.scriptPath}/haphic pipeline {input.fa} {input.bam} {params.nchrs} --threads {threads} --processes {threads} --outdir {output.outdir}
 
-	    cd {wildcards.sample}/s5_run_haphic/plot
+        # make plots dir
+        mkdir -p {output.outdir}/plot
+	    cd {output.outdir}/plot
 
         # move into plot dir otherwise supplementary files will not be properly placed
-        {params.scriptPath}/haphic plot ../../../{output.agp} ../../../{input.bam} --prefix {wildcards.sample}_
+        {params.scriptPath}/haphic plot ../../../../{output.agp} ../../../../{input.bam} --prefix {wildcards.sample}_
         '''
         
 

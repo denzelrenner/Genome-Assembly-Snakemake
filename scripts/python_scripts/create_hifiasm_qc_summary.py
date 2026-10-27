@@ -148,13 +148,13 @@ if len(sample_haplome) == 1:
             haplome = f'{s}.hap{i}'
 
             # get chrom sizes df
-            chromSizes = get_chromosome_sizes(haplome_name=haplome,file=f'{s}/s4_run_hifiasm/{s}.hap{i}.fa')
+            chromSizes = get_chromosome_sizes(haplome_name=haplome,file=f'{s}/s4a_run_hifiasm/{s}.hap{i}.fa')
 
             # get gfastats df
-            gfastats = gfastats_to_df(haplome_name=haplome,file=f'{s}/s4_run_hifiasm/quality_control/{s}.hap{i}/gfastats/stats.txt')
+            gfastats = gfastats_to_df(haplome_name=haplome,file=f'{s}/s4b_run_hifiasm_qc/{s}.hap{i}/gfastats/stats.txt')
 
             # get compleams df
-            compleasm = compleasm_to_df(haplome_name=haplome,file=f'{s}/s4_run_hifiasm/quality_control/{s}.hap{i}/compleasm/summary.txt')
+            compleasm = compleasm_to_df(haplome_name=haplome,file=f'{s}/s4b_run_hifiasm_qc/{s}.hap{i}/compleasm/summary.txt')
         
             # combine stats
             qcStats = concat_multiple_dataframes([gfastats,compleasm])
@@ -187,13 +187,13 @@ elif len(sample_haplome) > 1:
             haplome = f'{s}.hap{i}'
 
             # get chrom sizes df
-            chromSizes = get_chromosome_sizes(haplome_name=haplome,file=f'{s}/s4_run_hifiasm/{s}.hap{i}.fa')
+            chromSizes = get_chromosome_sizes(haplome_name=haplome,file=f'{s}/s4a_run_hifiasm/{s}.hap{i}.fa')
 
             # get gfastats df
-            gfastats = gfastats_to_df(haplome_name=haplome,file=f'{s}/s4_run_hifiasm/quality_control/{s}.hap{i}/gfastats/stats.txt')
+            gfastats = gfastats_to_df(haplome_name=haplome,file=f'{s}/s4b_run_hifiasm_qc/{s}.hap{i}/gfastats/stats.txt')
 
             # get compleams df
-            compleasm = compleasm_to_df(haplome_name=haplome,file=f'{s}/s4_run_hifiasm/quality_control/{s}.hap{i}/compleasm/summary.txt')
+            compleasm = compleasm_to_df(haplome_name=haplome,file=f'{s}/s4b_run_hifiasm_qc/{s}.hap{i}/compleasm/summary.txt')
         
             # combine stats
             qcStats = concat_multiple_dataframes([gfastats,compleasm])

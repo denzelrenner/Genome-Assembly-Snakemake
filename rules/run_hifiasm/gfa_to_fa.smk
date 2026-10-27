@@ -1,8 +1,8 @@
 rule pctg_gfa_to_fa:
     input:
-        '{sample}/s4_run_hifiasm/.done.txt',
+        '{sample}/s4a_run_hifiasm/.done.txt',
     output:
-        '{sample}/s4_run_hifiasm/{sample}.hap{haplomeNumber}.fa'
+        '{sample}/s4a_run_hifiasm/{sample}.hap{haplomeNumber}.fa'
     threads:
         1
     resources:
@@ -13,14 +13,14 @@ rule pctg_gfa_to_fa:
     shell:
         '''
         # convert to fasta file
-        awk '/^S/{{print ">"$2;print $3}}' {wildcards.sample}/s4_run_hifiasm/{wildcards.sample}.hap{wildcards.haplomeNumber}.p_ctg.gfa > {output}
+        awk '/^S/{{print ">"$2;print $3}}' {wildcards.sample}/s4a_run_hifiasm/{wildcards.sample}.hap{wildcards.haplomeNumber}.p_ctg.gfa > {output}
         '''
         
 rule putg_gfa_to_fa:
     input:
-        '{sample}/s4_run_hifiasm/.done.txt',
+        '{sample}/s4a_run_hifiasm/.done.txt',
     output:
-        '{sample}/s4_run_hifiasm/{sample}.p_utg.fa',
+        '{sample}/s4a_run_hifiasm/{sample}.p_utg.fa',
     threads:
         1
     localrule:
@@ -31,5 +31,5 @@ rule putg_gfa_to_fa:
     shell:
         '''
         # convert to fasta file
-        awk '/^S/{{print ">"$2;print $3}}' {wildcards.sample}/s4_run_hifiasm/{wildcards.sample}.p_utg.gfa' > {output}
+        awk '/^S/{{print ">"$2;print $3}}' {wildcards.sample}/s4a_run_hifiasm/{wildcards.sample}.p_utg.gfa > {output}
         '''

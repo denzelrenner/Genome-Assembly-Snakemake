@@ -81,7 +81,7 @@ rule summarise_input_data_all_samples:
         hic1=expand("{smp}/s2_input_data_qc/HiC1/{smp}.hic1.tsv",smp=HICSAMPLES),
         hic2=expand("{smp}/s2_input_data_qc/HiC2/{smp}.hic2.tsv",smp=HICSAMPLES),
     output:
-        excel=f'summary_results/input_data_qc/input_data_qc_{NUMBEROFINPUTSAMPLES}samples_{CURRENTDATE}.xlsx',
+        excel=f'results/all_samples/input_data_qc/input_data_qc_{NUMBEROFINPUTSAMPLES}samples_{CURRENTDATE}.xlsx',
     params:
         qcScript=os.path.join(config['script_dir'],'python_scripts','summarise_sequencing_reads.py'),
         outfilePrefix=f'input_data_qc_{NUMBEROFINPUTSAMPLES}samples_{CURRENTDATE}',
@@ -102,5 +102,5 @@ rule summarise_input_data_all_samples:
         '''
         export PATH=$CONDA_PREFIX/bin:$PATH
         
-        python3 {params.qcScript} -s {params.inputSamples} -g {params.genomesizeSamples} -o {params.outfilePrefix} -od summary_results/input_data_qc
+        python3 {params.qcScript} -s {params.inputSamples} -g {params.genomesizeSamples} -o {params.outfilePrefix} -od results/all_samples/input_data_qc
         '''

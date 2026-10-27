@@ -3,7 +3,7 @@ rule run_genomescope:
         fastq="{sample}/s1_get_input_data/Hifi/{sample}.fastq.gz"
 
     output:
-        plots=expand("{{sample}}/s3_estimate_ploidy/genomescope/plots/{png}.png",png=['transformed_log_plot','transformed_linear_plot','log_plot','linear_plot'])
+        plots=expand("{{sample}}/s3_estimate_ploidy/genomescope/plots/{{sample}}_{png}.png",png=['transformed_log_plot','transformed_linear_plot','log_plot','linear_plot'])
 
     params:
         ploidy=lambda w: sampleInfo[w.sample]["ploidy"],
@@ -27,14 +27,13 @@ rule run_genomescope:
         export PATH=$CONDA_PREFIX/bin:$PATH
         
         mkdir -p {params.outdir}/tmp 
-        mkdir -p {params.outdir}/plots
         
         # run kmc
         kmc -k31 -t{threads} -m178 -ci1 -cs2000000 {input.fastq} {params.outdir}/reads {params.outdir}/tmp/
         kmc_tools transform {params.outdir}/reads histogram {params.outdir}/reads.histo -cx2000000
 
         # run genomescope
-        genomescope2 -i {params.outdir}/reads.histo -o {params.outdir} -k 31 -m 2000000 -p {params.ploidy}
-        mv {params.outdir}/*.png {params.outdir}/plots
+        genomescope2 -i {params.outdir}/reads.histo -o {params.outdir} -k 31 -m 2000000 -p {params.ploidy} -n {wildcards.sample}
+    
         '''
 
