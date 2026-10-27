@@ -4,7 +4,7 @@ rule run_hifiasm:
         hic1=lambda w: sampleInfo[w.sample]['hic1_workflow_file'],
         hic2=lambda w: sampleInfo[w.sample]['hic2_workflow_file']
     output:
-        outdir=directory('{sample}/s4a_run_hifiasm')
+        outdir=directory('{sample}/s4a_run_hifiasm'),
         complete='{sample}/s4a_run_hifiasm/.done.txt',
     log:
         stderr='{sample}/s4a_run_hifiasm/hifiasm_run.log',

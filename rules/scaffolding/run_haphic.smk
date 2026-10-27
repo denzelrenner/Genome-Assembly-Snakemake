@@ -33,7 +33,7 @@ rule run_haphic:
         fa='{sample}/s4a_run_hifiasm/{sample}.p_utg.fa',
         bam="{sample}/s5_run_haphic/align_hic_to_utg/HiC.filtered.bam"
     output:
-        outdir=directory("{sample}/s5_run_haphic/scaffolding")
+        outdir=directory("{sample}/s5_run_haphic/scaffolding"),
         agp="{sample}/s5_run_haphic/scaffolding/04.build/scaffolds.agp",
         fa="{sample}/s5_run_haphic/scaffolding/04.build/scaffolds.fa",
         pdf="{sample}/s5_run_haphic/scaffolding/plot/{sample}_contact_map.pdf"
