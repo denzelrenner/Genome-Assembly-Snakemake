@@ -51,11 +51,11 @@ def set_rule_target():
     # all samples file 
     outFiles.append(f'{config['rsync_folder']}/all_samples/input_data_qc_excel/input_data_qc_{NUMBEROFINPUTSAMPLES}samples_{CURRENTDATE}.xlsx')
 
-    outFiles.extend(expand(f'{config['rsync_folder']}/individual_sample/{{smp}}/hifiasm_qc_excel/{{smp}}_hifiasm_qc.xlsx',smp=SAMPLES))
+    outFiles.extend(expand(f'{config['rsync_folder']}/individual_sample/{{smp}}/hifiasm_qc_excel/{{smp}}_hifiasm_qc_{CURRENTDATE}.xlsx',smp=SAMPLES))
     outFiles.extend(expand(f"{config['rsync_folder']}/individual_sample/{{smp}}/smudgeplots/{{smp}}_{{png}}_{CURRENTDATE}.png",smp=SAMPLES,png=['smudgeplot','smudgeplot_log10','centralities']))
     outFiles.extend(expand(f"{config['rsync_folder']}/individual_sample/{{smp}}/genomescope_plots/{{smp}}_{{png}}_{CURRENTDATE}.png",smp=SAMPLES,png=['transformed_log_plot','transformed_linear_plot','log_plot','linear_plot']))
-    outFiles.extend(expand(f'{config['rsync_folder']}/individual_sample/{{smp}}/input_reads_qc_excel/{{smp}}_input_data_qc.xlsx',smp=SAMPLES))
-    outFiles.extend(expand(f'{config['rsync_folder']}/individual_sample/{{smp}}/pretextmap/{{smp}}_{CURRENTDATE}.map.pretext',smp=SAMPLES))
+    outFiles.extend(expand(f'{config['rsync_folder']}/individual_sample/{{smp}}/input_reads_qc_excel/{{smp}}_input_data_qc_{CURRENTDATE}.xlsx',smp=SAMPLES))
+    outFiles.extend(expand(f'{config['rsync_folder']}/individual_sample/{{smp}}/pretextmap/{{smp}}_{CURRENTDATE}.map.pretext',smp=HICSAMPLES))
 
     return outFiles
 
