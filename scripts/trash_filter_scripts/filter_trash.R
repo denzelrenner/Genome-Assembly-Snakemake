@@ -29,8 +29,8 @@ str(arrays_data)
 # Load libraries
 suppressMessages({library(seqinr)})
 
-# Load additional functions
-source(file.path(Sys.getenv("WORKFLOW_DIR"), "bin", "auxfuns.R"))
+# Load additional functions, edited by DenzelRenner 26/10/2026
+source(file.path(Sys.getenv("TRASH_FILTER_SCRIPTS_DIR"), "auxfuns.R"))
 
 # Filtering
 {

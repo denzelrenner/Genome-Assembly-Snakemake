@@ -186,12 +186,13 @@ rule create_trash_bedgraph:
     input:
         fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/04.build/scaffolds.fa",
     output:
-        multiext("{sample}/s6_build_pretextmap/trash/trash_filtered_repeat_arrays",filtered_repeat_arrays_gff=".gff",filtered_repeat_arrays_bedgraph='.bedgraph'),        
+        bed="{sample}/s6_build_pretextmap/trash/trash_filtered_repeat_arrays.bed",
+        bedgraph="{sample}/s6_build_pretextmap/trash/trash_filtered_repeat_arrays.bedgraph",
     params:
         trash_dir=os.path.join(config['script_dir'],'TRASH_2'),
         trash_src_dir=os.path.join(config['script_dir'],'TRASH_2','src'),
         trash_filter_dir=os.path.join(config['script_dir'],'trash_filter_scripts'),
-        outdir="{sample}/s6_build_pretextmap/trash",
+        outdir=lambda w:f"{w.sample}/s6_build_pretextmap/trash",
     threads:
         16
     resources:
@@ -207,15 +208,17 @@ rule create_trash_bedgraph:
         export PATH={params.trash_src_dir}:$PATH
         export PATH={params.trash_filter_dir}:$PATH
 
+        export TRASH_FILTER_SCRIPTS_DIR={params.trash_filter_dir}
+
         # run TRASH
-        Rscript TRASH.R -f {input.fa} -o {params.outdir} -p {threads}
+        TRASH.R -f {input.fa} -o {params.outdir} -p {threads}
 
         # filter trash output 
-        Rscript filter_trash.R {params.outdir}/scaffolds.fa_repeats_with_seq.csv {params.outdir}/scaffolds.fa_arrays.csv {params.outdir}/scaffolds.fa_repeats_filtered.csv {params.outdir}/scaffolds.fa_arrays_filtered.csv
+        filter_trash.R {params.outdir}/scaffolds.fa_repeats_with_seq.csv {params.outdir}/scaffolds.fa_arrays.csv {params.outdir}/scaffolds.fa_repeats_filtered.csv {params.outdir}/scaffolds.fa_arrays_filtered.csv
 
         # csv to bedgraph
-        awk -F "," -v 'OFS=\\t' '{{ print $3,$1,$2,$11 }}' {params.outdir}/scaffolds.fa_arrays_filtered.csv | sed s/'"'/''/g | sed s/'seqID'/'Chr'/g > {output.filtered_repeat_arrays_bedgraph}
+        awk -F "," -v 'OFS=\\t' '{{ print $3,$1,$2,$11 }}' {params.outdir}/scaffolds.fa_arrays_filtered.csv | sed s/'"'/''/g | sed s/'seqID'/'Chr'/g > {output.bedgraph}
 
         # create gff
-        cut -f 1,2,3 {output.filtered_repeat_arrays_bedgraph} > {output.filtered_repeat_arrays_gff}
+        cut -f 1,2,3 {output.bedgraph} > {output.bed}
         '''
