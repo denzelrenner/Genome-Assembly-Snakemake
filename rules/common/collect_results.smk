@@ -13,7 +13,7 @@ rule build_rsync_folder:
         expand(f"{config['rsync_folder']}/individual_sample/{expandPatternGenomescope}_{CURRENTDATE}.png",png=['transformed_log_plot','transformed_linear_plot','log_plot','linear_plot']),
         hifiasm_out=f'{config['rsync_folder']}/individual_sample/{{sample}}/hifiasm_qc_excel/{{sample}}_hifiasm_qc_{CURRENTDATE}.xlsx',
         seqkit_out=f'{config['rsync_folder']}/individual_sample/{{sample}}/input_reads_qc_excel/{{sample}}_input_data_qc_{CURRENTDATE}.xlsx',
-        pretext_signal=f'{config['rsync_folder']}/individual_sample/{{sample}}/pretextmap/.done.txt',
+        pretext=f'{config['rsync_folder']}/individual_sample/{{sample}}/pretextmap/{{sample}}_{CURRENTDATE}.map.pretext',
     params:
         inputDate=CURRENTDATE,
         outdir=lambda w:f"{config['rsync_folder']}/individual_sample/{w.sample}",
@@ -45,7 +45,8 @@ rule build_rsync_folder:
         # get pretextmap if HiC used
         if [ {params.useHiCShell} = true ];then
             cp {input.pretext} {params.outdir}/pretextmap/{wildcards.sample}_{params.inputDate}.map.pretext
+        else
+            echo 'No HiC data was given so I am empty' > {params.outdir}/pretextmap/{wildcards.sample}_{params.inputDate}.map.pretext
         fi
 
-        echo 'Done' > {output.pretext_signal}
         '''
