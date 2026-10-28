@@ -86,8 +86,8 @@ rule get_hifiasm_fasta_paths:
         True
     shell:
         '''
-        ls {input.contigs} > {output[0]}
-        ls {input.unitigs} > {output[1]}
+        ls {input.contigs} > {output[1]}
+        ls {input.unitigs} > {output[0]}
 
         # use awk to prepend the working dir to file names
         awk '{{print "{params.workingDir}/"$1}}' {output[0]} > tmp && mv tmp {output[0]}
