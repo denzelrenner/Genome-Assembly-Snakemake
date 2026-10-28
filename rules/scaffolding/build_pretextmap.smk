@@ -1,3 +1,4 @@
+import os
 rule build_pretextmap:
     input:
         bam="{sample}/s6_build_pretextmap/mapping_coverage/hic/hic_sorted.bam",
@@ -184,15 +185,15 @@ rule create_barrnap_bedgraph:
 
 rule create_trash_bedgraph:
     input:
-        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/scaffolding/04.build/scaffolds.fa",
+        fa=lambda w: os.path.join(SNAKEMAKE_OUTPUTDIR,f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa") if sampleInfo[w.sample]['ploidy'] == 2 else os.path.join(SNAKEMAKE_OUTPUTDIR,f"{w.sample}/s5_run_haphic/scaffolding/04.build/scaffolds.fa"),
     output:
-        bed="{sample}/s6_build_pretextmap/trash/trash_filtered_repeat_arrays.bed",
-        bedgraph="{sample}/s6_build_pretextmap/trash/trash_filtered_repeat_arrays.bedgraph",
+        bed=os.path.join(SNAKEMAKE_OUTPUTDIR,"{sample}/s6_build_pretextmap/trash/trash_filtered_repeat_arrays.bed"),
+        bedgraph=os.path.join(SNAKEMAKE_OUTPUTDIR,"{sample}/s6_build_pretextmap/trash/trash_filtered_repeat_arrays.bedgraph"),
     params:
         trash_dir=os.path.join(config['script_dir'],'TRASH_2'),
         trash_src_dir=os.path.join(config['script_dir'],'TRASH_2','src'),
         trash_filter_dir=os.path.join(config['script_dir'],'trash_filter_scripts'),
-        outdir=lambda w:f"{w.sample}/s6_build_pretextmap/trash",
+        outdir=lambda w: os.path.join(SNAKEMAKE_OUTPUTDIR,f"{w.sample}/s6_build_pretextmap/trash"),
     threads:
         16
     resources:

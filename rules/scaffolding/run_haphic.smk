@@ -33,11 +33,11 @@ rule run_haphic:
         fa='{sample}/s4a_run_hifiasm/{sample}.p_utg.fa',
         bam="{sample}/s5_run_haphic/align_hic_to_utg/HiC.filtered.bam"
     output:
-        outdir=directory("{sample}/s5_run_haphic/scaffolding"),
         agp="{sample}/s5_run_haphic/scaffolding/04.build/scaffolds.agp",
-        fa="{sample}/s5_run_haphic/scaffolding/04.build/scaffolds.fa",
+        outFasta="{sample}/s5_run_haphic/scaffolding/04.build/scaffolds.fa",
         pdf="{sample}/s5_run_haphic/scaffolding/plot/{sample}_contact_map.pdf"
     params:
+        outdir=lambda w: f"{w.sample}/s5_run_haphic/scaffolding",
         nchrs=lambda w: sampleInfo[w.sample]["ploidy"] * sampleInfo[w.sample]["chrom"],
         scriptPath=os.path.join(config['script_dir'],"HapHiC"),
     conda:
@@ -58,13 +58,19 @@ rule run_haphic:
         echo $PATH
 
         # make outdir
-        mkdir -p {output.outdir}
+        # if output dir exists then remove it
+        if [ -d {params.outdir} ];then
+            rm -r {params.outdir}
+        fi
 
-        {params.scriptPath}/haphic pipeline {input.fa} {input.bam} {params.nchrs} --threads {threads} --processes {threads} --outdir {output.outdir}
+        # make output dir 
+        mkdir -p {params.outdir}
+
+        {params.scriptPath}/haphic pipeline {input.fa} {input.bam} {params.nchrs} --threads {threads} --processes {threads} --outdir {params.outdir}
 
         # make plots dir
-        mkdir -p {output.outdir}/plot
-	    cd {output.outdir}/plot
+        mkdir -p {params.outdir}/plot
+	cd {params.outdir}/plot
 
         # move into plot dir otherwise supplementary files will not be properly placed
         {params.scriptPath}/haphic plot ../../../../{output.agp} ../../../../{input.bam} --prefix {wildcards.sample}_

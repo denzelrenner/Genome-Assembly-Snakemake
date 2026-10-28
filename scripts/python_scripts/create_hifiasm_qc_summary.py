@@ -109,7 +109,7 @@ def compleasm_to_df(haplome_name:str,file:str):
 
         ### Parse Compleasm data
         # store busco data
-        CompleasmData = CompleasmFile.readlines()[1:]
+        CompleasmData = CompleasmFile.readlines()[3:]
         TotalBuscoGenes = int(CompleasmData[-1].split(':')[-1])
         CompleasmData = CompleasmData[:-1] # remove last line
         CompleasmDict = {} 
