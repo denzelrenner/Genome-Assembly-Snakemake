@@ -185,20 +185,23 @@ rule create_barrnap_bedgraph:
 
 rule create_trash_bedgraph:
     input:
-        fa=lambda w: os.path.join(SNAKEMAKE_OUTPUTDIR,f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa") if sampleInfo[w.sample]['ploidy'] == 2 else os.path.join(SNAKEMAKE_OUTPUTDIR,f"{w.sample}/s5_run_haphic/scaffolding/04.build/scaffolds.fa"),
+        lambda w: f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/scaffolding/04.build/scaffolds.fa",
     output:
-        bed=os.path.join(SNAKEMAKE_OUTPUTDIR,"{sample}/s6_build_pretextmap/trash/trash_filtered_repeat_arrays.bed"),
-        bedgraph=os.path.join(SNAKEMAKE_OUTPUTDIR,"{sample}/s6_build_pretextmap/trash/trash_filtered_repeat_arrays.bedgraph"),
+        "{sample}/s6_build_pretextmap/trash/trash_filtered_repeat_arrays.bed",
+        "{sample}/s6_build_pretextmap/trash/trash_filtered_repeat_arrays.bedgraph",
     params:
         trash_dir=os.path.join(config['script_dir'],'TRASH_2'),
         trash_src_dir=os.path.join(config['script_dir'],'TRASH_2','src'),
         trash_filter_dir=os.path.join(config['script_dir'],'trash_filter_scripts'),
         outdir=lambda w: os.path.join(SNAKEMAKE_OUTPUTDIR,f"{w.sample}/s6_build_pretextmap/trash"),
+        fa=lambda w: os.path.join(SNAKEMAKE_OUTPUTDIR,f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa") if sampleInfo[w.sample]['ploidy'] == 2 else os.path.join(SNAKEMAKE_OUTPUTDIR,f"{w.sample}/s5_run_haphic/scaffolding/04.build/scaffolds.fa"),
+        bed=lambda w: os.path.join(SNAKEMAKE_OUTPUTDIR,f"{w.sample}/s6_build_pretextmap/trash/trash_filtered_repeat_arrays.bed"),
+        bedgraph=lambda w: os.path.join(SNAKEMAKE_OUTPUTDIR,f"{w.sample}/s6_build_pretextmap/trash/trash_filtered_repeat_arrays.bedgraph"),
     threads:
         16
     resources:
         runtime=240,
-        mem_mb=10000,
+        mem_mb=50000,
     conda:
         '../../envs/trash-v2.yml'
     shell:
@@ -212,14 +215,14 @@ rule create_trash_bedgraph:
         export TRASH_FILTER_SCRIPTS_DIR={params.trash_filter_dir}
 
         # run TRASH
-        TRASH.R -f {input.fa} -o {params.outdir} -p {threads}
+        TRASH.R -f {params.fa} -o {params.outdir} -p {threads}
 
         # filter trash output 
         filter_trash.R {params.outdir}/scaffolds.fa_repeats_with_seq.csv {params.outdir}/scaffolds.fa_arrays.csv {params.outdir}/scaffolds.fa_repeats_filtered.csv {params.outdir}/scaffolds.fa_arrays_filtered.csv
 
         # csv to bedgraph
-        awk -F "," -v 'OFS=\\t' '{{ print $3,$1,$2,$11 }}' {params.outdir}/scaffolds.fa_arrays_filtered.csv | sed s/'"'/''/g | sed s/'seqID'/'Chr'/g > {output.bedgraph}
+        awk -F "," -v 'OFS=\\t' '{{ print $3,$1,$2,$11 }}' {params.outdir}/scaffolds.fa_arrays_filtered.csv | sed s/'"'/''/g | sed s/'seqID'/'Chr'/g > {params.bedgraph}
 
         # create gff
-        cut -f 1,2,3 {output.bedgraph} > {output.bed}
+        cut -f 1,2,3 {params.bedgraph} > {params.bed}
         '''
