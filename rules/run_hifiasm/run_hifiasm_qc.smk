@@ -111,10 +111,10 @@ rule summarise_hifiasm_qc_all_samples:
     input:
         get_hifiasm_qc_files_all_samples
     output:
-        excel=f'{config['rsync_folder']}/all_samples/hifiasm_qc_excel/hifiasm_qc_{NUMBEROFINPUTSAMPLES}samples_{CURRENTDATE}.xlsx',
+        excel=f'{config['rsync_folder']}/all_samples/hifiasm_qc_excel/{ANALYSIS_NAME}_hifiasm_qc_{NUMBEROFINPUTSAMPLES}samples_{CURRENTDATE}.xlsx',
     params:
         qcScript=os.path.join(config['script_dir'],'python_scripts','create_hifiasm_qc_summary.py'),
-        outfilePrefix=f'hifiasm_qc_{NUMBEROFINPUTSAMPLES}samples_{CURRENTDATE}',
+        outfilePrefix=f'{ANALYSIS_NAME}_hifiasm_qc_{NUMBEROFINPUTSAMPLES}samples_{CURRENTDATE}',
         inputSamples=SAMPLES,
         ploidySamples=HIFIASMPLOIDYFORSAMPLES,
     resources:

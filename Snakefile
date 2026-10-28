@@ -7,6 +7,8 @@ import pandas as pd
 # path is relative and set relative to working directory
 # you can set environemntal variable called CONFIG_INI_PATH if the file 'config.ini' is not in your working directory
 configIniPath = os.environ.get('CONFIG_INI_PATH','config.ini')
+SNAKEMAKE_OUTPUTDIR = os.environ.get('SNAKEMAKE_OUTPUTDIR','')
+ANALYSIS_NAME = os.environ.get('ANALYSIS_NAME','analysis')
 
 # load in config file, 
 configIni = configparser.ConfigParser(inline_comment_prefixes=('#', ';'))

@@ -1,7 +1,7 @@
 expandPatternGenomescope="{{sample}}/genomescope_plots/{{sample}}_{png}"
 expandPatternSmudgeplot="{{sample}}/smudgeplots/{{sample}}_{png}"
 
-rule build_rsync_folder:
+rule build_rsync_folder_single_sample:
     input:
         hifiasm='{sample}/s4b_run_hifiasm_qc/qc_summary/{sample}_hifiasm_qc.xlsx',
         genomescope=lambda w:expand(f"{w.sample}/s3_estimate_ploidy/genomescope/{w.sample}_{{png}}.png",png=['transformed_log_plot','transformed_linear_plot','log_plot','linear_plot']),
@@ -50,3 +50,4 @@ rule build_rsync_folder:
         fi
 
         '''
+
