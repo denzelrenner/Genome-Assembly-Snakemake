@@ -1,6 +1,7 @@
 # helper function to be used in the actual snakefile, and in other snakemake files as well
 import os
 import pandas as pd
+import numpy as np
 
 def list_directory(myDir:str,absPath:bool=True):
     
@@ -116,7 +117,7 @@ def set_hifi_reads_operation(row):
 # process samples
 
 # load in csv
-df = pd.read_csv(config['samples_file'],comment='#').set_index("sample", drop=False).fillna(value = [])
+df = pd.read_csv(config['samples_file'],comment='#').set_index("sample", drop=False).fillna(np.nan).replace([np.nan], [None])
 
 # get index values, which are sample names
 SAMPLES = df.index.values.tolist()
