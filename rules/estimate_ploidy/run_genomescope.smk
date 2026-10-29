@@ -34,6 +34,5 @@ rule run_genomescope:
 
         # run genomescope
         genomescope2 -i {params.outdir}/reads.histo -o {params.outdir} -k 31 -m 2000000 -p {params.ploidy} -n {wildcards.sample}
-    
         '''
 
