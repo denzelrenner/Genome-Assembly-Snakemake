@@ -73,9 +73,9 @@ rule putg_gfa_to_fa:
 rule get_hifiasm_fasta_paths_single_sample:
     input:
         contigs=lambda w:expand(f'{w.sample}/s4a_run_hifiasm/{w.sample}.hap{hapNum}.fa',hapNum=sampleInfo[w.sample]['hifiasmploidyAsArray']),
-        unitigs=lambda w:expand(f'{w.sample}/s4a_run_hifiasm/{w.sample}.p_utg.fa',hapNum=sampleInfo[w.sample]['hifiasmploidyAsArray']),
+        unitigs=lambda w:expand(f'{w.sample}/s4a_run_hifiasm/{w.sample}.p_utg.fa'),
     output:
-        expand('{sample}/s4b_run_hifiasm_qc/hifiasm_file_paths/{sample}_hifiasm_{{fastaType}}_paths.txt',fastaType=['unitig','contigs']),
+        expand('{{sample}}/s4b_run_hifiasm_qc/hifiasm_file_paths/{{sample}}_hifiasm_{fastaType}_paths.txt',fastaType=['unitig','contigs']),
     params:
         workingDir=SNAKEMAKE_OUTPUTDIR,
     threads:
