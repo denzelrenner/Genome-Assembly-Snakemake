@@ -11,7 +11,7 @@ def list_directory(myDir:str,absPath:bool=True):
     elif not absPath:
         return os.listdir(myDir)
 
-def return_hic_input_files(hic1_input,hic2_input):
+def return_hic_input_files(hic1_input:str,hic2_input:str):
 
     hic1Files,hic2Files = [],[]
 
@@ -29,6 +29,11 @@ def return_hic_input_files(hic1_input,hic2_input):
     # otherwise assume it is a space separated list
     elif not os.path.isdir(hic2_input):
         hic2Files = hic2_input.split()
+
+    print(hic1_input)
+    print(hic1Files)
+    print(hic2_input)
+    print(hic2Files)
 
     return hic1Files,hic2Files
 
@@ -65,7 +70,7 @@ def fix_hic_file_order(row):
         # return space separated string again
         return ' '.join(hic1Output), ' '.join(hic2Output)
 
-    return []
+    return None,None
 
 def should_hic_be_merged(row):
 
@@ -73,8 +78,9 @@ def should_hic_be_merged(row):
     if row['has_hic']:
 
         # if more than HiC file was given
-        if len(row['HiC1'].split()) > 1:        
-            return True
+        hic1,hic2 = return_hic_input_files(row['HiC1'],row['HiC2'])
+        if len(hic1) > 1:
+            return True        
             
     return False
 
