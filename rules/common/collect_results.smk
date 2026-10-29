@@ -72,7 +72,7 @@ rule zip_rsync_folder:
     input:
         expand(f"{config['rsync_folder']}/individual_samples/{expandPatternSmudgeplotZipFolder}_{CURRENTDATE}.png",s=SAMPLES,png=['smudgeplot','smudgeplot_log10','centralities']),
         expand(f"{config['rsync_folder']}/individual_samples/{expandPatternGenomescopeZipFolder}_{CURRENTDATE}.png",s=SAMPLES,png=['transformed_log_plot','transformed_linear_plot','log_plot','linear_plot']),
-        expand(f'{config['rsync_folder']}/individual_samples/{expandPatternFastaPaths}_{CURRENTDATE}.txt',s=SAMPLES,fastaType=['unitig','contigs']),
+        expand(f'{config['rsync_folder']}/individual_samples/{expandPatternFastaPathsZipFolder}_{CURRENTDATE}.txt',s=SAMPLES,fastaType=['unitig','contigs']),
         expand(f'{config['rsync_folder']}/individual_samples/{{s}}/hifiasm_qc_excel/{{s}}_hifiasm_qc_{CURRENTDATE}.xlsx',s=SAMPLES),
         expand(f'{config['rsync_folder']}/individual_samples/{{s}}/input_reads_qc_excel/{{s}}_input_data_qc_{CURRENTDATE}.xlsx',s=SAMPLES),
         expand(f'{config['rsync_folder']}/individual_samples/{{s}}/pretextmap/{{s}}_{CURRENTDATE}.map.pretext',s=SAMPLES),
