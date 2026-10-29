@@ -116,7 +116,7 @@ def set_hifi_reads_operation(row):
 # process samples
 
 # load in csv
-df = pd.read_csv(config['samples_file'],comment='#').set_index("sample", drop=False)
+df = pd.read_csv(config['samples_file'],comment='#').set_index("sample", drop=False).fillna(value = [])
 
 # get index values, which are sample names
 SAMPLES = df.index.values.tolist()
