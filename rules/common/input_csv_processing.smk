@@ -23,9 +23,22 @@ def fix_hic_file_order(row):
 
     if row['HiC1'] and row['HiC2']:
 
-        # get list of each mate file
-        hic1Files = row['HiC1'].split()
-        hic2Files = row['HiC2'].split()
+        hic1Files,hic2Files = [],[]
+
+        # get HiC1 and HiC2 files by checking if a dir or space seprated list of files was given
+        if os.path.isdir(row['HiC1']):
+            hic1Files = [f for f in list_directory(row['HiC1']) if (f.endswith('.fq.gz') or f.endswith('.fastq.gz'))]
+
+        # otherwise assume it is a space separated list
+        elif not os.path.isdir(row['HiC1']):
+            hic1Files = row['HiC1'].split()
+
+        if os.path.isdir(row['HiC2']):
+            hic2Files = [f for f in list_directory(row['HiC2']) if (f.endswith('.fq.gz') or f.endswith('.fastq.gz'))]
+
+        # otherwise assume it is a space separated list
+        elif not os.path.isdir(row['HiC2']):
+            hic2Files = row['HiC2'].split()
 
         # set var for output files, HiC1 leads the ordering
         hic1Output = []
