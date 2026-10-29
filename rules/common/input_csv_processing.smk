@@ -10,11 +10,34 @@ def list_directory(myDir:str,absPath:bool=True):
     elif not absPath:
         return os.listdir(myDir)
 
+def return_hic_input_files(hic1_input,hic2_input):
+
+    hic1Files,hic2Files = [],[]
+
+    # get HiC1 and HiC2 files by checking if a dir or space seprated list of files was given
+    if os.path.isdir(hic1_input):
+        hic1Files = [f for f in list_directory(hic1_input) if (f.endswith('.fq.gz') or f.endswith('.fastq.gz'))]
+
+    # otherwise assume it is a space separated list
+    elif not os.path.isdir(hic1_input):
+        hic1Files = hic1_input.split()
+
+    if os.path.isdir(hic2_input):
+        hic2Files = [f for f in list_directory(hic2_input) if (f.endswith('.fq.gz') or f.endswith('.fastq.gz'))]
+
+    # otherwise assume it is a space separated list
+    elif not os.path.isdir(hic2_input):
+        hic2Files = hic2_input.split()
+
+    return hic1Files,hic2Files
+
+
 # check whether input sample has HiC
 def check_for_hic(row):
 
     if row['HiC1'] and row['HiC2']:
-        if len(row['HiC1'].split()) == len(row['HiC2'].split()):
+        hic1,hic2 = return_hic_input_files(row['HiC1'],row['HiC2'])
+        if len(hic1) == len(hic2):
             return True
     return False
 
@@ -23,31 +46,17 @@ def fix_hic_file_order(row):
 
     if row['HiC1'] and row['HiC2']:
 
-        hic1Files,hic2Files = [],[]
-
-        # get HiC1 and HiC2 files by checking if a dir or space seprated list of files was given
-        if os.path.isdir(row['HiC1']):
-            hic1Files = [f for f in list_directory(row['HiC1']) if (f.endswith('.fq.gz') or f.endswith('.fastq.gz'))]
-
-        # otherwise assume it is a space separated list
-        elif not os.path.isdir(row['HiC1']):
-            hic1Files = row['HiC1'].split()
-
-        if os.path.isdir(row['HiC2']):
-            hic2Files = [f for f in list_directory(row['HiC2']) if (f.endswith('.fq.gz') or f.endswith('.fastq.gz'))]
-
-        # otherwise assume it is a space separated list
-        elif not os.path.isdir(row['HiC2']):
-            hic2Files = row['HiC2'].split()
+        # get hic files
+        hic1,hic2 = return_hic_input_files(row['HiC1'],row['HiC2'])
 
         # set var for output files, HiC1 leads the ordering
         hic1Output = []
         hic2Output = []
 
         # start looping and find mate file that shares the longest prefix with it
-        for f in hic1Files:
+        for f in hic1:
 
-            mateWithLongestSharedPrefix = max(hic2Files,key=lambda m:len(os.path.commonprefix([f,m])))
+            mateWithLongestSharedPrefix = max(hic2,key=lambda m:len(os.path.commonprefix([f,m])))
 
             hic1Output.append(f)
             hic2Output.append(mateWithLongestSharedPrefix)
