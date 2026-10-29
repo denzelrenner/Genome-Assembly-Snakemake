@@ -10,7 +10,7 @@ rule get_hifi:
         runtime=240,
         mem_mb=5000,
     params:
-        hifi=lambda w: sampleInfo[w.sample]['hifi'],
+        hifi=lambda w: sampleInfo[w.sample]['HiFi'],
         operation=lambda w: sampleInfo[w.sample]['hifi_operation'],
     shell:
         '''
