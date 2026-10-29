@@ -8,7 +8,7 @@ rule get_hifi:
         8
     resources:
         runtime=240,
-        mem_mb=5000
+        mem_mb=5000,
     params:
         hifi=lambda w: sampleInfo[w.sample]['hifi'],
         operation=lambda w: sampleInfo[w.sample]['hifi_operation'],
@@ -31,35 +31,4 @@ rule get_hifi:
         fi
         '''
 
-
-# not currently being used
-rule get_hifi_with_filter:
-    input:
-        bam=config['hifi_reads'] + "{sample}.hifi_reads.bam"
-
-    output:
-        fastq="{sample}/s1_bam_to_fastq/{sample}.fastq.gz"
-
-    params:
-        outdir="{sample}/s1_get_fastq",
-        DB=config['hifiadapterfiltDB_path'],
-    
-    conda:
-        "../../envs/hifiadapterfilt.yml"
-
-    shell:
-        '''export PATH=$PATH:{params.DB}
-
-        # sym link to input bam
-        ln -s {input.bam} ./
-
-        hifiadapterfilt.sh \
-	        -p {sample}.hifi_reads \
-        	-l 44 \
-        	-m 97 \
-        	-t 16 \
-        	-o .
-
-        # set variable for filtered reads
-        mv {sample}.filt.fastq.gz {sample}.fastq.gz'''
         
