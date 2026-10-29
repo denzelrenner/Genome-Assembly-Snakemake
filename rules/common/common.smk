@@ -18,7 +18,6 @@ def set_rule_target():
     outFiles = []
 
     # get target files for individuals with HiC
-    #outFiles.extend(expand("{smp}/s6_build_pretextmap/{outFile}",smp=HICSAMPLES,outFile=SCAFFOLDINGTARGETFILES))
     outFiles.extend(expand("{smp}/s6_build_pretextmap/pretextmap/{smp}.map.pretext",smp=HICSAMPLES))
 
     # regardless of HiC or not, add smudgeplot and genomescope to target files, and remove as input for hifiasm
@@ -34,8 +33,8 @@ def set_rule_target():
     # get target hifiasm qc file for all individuals
     for smp in SAMPLES:
         
-        outFiles.extend(expand('{s}/s4b_run_hifiasm_qc/{s}.hap{i}/compleasm/summary.txt',s=[smp],i=sampleInfo[smp]['hifiasmploidyAsArray']))
-        outFiles.extend(expand('{s}/s4b_run_hifiasm_qc/{s}.hap{i}/gfastats/stats.txt',s=[smp],i=sampleInfo[smp]['hifiasmploidyAsArray']))
+        outFiles.extend(expand(f'{smp}/s4b_run_hifiasm_qc/{smp}.hap{{i}}/compleasm/summary.txt',i=sampleInfo[smp]['hifiasmploidyAsArray']))
+        outFiles.extend(expand(f'{smp}/s4b_run_hifiasm_qc/{smp}.hap{{i}}/gfastats/stats.txt',i=sampleInfo[smp]['hifiasmploidyAsArray']))
         outFiles.append(f'{smp}/s4b_run_hifiasm_qc/qc_summary/{smp}_hifiasm_qc.xlsx')
 
     # add excel spreadhseet which summarises hifiasm results for all samples
@@ -53,13 +52,17 @@ def set_rule_target():
 
     # fasta files
     outFiles.extend(expand(f"{config['rsync_folder']}/all_samples/hifiasm_file_paths/{ANALYSIS_NAME}_hifiasm_{{fastaType}}_paths_{NUMBEROFINPUTSAMPLES}samples_{CURRENTDATE}.txt",fastaType=['unitig','contigs']))
+    outFiles.extend(expand(f'{config['rsync_folder']}/individual_samples/{{smp}}/hifiasm_file_paths/{{smp}}_hifiasm_{{fastaType}}_paths_{CURRENTDATE}.txt',smp=SAMPLES,fastaType=['unitig','contigs']))
 
     # individual sample files
-    outFiles.extend(expand(f"{config['rsync_folder']}/individual_sample/{{smp}}/hifiasm_qc_excel/{{smp}}_hifiasm_qc_{CURRENTDATE}.xlsx",smp=SAMPLES))
-    outFiles.extend(expand(f"{config['rsync_folder']}/individual_sample/{{smp}}/smudgeplots/{{smp}}_{{png}}_{CURRENTDATE}.png",smp=SAMPLES,png=['smudgeplot','smudgeplot_log10','centralities']))
-    outFiles.extend(expand(f"{config['rsync_folder']}/individual_sample/{{smp}}/genomescope_plots/{{smp}}_{{png}}_{CURRENTDATE}.png",smp=SAMPLES,png=['transformed_log_plot','transformed_linear_plot','log_plot','linear_plot']))
-    outFiles.extend(expand(f"{config['rsync_folder']}/individual_sample/{{smp}}/input_reads_qc_excel/{{smp}}_input_data_qc_{CURRENTDATE}.xlsx",smp=SAMPLES))
-    outFiles.extend(expand(f"{config['rsync_folder']}/individual_sample/{{smp}}/pretextmap/{{smp}}_{CURRENTDATE}.map.pretext",smp=HICSAMPLES))
+    outFiles.extend(expand(f"{config['rsync_folder']}/individual_samples/{{smp}}/hifiasm_qc_excel/{{smp}}_hifiasm_qc_{CURRENTDATE}.xlsx",smp=SAMPLES))
+    outFiles.extend(expand(f"{config['rsync_folder']}/individual_samples/{{smp}}/smudgeplots/{{smp}}_{{png}}_{CURRENTDATE}.png",smp=SAMPLES,png=['smudgeplot','smudgeplot_log10','centralities']))
+    outFiles.extend(expand(f"{config['rsync_folder']}/individual_samples/{{smp}}/genomescope_plots/{{smp}}_{{png}}_{CURRENTDATE}.png",smp=SAMPLES,png=['transformed_log_plot','transformed_linear_plot','log_plot','linear_plot']))
+    outFiles.extend(expand(f"{config['rsync_folder']}/individual_samples/{{smp}}/input_reads_qc_excel/{{smp}}_input_data_qc_{CURRENTDATE}.xlsx",smp=SAMPLES))
+    outFiles.extend(expand(f"{config['rsync_folder']}/individual_samples/{{smp}}/pretextmap/{{smp}}_{CURRENTDATE}.map.pretext",smp=HICSAMPLES))
+
+    # zip folder
+    outFiles.append(f"{config['rsync_folder']}/{ANALYSIS_NAME}_{NUMBEROFINPUTSAMPLES}samples_{CURRENTDATE}.zip")
 
     return outFiles
 

@@ -1,33 +1,13 @@
 import os
-rule merge_hic:
-    output:
-        merged1=os.path.join(config['hic1_reads'],'{sample}','{sample}.merged_1.fq.gz'),
-        merged2=os.path.join(config['hic2_reads'],'{sample}','{sample}.merged_2.fq.gz'),
-    params:
-        hic1=lambda w: sampleInfo[w.sample]["input_hic1_files"],
-        hic2=lambda w: sampleInfo[w.sample]["input_hic2_files"],
-    threads:
-        1
-    localrule:
-        True
-    resources:
-        runtime=120,
-        mem_mb=1000
-    shell:
-        '''
-        # merge HiC1 and HiC2
-        cat {params.hic1} > {output.merged1}
-        cat {params.hic2} > {output.merged2}
-        '''
 
 rule get_hic:
     output:
         hic1="{sample}/s1_get_input_data/HiC1/{sample}.hic_1.fq.gz",
         hic2="{sample}/s1_get_input_data/HiC2/{sample}.hic_2.fq.gz",
     params:
-        in1=lambda w: sampleInfo[w.sample]["input_hic1_files"],
-        in2=lambda w: sampleInfo[w.sample]["input_hic2_files"],
-        merge=lambda w: sampleInfo[w.sample]["merge_hic_shell"],
+        in1=lambda w: sampleInfo[w.sample]["HiC1"],
+        in2=lambda w: sampleInfo[w.sample]["HiC2"],
+        merge=lambda w: 'true' if sampleInfo[w.sample]["merge_hic"] else 'false',
     threads:
         1
     localrule:

@@ -1,21 +1,5 @@
 import os
-rule bam_to_fastq:
-    input:
-        bam=os.path.join(config['hifi_reads'],"{sample}.hifi_reads.bam")
-    output:
-        fastq="{sample}/s1_bam_to_fastq/{sample}.fastq.gz"
-    conda:
-        "../../envs/minimap2_samtools.yml"
-    threads:
-        8
-    resources:
-        runtime=240,
-        mem_mb=5000
-    shell:
-        "samtools fastq --threads {threads} {input.bam} | pigz -p {threads} -6 > {output.fastq}"
-
-
-rule get_fastq:
+rule get_hifi:
     output:
         fastq="{sample}/s1_get_input_data/Hifi/{sample}.fastq.gz"
     conda:
@@ -27,7 +11,7 @@ rule get_fastq:
         mem_mb=5000
     params:
         hifi=lambda w: sampleInfo[w.sample]['hifi'],
-        operation=lambda w: sampleInfo[w.sample]['hifiOperation'],
+        operation=lambda w: sampleInfo[w.sample]['hifi_operation'],
     shell:
         '''
         export PATH=$CONDA_PREFIX/bin:$PATH
@@ -42,13 +26,14 @@ rule get_fastq:
 
         elif [ {params.operation} = 'copy' ];then
 
-            cp {params.hifi} > {output.fastq}
+            ln -s {params.hifi} {output.fastq}
 
         fi
         '''
 
 
-rule bam_to_fastq_with_filter:
+# not currently being used
+rule get_hifi_with_filter:
     input:
         bam=config['hifi_reads'] + "{sample}.hifi_reads.bam"
 

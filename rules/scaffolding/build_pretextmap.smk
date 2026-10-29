@@ -1,4 +1,13 @@
 import os
+
+# function to get scaffolding file, this is where it is decided if a tool is going to be scaffolded using yahs or haphic
+def get_scaffold_fasta(w):
+
+    if sampleInfo[w.sample]['scaffolding_tool'] == 'yahs':
+        return f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa"
+    elif sampleInfo[w.sample]['scaffolding_tool'] == 'haphic':
+        return f"{w.sample}/s5_run_haphic/scaffolding/04.build/scaffolds.fa"
+
 rule build_pretextmap:
     input:
         bam="{sample}/s6_build_pretextmap/mapping_coverage/hic/hic_sorted.bam",
@@ -18,8 +27,8 @@ rule build_pretextmap:
     threads:
         int(workflow.cores * 0.10)
     resources:
-        runtime=1200,
-        mem_mb=300000,
+        runtime=60,
+        mem_mb=10000,
     shell:
         '''
         export PATH=$CONDA_PREFIX/bin:$PATH
@@ -37,7 +46,7 @@ rule build_pretextmap:
     
 rule create_telomeres_bedgraph:
     input:
-        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/scaffolding/04.build/scaffolds.fa",
+        fa=get_scaffold_fasta,
     output:
         telomereBedgraph="{sample}/s6_build_pretextmap/telomeres/telomeres_telomeric_repeat_windows.bedgraph",
     conda:
@@ -56,9 +65,9 @@ rule create_telomeres_bedgraph:
 
 rule create_hic_coverage_bedgraph:
     input:
-        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/scaffolding/04.build/scaffolds.fa",
-        hic1=lambda w: sampleInfo[w.sample]['hic1_workflow_file'],
-        hic2=lambda w: sampleInfo[w.sample]['hic2_workflow_file'], 
+        fa=get_scaffold_fasta,
+        hic1="{sample}/s1_get_input_data/HiC1/{sample}.hic_1.fq.gz",
+        hic2="{sample}/s1_get_input_data/HiC2/{sample}.hic_2.fq.gz", 
     output:
         hicCovBedgraph="{sample}/s6_build_pretextmap/mapping_coverage/hic/coverage_output_hic.bedgraph",
         bam="{sample}/s6_build_pretextmap/mapping_coverage/hic/hic_sorted.bam",
@@ -86,7 +95,7 @@ rule create_hic_coverage_bedgraph:
 
 rule create_hifi_coverage_bedgraph:
     input:
-        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/scaffolding/04.build/scaffolds.fa",
+        fa=get_scaffold_fasta,
         hifiFastq="{sample}/s1_get_input_data/Hifi/{sample}.fastq.gz",
     output:
         hifiCovBedgraph="{sample}/s6_build_pretextmap/mapping_coverage/hifi/coverage_output_hifi.bedgraph",
@@ -113,7 +122,7 @@ rule create_hifi_coverage_bedgraph:
 
 rule create_hic_gaps_bedgraph:
     input:
-        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/scaffolding/04.build/scaffolds.fa",
+        fa=get_scaffold_fasta,
         hicCovBedgraph="{sample}/s6_build_pretextmap/mapping_coverage/hic/coverage_output_hic.bedgraph",
     output:
         covGapsBedgraph="{sample}/s6_build_pretextmap/coverage_gaps/gaps.bedgraph",
@@ -133,7 +142,7 @@ rule create_hic_gaps_bedgraph:
 
 rule create_gfastats_gaps_bedgraph:
     input:
-        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/scaffolding/04.build/scaffolds.fa",
+        fa=get_scaffold_fasta,
     output:
         gfastatsGapsBedgraph="{sample}/s6_build_pretextmap/gfastats_gaps/gfastats_gaps.bedgraph",
     conda:
@@ -155,7 +164,7 @@ rule create_gfastats_gaps_bedgraph:
 
 rule create_barrnap_bedgraph:
     input:
-        fa=lambda w:f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/scaffolding/04.build/scaffolds.fa",
+        fa=get_scaffold_fasta,
     output:
         barrnapGff="{sample}/s6_build_pretextmap/barrnap/RNA.gff",
         barrnapHits="{sample}/s6_build_pretextmap/barrnap/all_hits.fa",
@@ -185,7 +194,7 @@ rule create_barrnap_bedgraph:
 
 rule create_trash_bedgraph:
     input:
-        lambda w: f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa" if sampleInfo[w.sample]['ploidy'] == 2 else f"{w.sample}/s5_run_haphic/scaffolding/04.build/scaffolds.fa",
+        get_scaffold_fasta,
     output:
         "{sample}/s6_build_pretextmap/trash/trash_filtered_repeat_arrays.bed",
         "{sample}/s6_build_pretextmap/trash/trash_filtered_repeat_arrays.bedgraph",
@@ -200,8 +209,8 @@ rule create_trash_bedgraph:
     threads:
         16
     resources:
-        runtime=240,
-        mem_mb=50000,
+        runtime=480,
+        mem_mb=30000,
     conda:
         '../../envs/trash-v2.yml'
     shell:

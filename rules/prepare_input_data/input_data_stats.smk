@@ -21,14 +21,14 @@ rule get_input_hifi_stats:
 
 rule get_input_hic_stats:
     input:
-        hic1=lambda w: sampleInfo[w.sample]['hic1_workflow_file'],
-        hic2=lambda w: sampleInfo[w.sample]['hic2_workflow_file'],
+        hic1="{sample}/s1_get_input_data/HiC1/{sample}.hic_1.fq.gz",
+        hic2="{sample}/s1_get_input_data/HiC2/{sample}.hic_2.fq.gz",
     output:
         tsv1="{sample}/s2_input_data_qc/HiC1/{sample}.hic1.tsv",
         tsv2="{sample}/s2_input_data_qc/HiC2/{sample}.hic2.tsv",
     params:
-        inhic1=lambda w,input: ' '.join([sampleInfo[w.sample]["input_hic1_files"],input.hic1]) if sampleInfo[w.sample]["merge_hic"] else input.hic1,
-        inhic2=lambda w,input: ' '.join([sampleInfo[w.sample]["input_hic2_files"],input.hic2]) if sampleInfo[w.sample]["merge_hic"] else input.hic2,
+        inhic1=lambda w,input: ' '.join([sampleInfo[w.sample]["HiC1"],input.hic1]) if sampleInfo[w.sample]["merge_hic"] else input.hic1,
+        inhic2=lambda w,input: ' '.join([sampleInfo[w.sample]["HiC2"],input.hic2]) if sampleInfo[w.sample]["merge_hic"] else input.hic2,
     conda:
         "../../envs/seqkit.yml"
     threads:
@@ -49,8 +49,8 @@ rule get_input_hic_stats:
 rule summarise_input_data_stats_single_sample:
     input:
         hifi="{sample}/s2_input_data_qc/Hifi/{sample}.hifi.tsv",
-        hic1=lambda w: expand("{s}/s2_input_data_qc/HiC1/{s}.hic1.tsv",s=[w.sample]) if sampleInfo[w.sample]["useHiC"] else [],
-        hic2=lambda w: expand("{s}/s2_input_data_qc/HiC2/{s}.hic2.tsv",s=[w.sample]) if sampleInfo[w.sample]["useHiC"] else [],
+        hic1=lambda w: f"{w.sample}/s2_input_data_qc/HiC1/{w.sample}.hic1.tsv" if sampleInfo[w.sample]["has_hic"] else [],
+        hic2=lambda w: f"{w.sample}/s2_input_data_qc/HiC2/{w.sample}.hic2.tsv" if sampleInfo[w.sample]["has_hic"] else [],
     output:
         excel='{sample}/s2_input_data_qc/qc_results/{sample}_input_data_qc.xlsx',
     params:

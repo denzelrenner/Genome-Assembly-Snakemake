@@ -1,3 +1,3 @@
-sample,useHiC,ploidy,chrom,haplomeSize
-MIL4554,False,2,8,200
-VEL3171,False,2,8,200
+sample,HiFi,HiC1,HiC2,ploidy,chrom,haplomeSize,compleasm_lineage_odb
+MIL4554,/path/to/hifi/reads/{.bam or .fastq or.fastq.gz},,,2,8,210000000,brassicales_odb12
+VEL3171,/path/to/hifi/reads/{.bam or .fastq or .fastq.gz},/path/to/HiC1/reads/{.fastq.gz or .fq.gz},/path/to/HiC1/reads/{.fastq.gz or .fq.gz},2,8,210000000,brassicales_odb12

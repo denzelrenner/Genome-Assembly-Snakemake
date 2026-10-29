@@ -1,17 +1,17 @@
 rule run_hifiasm:
     input:
         hifi="{sample}/s1_get_input_data/Hifi/{sample}.fastq.gz",
-        hic1=lambda w: sampleInfo[w.sample]['hic1_workflow_file'],
-        hic2=lambda w: sampleInfo[w.sample]['hic2_workflow_file']
+        hic1=lambda w: f"{w.sample}/s1_get_input_data/HiC1/{w.sample}.hic_1.fq.gz" if sampleInfo[w.sample]['has_hic'] else [],
+        hic2=lambda w: f"{w.sample}/s1_get_input_data/HiC2/{w.sample}.hic_2.fq.gz" if sampleInfo[w.sample]['has_hic'] else []
     output:
-        outdir=directory('{sample}/s4a_run_hifiasm'),
         complete='{sample}/s4a_run_hifiasm/.done.txt',
     log:
         stderr='{sample}/s4a_run_hifiasm/hifiasm_run.log',
     params:
-        useHiCShell=lambda w: 'true' if sampleInfo[w.sample]["useHiC"] else 'false',
+        hasHiCShell=lambda w: 'true' if sampleInfo[w.sample]["has_hic"] else 'false',
         ploidy=lambda w: sampleInfo[w.sample]["ploidy"],
         hifiasmPloidy=lambda w: sampleInfo[w.sample]["hifiasm_ploidy"],
+        outdir=lambda w:f'{w.sample}/s4a_run_hifiasm',
     conda:
         "../../envs/hifiasm.yml"
     threads:
@@ -25,24 +25,29 @@ rule run_hifiasm:
 
         hifiasm -v # confirm hifiasm version
 
+        # if output dir exists then remove it
+        if [ -d {params.outdir} ];then
+            rm -r {params.outdir}
+        fi
+
         # make outdir
-        mkdir -p {output.outdir}
+        mkdir -p {params.outdir}
 
-        if [ {params.useHiCShell} = true ];then
+        if [ {params.hasHiCShell} = true ];then
 
-	        hifiasm -o {output.outdir}/{wildcards.sample} --n-hap {params.ploidy} --h1 {input.hic1} --h2 {input.hic2} -t {threads} {input.hifi} > {log.stderr} 2>&1
+	        hifiasm -o {params.outdir}/{wildcards.sample} --n-hap {params.ploidy} --h1 {input.hic1} --h2 {input.hic2} -t {threads} {input.hifi} > {log.stderr} 2>&1
         else
             
-            hifiasm -o {output.outdir}/{wildcards.sample} --n-hap {params.ploidy} -t {threads} {input.hifi} > {log.stderr} 2>&1
+            hifiasm -o {params.outdir}/{wildcards.sample} --n-hap {params.ploidy} -t {threads} {input.hifi} > {log.stderr} 2>&1
         fi
     
         # clean up unnecessary files
-        rm {output.outdir}/*.bin
-        rm {output.outdir}/*.noseq.gfa
-        rm {output.outdir}/*.lowQ.bed
+        rm {params.outdir}/*.bin
+        rm {params.outdir}/*.noseq.gfa
+        rm {params.outdir}/*.lowQ.bed
 
         # go through all the gfa files
-        for gfa in {output.outdir}/*hap*.p_ctg.gfa; do
+        for gfa in {params.outdir}/*hap*.p_ctg.gfa; do
 
             echo $gfa
 
@@ -55,20 +60,20 @@ rule run_hifiasm:
                 hap=$(awk -F'.' '{{print $(NF-2)}}' <<< $file)
 
                 # change name of gfa file
-                mv $gfa {output.outdir}/{wildcards.sample}."${{hap}}".p_ctg.gfa
+                mv $gfa {params.outdir}/{wildcards.sample}."${{hap}}".p_ctg.gfa
                 
             fi
         done
 
         # change name of utg file
-        mv {output.outdir}/*.p_utg.gfa {output.outdir}/{wildcards.sample}.p_utg.gfa
+        mv {params.outdir}/*.p_utg.gfa {params.outdir}/{wildcards.sample}.p_utg.gfa
 
         # do a sense check for completion by making sure we had the expected number of gfa's
-        gfaFiles=({output.outdir}/*hap*.p_ctg.gfa)
+        gfaFiles=({params.outdir}/*hap*.p_ctg.gfa)
         numOfGfaFiles=${{#gfaFiles[@]}}
 
         # echo complete signal if file number is the same
-        if [ "$numOfGfaFiles" -eq "{params.hifiasmPloidy}" ] && [ -f {output.outdir}/{wildcards.sample}.p_utg.gfa ];then
+        if [ "$numOfGfaFiles" -eq "{params.hifiasmPloidy}" ] && [ -f {params.outdir}/{wildcards.sample}.p_utg.gfa ];then
 
             echo 'DONE' > {output.complete}
         fi

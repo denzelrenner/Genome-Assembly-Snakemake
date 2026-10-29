@@ -2,8 +2,8 @@ import os
 rule align_hic_to_utg:
     input:
         fa='{sample}/s4a_run_hifiasm/{sample}.p_utg.fa',
-        hic1=lambda w: sampleInfo[w.sample]['hic1_workflow_file'],
-        hic2=lambda w: sampleInfo[w.sample]['hic2_workflow_file']
+        hic1="{sample}/s1_get_input_data/HiC1/{sample}.hic_1.fq.gz",
+        hic2="{sample}/s1_get_input_data/HiC2/{sample}.hic_2.fq.gz"
     output:
         bam="{sample}/s5_run_haphic/align_hic_to_utg/HiC.bam",
         filteredBam="{sample}/s5_run_haphic/align_hic_to_utg/HiC.filtered.bam",
@@ -57,7 +57,6 @@ rule run_haphic:
         which python3
         echo $PATH
 
-        # make outdir
         # if output dir exists then remove it
         if [ -d {params.outdir} ];then
             rm -r {params.outdir}
@@ -70,7 +69,7 @@ rule run_haphic:
 
         # make plots dir
         mkdir -p {params.outdir}/plot
-	cd {params.outdir}/plot
+        cd {params.outdir}/plot
 
         # move into plot dir otherwise supplementary files will not be properly placed
         {params.scriptPath}/haphic plot ../../../../{output.agp} ../../../../{input.bam} --prefix {wildcards.sample}_

@@ -19,16 +19,13 @@ configIni.read(configIniPath)
 # build snakemake config
 ### DEFAULTS ###
 config['samples_file'] = configIni['DEFAULT'].get('samples_file',fallback='samples.csv')
-config['rsync_folder'] = configIni['DEFAULT'].get('rsync_folder',fallback='results')
+config['rsync_folder'] = configIni['DEFAULT'].get('rsync_folder',fallback='compiled_results')
 
 ### PREPARING HIFI READS
 config['filter_hifi_reads'] = configIni['PREPARING_HIFI_READS'].getboolean('filter_hifi_reads',fallback=False)
 config['hifiadapterfiltDB_path'] = configIni['PREPARING_HIFI_READS'].get('hifiadapterfiltDB_path',fallback='')
 
 ### HIFIASM
-config['hifi_reads'] = configIni['HIFIASM'].get('hifi_reads',fallback='')
-config['hic1_reads'] = configIni['HIFIASM'].get('hic1_reads',fallback='')
-config['hic2_reads'] = configIni['HIFIASM'].get('hic2_reads',fallback='')
 config['use_genomescope_homcov'] = configIni['HIFIASM'].getboolean('use_genomescope_homcov',fallback=False)
 
 ### QUALITY CONTROL
@@ -54,13 +51,13 @@ config['shared_data_dir'] = os.path.join(workflow.basedir,'shared_data')
 # include rules
 
 # shared rules
-include:"rules/common/input_csv_processes.smk"
+include:"rules/common/input_csv_processing.smk"
 include:"rules/common/common.smk"
 include:"rules/common/collect_results.smk"
 
 ### PREPARING INPUT DATA ###
 # bam to fastq
-include:"rules/prepare_input_data/get_fastq.smk"
+include:"rules/prepare_input_data/get_hifi.smk"
 
 # merge HiC
 include:"rules/prepare_input_data/get_hic.smk"

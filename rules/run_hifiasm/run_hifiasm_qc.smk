@@ -83,8 +83,8 @@ rule hifiasm_qc_on_individual_haplome:
 
 rule summarise_hifiasm_qc_single_sample:
     input:
-        compleasm=lambda w:expand('{s}/s4b_run_hifiasm_qc/{s}.hap{hapNum}/compleasm/summary.txt',s=[w.sample],hapNum=sampleInfo[w.sample]['hifiasmploidyAsArray']),
-        gfastats=lambda w:expand('{s}/s4b_run_hifiasm_qc/{s}.hap{hapNum}/gfastats/stats.txt',s=[w.sample],hapNum=sampleInfo[w.sample]['hifiasmploidyAsArray']),
+        compleasm=lambda w:expand(f'{w.sample}/s4b_run_hifiasm_qc/{w.sample}.hap{{hapNum}}/compleasm/summary.txt',hapNum=sampleInfo[w.sample]['hifiasmploidyAsArray']),
+        gfastats=lambda w:expand(f'{w.sample}/s4b_run_hifiasm_qc/{w.sample}.hap{{hapNum}}/gfastats/stats.txt',hapNum=sampleInfo[w.sample]['hifiasmploidyAsArray']),
     output:
         qcSummary='{sample}/s4b_run_hifiasm_qc/qc_summary/{sample}_hifiasm_qc.xlsx',
     params:

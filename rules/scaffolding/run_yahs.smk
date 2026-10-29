@@ -1,8 +1,8 @@
 rule align_hic_to_hifiasm_haplome:
     input:
         fa='{sample}/s4a_run_hifiasm/{sample}.hap{haplomeNumber}.fa',
-        hic1=lambda w: sampleInfo[w.sample]['hic1_workflow_file'],
-        hic2=lambda w: sampleInfo[w.sample]['hic2_workflow_file']
+        hic1="{sample}/s1_get_input_data/HiC1/{sample}.hic_1.fq.gz",
+        hic2="{sample}/s1_get_input_data/HiC2/{sample}.hic_2.fq.gz",
     output:
         bam="{sample}/s5_run_yahs/hap{haplomeNumber}/mapped.PT.bam",
         fai='{sample}/s4a_run_hifiasm/{sample}.hap{haplomeNumber}.fa.fai',
