@@ -30,11 +30,6 @@ def return_hic_input_files(hic1_input:str,hic2_input:str):
     elif not os.path.isdir(hic2_input):
         hic2Files = hic2_input.split()
 
-    print(hic1_input)
-    print(hic1Files)
-    print(hic2_input)
-    print(hic2Files)
-
     return hic1Files,hic2Files
 
 
@@ -109,14 +104,15 @@ def separate_lineage_and_odb(row):
 def set_hifi_reads_operation(row):
 
     if row['HiFi'].endswith('.fastq'):
-        sampleInfo[smpl]['hifi_operation'] = 'compress'
+        return 'compress'
 
     elif row['HiFi'].endswith('.fastq.gz'):
-        sampleInfo[smpl]['hifi_operation'] = 'copy'
+        return 'copy'
 
     elif row['HiFi'].endswith('.bam'):
-        sampleInfo[smpl]['hifi_operation'] = 'convert'
+        return 'convert'
 
+     
 
 
 
