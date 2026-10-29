@@ -128,7 +128,7 @@ SAMPLES = df.index.values.tolist()
 
 # hifiasm ploidy, set to 2 automatically if no HiC
 df['has_hic'] = df.apply(check_for_hic,axis=1)
-df['HiC'],df['HiC2'] = zip(*df.apply(fix_hic_file_order,axis=1))
+df['HiC1'],df['HiC2'] = zip(*df.apply(fix_hic_file_order,axis=1))
 df['merge_hic'] = df.apply(should_hic_be_merged,axis=1)
 df['hifiasm_ploidy'] = df.apply(set_hifiasm_ploidy,axis=1)
 df['ploidyAsArray'] = df.apply(lambda row:[i for i in range(1,row['ploidy']+1)],axis=1)
