@@ -61,8 +61,6 @@ def set_hifiasm_ploidy(row):
         return row['ploidy']
     return 2
 
-def set_
-
 def set_scaffolding_tool(row):
 
     if row['has_hic']:
@@ -134,3 +132,5 @@ NUMBEROFINPUTSAMPLES = len(SAMPLES)
 # get all lineages to be download
 ALLCOMPLEASMLINEAGES = list(set([sampleInfo[s]['compleasm_lineage_odb'] for s in SAMPLES]))
 
+print(sampleInfo)
+print(df)
