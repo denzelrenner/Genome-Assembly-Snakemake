@@ -7,7 +7,7 @@ rule run_genomescope:
 
     params:
         ploidy=lambda w: sampleInfo[w.sample]["ploidy"],
-        outdir="{sample}/s3_estimate_ploidy/genomescope"
+        outdir="{sample}/s3_estimate_ploidy/genomescope",
 
     conda:
         "../../envs/genomescope.yml"

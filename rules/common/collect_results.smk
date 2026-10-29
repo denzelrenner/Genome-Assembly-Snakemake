@@ -11,9 +11,9 @@ expandPatternFastaPathsZipFolder="{s}/hifiasm_file_paths/{s}_hifiasm_{fastaType}
 rule build_rsync_folder_single_sample:
     input:
         hifiasm='{sample}/s4b_run_hifiasm_qc/qc_summary/{sample}_hifiasm_qc.xlsx',
-        fasta=lambda w:expand(f'{w.sample}/s4b_run_hifiasm_qc/hifiasm_file_paths/{w.sample}_hifiasm_{{fastaType}}_paths.txt',fastaType=['unitig','contigs']),
-        genomescope=lambda w:expand(f"{w.sample}/s3_estimate_ploidy/genomescope/{w.sample}_{{png}}.png",png=['transformed_log_plot','transformed_linear_plot','log_plot','linear_plot']),
-        smudgeplot=lambda w:expand(f"{w.sample}/s3_estimate_ploidy/smudgeplot/{w.sample}_{{png}}.png",png=['smudgeplot','smudgeplot_log10','centralities']),
+        fasta=expand('{{sample}}/s4b_run_hifiasm_qc/hifiasm_file_paths/{{sample}}_hifiasm_{fastaType}_paths.txt',fastaType=['unitig','contigs']),
+        genomescope=expand("{{sample}}/s3_estimate_ploidy/genomescope/{{sample}}_{png}.png",png=['transformed_log_plot','transformed_linear_plot','log_plot','linear_plot']),
+        smudgeplot=expand("{{sample}}/s3_estimate_ploidy/smudgeplot/{{sample}}_{png}.png",png=['smudgeplot','smudgeplot_log10','centralities']),
         seqkit='{sample}/s2_input_data_qc/qc_results/{sample}_input_data_qc.xlsx',
         pretext=lambda w:f"{w.sample}/s6_build_pretextmap/pretextmap/{w.sample}.map.pretext" if sampleInfo[w.sample]['has_hic'] else [],
     output:
