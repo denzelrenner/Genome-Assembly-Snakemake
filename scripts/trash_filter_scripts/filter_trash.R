@@ -1,8 +1,6 @@
-#!/usr/bin/env Rscript
-
+#!/usr/bin/env Rscript 
 # filter_trash.R
 # Description: Filter TRASH2 outputs
-
 # Parse command-line arguments
 args <- commandArgs(trailingOnly = TRUE)
 if (length(args) != 4) {
