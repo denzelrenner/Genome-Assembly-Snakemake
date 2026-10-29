@@ -91,8 +91,8 @@ rule get_hifiasm_fasta_paths_single_sample:
         ls {input.unitigs} > {output[0]}
 
         # use awk to prepend the working dir to file names
-        awk '{{print "{params.workingDir}/"$1}}' {output[0]} > {sample}/s4b_run_hifiasm_qc/hifiasm_file_paths/tmp && mv {sample}/s4b_run_hifiasm_qc/hifiasm_file_paths/tmp {output[0]}
-        awk '{{print "{params.workingDir}/"$1}}' {output[1]} > {sample}/s4b_run_hifiasm_qc/hifiasm_file_paths/tmp && mv {sample}/s4b_run_hifiasm_qc/hifiasm_file_paths/tmp {output[1]}
+        awk '{{print "{params.workingDir}/"$1}}' {output[0]} > {wildcards.sample}/s4b_run_hifiasm_qc/hifiasm_file_paths/tmp && mv {wildcards.sample}/s4b_run_hifiasm_qc/hifiasm_file_paths/tmp {output[0]}
+        awk '{{print "{params.workingDir}/"$1}}' {output[1]} > {wildcards.sample}/s4b_run_hifiasm_qc/hifiasm_file_paths/tmp && mv {wildcards.sample}/s4b_run_hifiasm_qc/hifiasm_file_paths/tmp {output[1]}
         '''
 
 # this rule is here for now because it is dependent on the top u/ctg to fa rules actually completing

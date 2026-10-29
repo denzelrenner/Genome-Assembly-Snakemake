@@ -157,5 +157,3 @@ NUMBEROFINPUTSAMPLES = len(SAMPLES)
 # get all lineages to be download
 ALLCOMPLEASMLINEAGES = list(set([sampleInfo[s]['compleasm_lineage_odb'] for s in SAMPLES]))
 
-print(sampleInfo)
-print(df)
