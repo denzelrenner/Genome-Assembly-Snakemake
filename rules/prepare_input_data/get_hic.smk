@@ -27,8 +27,8 @@ rule get_hic:
         elif [ {params.merge} = false ];then
 
             # copy file to output
-            cp {params.in1} {output.hic1}
-            cp {params.in2} {output.hic2}
+            ln -s {params.in1} {output.hic1}
+            ln -s {params.in2} {output.hic2}
 
         fi
         '''
