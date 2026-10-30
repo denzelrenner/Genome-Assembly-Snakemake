@@ -83,6 +83,7 @@ rule summarise_input_data_stats_all_samples:
         excel=f'{config['rsync_folder']}/all_samples/input_data_qc_excel/{ANALYSIS_NAME}_input_data_qc_{NUMBEROFINPUTSAMPLES}samples_{CURRENTDATE}.xlsx',
     params:
         qcScript=os.path.join(config['script_dir'],'python_scripts','summarise_sequencing_reads.py'),
+        outdir=f"{config['rsync_folder']}/all_samples/input_data_qc_excel",
         outfilePrefix=f'{ANALYSIS_NAME}_input_data_qc_{NUMBEROFINPUTSAMPLES}samples_{CURRENTDATE}',
         inputSamples=SAMPLES,
         genomesizeSamples=GENOMESIZEFORSAMPLES,
@@ -101,5 +102,5 @@ rule summarise_input_data_stats_all_samples:
         '''
         export PATH=$CONDA_PREFIX/bin:$PATH
         
-        python3 {params.qcScript} -s {params.inputSamples} -g {params.genomesizeSamples} -o {params.outfilePrefix} -od results/all_samples/input_data_qc_excel
+        python3 {params.qcScript} -s {params.inputSamples} -g {params.genomesizeSamples} -o {params.outfilePrefix} -od {params.outdir}
         '''

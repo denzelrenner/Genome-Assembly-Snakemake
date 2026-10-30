@@ -114,6 +114,7 @@ rule summarise_hifiasm_qc_all_samples:
         excel=f'{config['rsync_folder']}/all_samples/hifiasm_qc_excel/{ANALYSIS_NAME}_hifiasm_qc_{NUMBEROFINPUTSAMPLES}samples_{CURRENTDATE}.xlsx',
     params:
         qcScript=os.path.join(config['script_dir'],'python_scripts','create_hifiasm_qc_summary.py'),
+        outdir=f"{config['rsync_folder']}/all_samples/hifiasm_qc_excel",
         outfilePrefix=f'{ANALYSIS_NAME}_hifiasm_qc_{NUMBEROFINPUTSAMPLES}samples_{CURRENTDATE}',
         inputSamples=SAMPLES,
         ploidySamples=HIFIASMPLOIDYFORSAMPLES,
@@ -130,6 +131,6 @@ rule summarise_hifiasm_qc_all_samples:
         '''
         export PATH=$CONDA_PREFIX/bin:$PATH
 
-        python3 {params.qcScript} -s {params.inputSamples} -nhap {params.ploidySamples} -o {params.outfilePrefix} -od results/all_samples/hifiasm_qc_excel
+        python3 {params.qcScript} -s {params.inputSamples} -nhap {params.ploidySamples} -o {params.outfilePrefix} -od {params.outdir}
         '''
 
