@@ -150,7 +150,7 @@ elif len(sample_haplomeSize) > 1:
         dataframes_sheetnames.append((concat_multiple_dataframes(dfs=toMergeHifi),'hifi'))
 
     if toMergeHic1:
-        dataframes_sheetnames.append((concat_multiple_dataframes(dfs=toMergeHic2),'hic1'))
+        dataframes_sheetnames.append((concat_multiple_dataframes(dfs=toMergeHic1),'hic1'))
 
     if toMergeHic2:
         dataframes_sheetnames.append((concat_multiple_dataframes(dfs=toMergeHic2),'hic2'))
