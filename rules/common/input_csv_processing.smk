@@ -57,7 +57,7 @@ def fix_hic_file_order(row):
         # start looping and find mate file that shares the longest prefix with it
         for f in hic1:
 
-            mateWithLongestSharedPrefix = max(hic2,key=lambda m:len(os.path.commonprefix([f,m])))
+            mateWithLongestSharedPrefix = max(hic2,key=lambda m:len(os.path.commonprefix([f.split('/')[-1],m.split('/')[-1]])))
 
             hic1Output.append(f)
             hic2Output.append(mateWithLongestSharedPrefix)
