@@ -17,14 +17,14 @@ def return_hic_input_files(hic1_input:str,hic2_input:str):
 
     # get HiC1 and HiC2 files by checking if a dir or space seprated list of files was given
     if os.path.isdir(hic1_input):
-        hic1Files = [f for f in list_directory(hic1_input) if (f.endswith('.fq.gz') or f.endswith('.fastq.gz'))]
+        hic1Files = [f for f in list_directory(hic1_input) if (f.endswith('1.fq.gz') or f.endswith('1.fastq.gz'))]
 
     # otherwise assume it is a space separated list
     elif not os.path.isdir(hic1_input):
         hic1Files = hic1_input.split()
 
     if os.path.isdir(hic2_input):
-        hic2Files = [f for f in list_directory(hic2_input) if (f.endswith('.fq.gz') or f.endswith('.fastq.gz'))]
+        hic2Files = [f for f in list_directory(hic2_input) if (f.endswith('2.fq.gz') or f.endswith('2.fastq.gz'))]
 
     # otherwise assume it is a space separated list
     elif not os.path.isdir(hic2_input):
