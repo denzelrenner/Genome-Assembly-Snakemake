@@ -6,7 +6,7 @@ The aim of this snakemake workflow is to assemble genomes of any ploidy, and whe
 ## Input Data
 For this workflow we will need to fill in a config.ini file, and samples.csv file. Examples of both files can be found in the configs folder. 
 
-### config ini
+### <ins>config ini</ins>
 The config contains different parameters that are essential to the pipeline running properly. Anything that is commented out is not essential, but can be uncommented and given a value if needed. This workflow does not require you to give paths to individual fastq files, or paired end reads. 
 
 ```
@@ -34,7 +34,7 @@ slurm_account = slu2026-1-5
 tmpdir = /scratch
 ```
 
-### samples csv
+### <ins>samples csv</ins>
 The csv file contains columns that allow for specific operations to be performed on different populations in the analysis. Columns that should not be left empty are highlighted in bold. An example is provided below, and a description of the expected values in each column.
 
 ```
@@ -58,7 +58,7 @@ PopA,/absolute/path/to/bam/file,/absolute/path/to/HiC1/file,/absolute/path/to/Hi
 
 `compleasm_lineage_db` : The lineage and odb to use for compleasm
 
-### environmental variables
+### <ins>environmental variables</ins>
 The workflow needs to be provided some environmental variables.
 
 `SNAKEMAKE_OUTPUTDIR` : The output directory for the analysis
