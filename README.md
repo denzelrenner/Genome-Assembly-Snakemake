@@ -37,8 +37,10 @@ tmpdir = /scratch
 ### samples csv
 The csv file contains columns that allow for specific operations to be performed on different populations in the analysis. Columns that should not be left empty are highlighted in bold. An example is provided below, and a description of the expected values in each column.
 
+```
 sample,HiFi,HiC1,HiC2,ploidy,chrom,haplomeSize,compleasm_lineage_odb
 PopA,/absolute/path/to/bam/file,/absolute/path/to/HiC1/file,/absolute/path/to/HiC2/file,2,8,210000000,brassicales_odb12
+```
 
 `sample` : The name of a population/sample. This name does not have to be present in the file name of the hifi or hic reads
 
