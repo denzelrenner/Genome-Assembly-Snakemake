@@ -35,22 +35,23 @@ tmpdir = /scratch
 ```
 
 ### samples csv
-The csv file contains columns that allow for specific operations to be performed on different populations in the analysis. Columns that should not be left empty are highlighted in bold. An example file is provided below.
+The csv file contains columns that allow for specific operations to be performed on different populations in the analysis. Columns that should not be left empty are highlighted in bold. An example is provided below, and a description of the expected values in each column.
 
+sample,HiFi,HiC1,HiC2,ploidy,chrom,haplomeSize,compleasm_lineage_odb
+PopA,/absolute/path/to/bam/file,/absolute/path/to/HiC1/file,/absolute/path/to/HiC2/file,2,8,210000000,brassicales_odb12
 
+`sample` : The name of a population/sample. This name does not have to be present in the file name of the hifi or hic reads
 
-`sample` : The name of a population/sample. This name does not have to be present in the file name of the hifi or hic reads.
+`HiFi` : The absolute path to a file with hifi reads. Valid file extensions are **.fastq**, .**fastq.gz**, **.fq**, **.fq.gz**, and **.bam**
 
-`HiFi` : The absolute path to a file with hifi reads. Valid file extensions are .fastq, .fastq.gz, .fq, .fq.gz, and .bam
+`HiC1` : There are types of information that can be provided here. Either a path to a directory containing HiC reads, or a space separated list of file(s) with HiC reads can be given. If a space separated list of files is given, the order of the files for HiC1 and HiC2 does not matter. Where more than one file is provided, the data will be merged. Valid extensions for fastq files are **.fastq.gz** or **.fq.gz**
 
-`**HiC1**` : There are types of information that can be provided here. Either a path to a directory containing HiC reads, or a space separated list of file(s) with HiC reads can be given. If a space separated list of files is given, the order of the files for HiC1 and HiC2 does not matter. Where more than one file is provided, the data will be merged. Valid extensions for fastq files are .fastq.gz or .fq.gz. 
+`HiC2` : There are types of information that can be provided here. Either a path to a directory containing HiC reads, or a space separated list of file(s) with HiC reads can be given. If a space separated list of files is given, the order of the files for HiC1 and HiC2 does not matter. Where more than one file is provided, the data will be merged. Valid extensions for fastq files are **.fastq.gz** or **.fq.gz**
 
-`hic2_reads` : There are types of information that can be provided here. Either a path to a directory containing HiC reads, or a space separated list of file(s) with HiC reads can be given. If a space separated list of files is given, the order of the files for HiC1 and HiC2 does not matter. Where more than one file is provided, the data will be merged. Valid extensions for fastq files are .fastq.gz or .fq.gz. 
+`ploidy` : The ploidy of the population
 
-`ploidy` : The ploidy of the population.
+`chrom` : The number of chromosomes per haplotype
 
-`chrom` : The number of chromosomes per haplotype.
+`haplomeSize` : The expected haplome size (in bp)
 
-`haplomeSize` : The expected haplome size (in bp).
-
-`compleasm_lineage_db` : The lineage and odb to use for compleasm.
+`compleasm_lineage_db` : The lineage and odb to use for compleasm
