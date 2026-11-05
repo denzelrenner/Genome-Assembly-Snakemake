@@ -57,3 +57,10 @@ PopA,/absolute/path/to/bam/file,/absolute/path/to/HiC1/file,/absolute/path/to/Hi
 `haplomeSize` : The expected haplome size (in bp)
 
 `compleasm_lineage_db` : The lineage and odb to use for compleasm
+
+### environmental variables
+The workflow needs to be provided some environmental variables.
+
+`SNAKEMAKE_OUTPUTDIR` : The output directory for the analysis
+
+`ANALYSIS_NAME` : The name you want to give the analysis. Some output files will have this name prepended onto them
