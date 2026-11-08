@@ -16,10 +16,10 @@ rule run_gphase:
     conda:
         "../../envs/gphase.yml"
     threads:
-        48
+        64
     resources:
         runtime=1200,
-        mem_mb=40000,
+        mem_mb=80000,
     shell:
         '''
         export PATH=$CONDA_PREFIX/bin:$PATH
