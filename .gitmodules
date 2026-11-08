@@ -4,3 +4,6 @@
 [submodule "scripts/TRASH_2"]
 	path = scripts/TRASH_2
 	url = https://github.com/vlothec/TRASH_2.git
+[submodule "scripts/GPhase"]
+	path = scripts/GPhase
+	url = https://github.com/panlab-bioinfo/GPhase.git
