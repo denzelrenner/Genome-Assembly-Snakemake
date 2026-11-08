@@ -81,7 +81,7 @@ include:"rules/run_hifiasm/run_hifiasm_qc.smk"
 include:"rules/scaffolding/build_pretextmap.smk"
 include:"rules/scaffolding/run_yahs.smk"
 include:"rules/scaffolding/run_haphic.smk"
-
+include:"rules/scaffolding/run_gphase.smk"
 
 # all rule
 rule all:
