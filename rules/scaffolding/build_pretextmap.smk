@@ -7,6 +7,9 @@ def get_scaffold_fasta(w):
         return f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa"
     elif sampleInfo[w.sample]['scaffolding_tool'] == 'haphic':
         return f"{w.sample}/s5_run_haphic/scaffolding/04.build/scaffolds.fa"
+    elif sampleInfo[w.sample]['scaffolding_tool'] == 'gphase':
+        return f"{w.sample}/s5_run_gphase/gphase_output/scaffold_hap/scaffolds.fa"
+
 
 rule build_pretextmap:
     input:

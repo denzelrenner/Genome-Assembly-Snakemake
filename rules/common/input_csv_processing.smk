@@ -85,17 +85,6 @@ def set_hifiasm_ploidy(row):
         return row['ploidy']
     return 2
 
-def set_scaffolding_tool(row):
-
-    if row['has_hic']:
-
-        if row['ploidy'] > 2:
-            return 'haphic'
-        elif row['ploidy'] <= 2:
-            return 'yahs'
-
-    return 'none'
-
 def separate_lineage_and_odb(row):
 
     return row['compleasm_lineage_odb'].split('_')
@@ -133,7 +122,6 @@ df['merge_hic'] = df.apply(should_hic_be_merged,axis=1)
 df['hifiasm_ploidy'] = df.apply(set_hifiasm_ploidy,axis=1)
 df['ploidyAsArray'] = df.apply(lambda row:[i for i in range(1,row['ploidy']+1)],axis=1)
 df['hifiasmploidyAsArray'] = df.apply(lambda row:[i for i in range(1,row['hifiasm_ploidy']+1)],axis=1)
-df['scaffolding_tool'] = df.apply(set_scaffolding_tool,axis=1)
 df['lineage'],df['odb'] = zip(*df.apply(separate_lineage_and_odb,axis=1))
 df['hifi_operation'] = df.apply(set_hifi_reads_operation,axis=1)
 
