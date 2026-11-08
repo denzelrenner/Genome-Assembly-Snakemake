@@ -1,7 +1,6 @@
 rule run_gphase:
     input:
         fa="{sample}/s4a_run_hifiasm/{sample}.p_utg.fa",
-        gfa="{sample}/s4a_run_hifiasm/{sample}.p_utg.gfa",
         hifi="{sample}/s1_get_input_data/Hifi/{sample}.fastq.gz",
         hic1="{sample}/s1_get_input_data/HiC1/{sample}.hic_1.fq.gz",
         hic2="{sample}/s1_get_input_data/HiC2/{sample}.hic_2.fq.gz",
@@ -13,6 +12,7 @@ rule run_gphase:
         scriptPath=os.path.join(config['script_dir'],"GPhase"),
         ploidy=lambda w: sampleInfo[w.sample]['ploidy'],
         nchr=lambda w: sampleInfo[w.sample]['chrom'],
+        gfa=lambda w: f"{w.sample}/s4a_run_hifiasm/{w.sample}.p_utg.gfa"
     conda:
         "../../envs/gphase.yml"
     threads:
@@ -43,7 +43,7 @@ rule run_gphase:
 
         gphase popcnv -f ../../{input.fa} -p output -t {threads} -r ../../{input.hifi}
 
-        gphase pipeline -f ../../{input.fa} -g ../../{input.gfa} -c popcnv/06.genes.round.cn -m ../../{output.hic_to_utg_bam} --n_chr {params.nchr} --n_hap {params.ploidy} --hap_pm 0.6 -p output --rescue --min_len 50
+        gphase pipeline -f ../../{input.fa} -g ../../{params.gfa} -c popcnv/06.genes.round.cn -m ../../{output.hic_to_utg_bam} --n_chr {params.nchr} --n_hap {params.ploidy} --hap_pm 0.6 -p output --rescue --min_len 50
 
         #chromap -i -r ../../{output.scaffoldFasta} -o reindex_utg
 
