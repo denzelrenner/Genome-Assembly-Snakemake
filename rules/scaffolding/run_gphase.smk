@@ -37,7 +37,7 @@ rule run_gphase:
         # map hic to assembly
         chromap -i -r ../../{input.fa} -o index
 
-        chromap --preset hic -x index -r ../../{input.fa} -q 0 -1 ../../{input.hic1} -2 ../../{input.hic2} --remove-pcr-duplicates -t {threads} --SAM -o ../../{output.hic_to_utg_bam}
+        chromap --preset hic -x index -r ../../{input.fa} -q 0 -1 ../../{input.hic1} -2 ../../{input.hic2} --remove-pcr-duplicates -t {threads} --SAM -o ../../{output.hic_to_utg_sam}
 
         samtools view -@ {threads} -bh ../../{output.hic_to_utg_sam} -o ../../{output.hic_to_utg_bam}
 
