@@ -206,7 +206,7 @@ rule create_trash_bedgraph:
         trash_src_dir=os.path.join(config['script_dir'],'TRASH_2','src'),
         trash_filter_dir=os.path.join(config['script_dir'],'trash_filter_scripts'),
         outdir=lambda w: os.path.join(SNAKEMAKE_OUTPUTDIR,f"{w.sample}/s6_build_pretextmap/trash"),
-        fa=lambda w: os.path.join(SNAKEMAKE_OUTPUTDIR,f"{w.sample}/s5_run_yahs/combined_haps/scaffolds.fa") if sampleInfo[w.sample]['ploidy'] == 2 else os.path.join(SNAKEMAKE_OUTPUTDIR,f"{w.sample}/s5_run_haphic/scaffolding/04.build/scaffolds.fa"),
+        fa=lambda w: os.path.join(SNAKEMAKE_OUTPUTDIR,get_scaffold_fasta(w)),
         bed=lambda w: os.path.join(SNAKEMAKE_OUTPUTDIR,f"{w.sample}/s6_build_pretextmap/trash/trash_filtered_repeat_arrays.bed"),
         bedgraph=lambda w: os.path.join(SNAKEMAKE_OUTPUTDIR,f"{w.sample}/s6_build_pretextmap/trash/trash_filtered_repeat_arrays.bedgraph"),
     threads:

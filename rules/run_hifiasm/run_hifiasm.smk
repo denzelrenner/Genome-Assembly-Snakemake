@@ -17,7 +17,7 @@ rule run_hifiasm:
     threads:
         int(workflow.cores * 0.75)
     resources:
-        runtime=720,
+        runtime=2160,
         mem_mb=300000
     shell:
         '''
