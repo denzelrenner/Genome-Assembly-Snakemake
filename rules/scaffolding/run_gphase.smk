@@ -19,7 +19,7 @@ rule run_gphase:
         64
     resources:
         runtime=1200,
-        mem_mb=80000,
+        mem_mb=200000,
     shell:
         '''
         export PATH=$CONDA_PREFIX/bin:$PATH
