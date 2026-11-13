@@ -213,7 +213,7 @@ rule create_trash_bedgraph:
         16
     resources:
         runtime=480,
-        mem_mb=30000,
+        mem_mb=100000,
     conda:
         '../../envs/trash-v2.yml'
     shell:
